@@ -1,0 +1,12 @@
+{
+  "name": "classup",
+  "displayName": "classup",
+  "expo": {
+    "name": "classup",
+    "slug": "classup",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
