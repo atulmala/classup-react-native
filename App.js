@@ -44,8 +44,10 @@ function LoginScreen() {
       });
       return;
     }
-
-    fetch('https://www.classupclient.com/auth/login1/', {
+    // let url = 'https://wwww.classupclient.com/auth/login1/';
+    // let url = 'http://10.0.2.2:8000/auth/login1/';
+    let url = 'http://127.0.0.1:8000/auth/login1/';
+    fetch(url, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -57,10 +59,13 @@ function LoginScreen() {
         'device_type': Device.brand,
         'model': Device.manufacturer,
         'os': Device.osName,
+        'size': 'standard',
+        'resolution': 'standard'
       })
     })
       .then((response) => response.json())
       .then((json) => {
+        console.log(json);
         if (json.login == "successful") {
           Toast.show({
             type: 'success',
@@ -108,7 +113,7 @@ function LoginScreen() {
           placeholderTextColor="#e8eaf6"
           onChangeText={text => password = text} />
       </View>
-      
+
       <TouchableOpacity
         style={styles.loginBtn}
         onPress={_onPressLogin}>
@@ -125,7 +130,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
