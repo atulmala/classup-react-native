@@ -1,11 +1,34 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
-import Constants from "expo-constants";
 import Toast from 'react-native-toast-message';
 import * as Device from 'expo-device';
-import Stack from '../App';
+import OneSignal from 'react-native-onesignal';
 
+function componentWillUnmount() {
+  OneSignal.removeEventListener('received', this.onReceived);
+  OneSignal.removeEventListener('opened', this.onOpened);
+  OneSignal.removeEventListener('ids', this.onIds);
+}
+
+function onReceived(notification) {
+  console.log("Notification received: ", notification);
+}
+
+function onOpened(openResult) {
+  console.log('Message: ', openResult.notification.payload.body);
+  console.log('Data: ', openResult.notification.payload.additionalData);
+  console.log('isActive: ', openResult.notification.isAppInFocus);
+  console.log('openResult: ', openResult);
+}
+
+function onIds(device) {
+  console.log('Device info: ', device);
+}
+
+function myiOSPromptCallback(permission){
+  // do something with permission value
+}
 
 function LoginScreen({ navigation }) {
   var login_id = "";
@@ -38,8 +61,8 @@ function LoginScreen({ navigation }) {
       return;
     }
     // let url = 'https://wwww.classupclient.com/auth/login1/';
-    // let url = 'http://10.0.2.2:8000/auth/login1/';
-    let url = 'http://127.0.0.1:8000/auth/login1/';
+    let url = 'http://10.0.2.2:8000/auth/login1/';
+    // let url = 'http://127.0.0.1:8000/auth/login1/';
     fetch(url, {
       method: 'POST',
       headers: {
@@ -60,6 +83,24 @@ function LoginScreen({ navigation }) {
       .then((json) => {
         console.log(json);
         if (json.login == "successful") {
+          // OneSignal set up
+          OneSignal.setLogLevel(6, 0);
+
+          // Replace 'YOUR_ONESIGNAL_APP_ID' with your OneSignal App ID.
+          OneSignal.init("4f62be3e-1330-4fda-ac23-91757077abe3", {
+            kOSSettingsKeyAutoPrompt: false,
+            kOSSettingsKeyInAppLaunchURL: false,
+            kOSSettingsKeyInFocusDisplayOption: 2
+          });
+          OneSignal.inFocusDisplaying(2); // Controls what should happen if a notification is received while the app is open. 2 means that the notification will go directly to the device's notification center.
+
+          // The promptForPushNotifications function code will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step below)
+          OneSignal.promptForPushNotificationsWithUserResponse(myiOSPromptCallback);
+
+          OneSignal.addEventListener('received', onReceived);
+          OneSignal.addEventListener('opened', onOpened);
+          OneSignal.addEventListener('ids', onIds);
+
           // check whether the user account is active or not
           if (json.user_status != "active") {
             Toast.show({
