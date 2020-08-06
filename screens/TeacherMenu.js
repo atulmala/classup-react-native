@@ -2,11 +2,24 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Colors from '../Constants/colors';
 
-function TeacherMenu({ rout, navigation }) {
+const TeacherMenu = ({ route, navigation }) => {
+  const { url } = route.params;
+  const { schoolId } = route.params;
+  const { userName } = route.params;
+
+  const _gotoSelectClass = () => {
+    navigation.navigate('SelectClass', {
+      url: url,
+      schoolId: schoolId,
+      userName: userName,
+      comingFrom: "takeAttendance"
+
+    });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn1} >
+        <TouchableOpacity style={styles.btn1} onPress={_gotoSelectClass}>
           <Text style={styles.font}>Take/Update Attendance</Text>
         </TouchableOpacity>
 

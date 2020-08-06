@@ -1,12 +1,16 @@
 import 'react-native-gesture-handler';
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
 import * as Device from 'expo-device';
 import OneSignal from 'react-native-onesignal';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 var player_id;
+let state = {
+  spinner: false
+};
 
 function componentWillUnmount() {
   OneSignal.removeEventListener('received', this.onReceived);
@@ -33,10 +37,12 @@ function myiOSPromptCallback(permission) {
   // do something with permission value
 }
 
-function LoginScreen({ navigation }) {
+const LoginScreen = ({ navigation }) => {
   var login_id = "";
   var password = "";
   var toastMessage = "";
+
+  var showSpinner = false;
 
   const _onPressLogin = () => {
     if (login_id == "") {
@@ -63,10 +69,10 @@ function LoginScreen({ navigation }) {
       });
       return;
     }
-
+    showSpinner = true;
     // let server_ip = 'https://wwww.classupclient.com;
-    // let server_ip = 'http://10.0.2.2:8000';
-    let server_ip = 'http://127.0.0.1:8000';
+    let server_ip = 'http://10.0.2.2:8000';
+    // let server_ip = 'http://127.0.0.1:8000';
     var url = server_ip.concat('/auth/login1/');
     fetch(url, {
       method: 'POST',
@@ -175,13 +181,14 @@ function LoginScreen({ navigation }) {
                 if (stopAccess == "false") {
                   navigation.navigate('ParentMenu', {
                     url: url,
+                    schoolId: json.school_id,
                     userName: json.user_name,
                     feeDefaultStatus: feeDefaultStatus,
                     welcomeMessage: welcomeMessage,
 
                   });
                 }
-                else  {
+                else {
                   Toast.show({
                     type: 'error',
                     position: 'top',
@@ -218,7 +225,13 @@ function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
+      <Spinner
+        visible={showSpinner}
+        textContent={'Please Wait...'}
+        textStyle={styles.spinnerTextStyle}
+      />
       <Text style={styles.logo}>ClassUp</Text>
+
       <View style={styles.inputView} >
         <TextInput
           style={styles.inputText}
@@ -248,6 +261,8 @@ function LoginScreen({ navigation }) {
       </TouchableOpacity>
     </View>
   );
+
+
 }
 
 export default LoginScreen;
@@ -297,5 +312,8 @@ const styles = StyleSheet.create({
     color: "#1a237e",
     fontSize: 18,
     fontStyle: "italic"
+  },
+  spinnerTextStyle: {
+    color: '#FFF'
   },
 });

@@ -3,68 +3,90 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'reac
 import Toast from 'react-native-toast-message';
 import Colors from '../Constants/colors';
 
-function ParentMenu({ route, navigation }) {
+const ParentMenu = ({ route, navigation }) => {
   console.log('inside ParentMenu');
   const testPress = () => {
     Alert.alert('was pressed');
     console.log('was pressed');
   };
 
+  const { url } = route.params;
+  const { schoolId } = route.params;
+  const { userName } = route.params;
   const { feeDefaultStatus } = route.params;
   const { welcomeMessage } = route.params;
-  
-  if (feeDefaultStatus == "yes") {
-    console.log('FeeDefaulter');
-    Toast.show({
-      type: 'error',
+
+  const showToast = () => {
+    if (feeDefaultStatus == "yes") {
+      console.log('FeeDefaulter');
+      Alert.alert(
+        "Fee Outstanding!", welcomeMessage,
+        [
+          {
+            text: "Cancel",
+            style: "cancel"
+          },
+          { text: "OK" }
+        ],
+        { cancelable: false }
+      );
+      Toast.show({
+        type: 'error',
+
+        text1: 'Fee Status: Pending',
+        text2: welcomeMessage,
+      });
       
-      text1: 'Fee Status: Pending',
-      text2: welcomeMessage,
-    });
-  }
-  else  {
-    console.log('Fee status good');
-    Toast.show({
-      type: 'success',
-      text1: 'Login Successful',
-      text2: welcomeMessage
-    });
-  }
-  return (
-    <View style={styles.container}>
-      <Text style={styles.StudentName}>Student Name</Text>
-      <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn1} onPress={testPress}>
-          <Text style={styles.font}>Month Wise Attendance</Text>
-        </TouchableOpacity>
+    }
+    else {
+      console.log('Fee status good');
+      Toast.show({
+        type: 'success',
+        text1: 'Login Successful',
+        text2: welcomeMessage
+      });
+    }
+  };
+  showToast();
 
-        <TouchableOpacity style={styles.btn2}>
-          <Text style={styles.font}>Time Table</Text>
-        </TouchableOpacity>
-      </View>
+return (
+  <View style={styles.container}>
+    {
+      showToast
+    }
+    <Text style={styles.StudentName}>Student Name</Text>
+    <View style={styles.parallel}>
+      <TouchableOpacity style={styles.btn1} onPress={testPress}>
+        <Text style={styles.font}>Month Wise Attendance</Text>
+      </TouchableOpacity>
 
-      <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn3} onPress={testPress}>
-          <Text style={styles.font}>Homework</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.btn4}>
-          <Text style={styles.font}>Test & Exams</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn5} onPress={testPress}>
-          <Text style={styles.font}>Communication Center</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.btn6}>
-          <Text style={styles.font}>Change Password</Text>
-        </TouchableOpacity>
-      </View>
-
+      <TouchableOpacity style={styles.btn2}>
+        <Text style={styles.font}>Time Table</Text>
+      </TouchableOpacity>
     </View>
-  )
+
+    <View style={styles.parallel}>
+      <TouchableOpacity style={styles.btn3} onPress={testPress}>
+        <Text style={styles.font}>Homework</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.btn4}>
+        <Text style={styles.font}>Test & Exams</Text>
+      </TouchableOpacity>
+    </View>
+
+    <View style={styles.parallel}>
+      <TouchableOpacity style={styles.btn5} onPress={testPress}>
+        <Text style={styles.font}>Communication Center</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.btn6}>
+        <Text style={styles.font}>Change Password</Text>
+      </TouchableOpacity>
+    </View>
+
+  </View>
+)
 }
 
 const styles = StyleSheet.create({

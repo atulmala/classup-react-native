@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Colors from '../Constants/colors';
 
-function AdminMenu ({ rout, navigation }) {
+const AdminMenu = ({ rout, navigation }) => {
 
   const testPress = () => {
     Alert.alert('was pressed')

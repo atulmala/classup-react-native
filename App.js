@@ -6,10 +6,11 @@ import LoginScreen from './screens/LoginScreen';
 import TeacherMenu from './screens/TeacherMenu';
 import ParentMenu from './screens/ParentMenu';
 import AdminMenu from './screens/AdminMenu';
+import SelectClass from './screens/SelectClass';
 
 const Stack = createStackNavigator();
 
-function App() {
+const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">
@@ -17,6 +18,7 @@ function App() {
         <Stack.Screen name="TeacherMenu" component={TeacherMenu} />
         <Stack.Screen name="ParentMenu" component={ParentMenu} />
         <Stack.Screen name="AdminMenu" component={AdminMenu} />
+        <Stack.Screen name="SelectClass" component={SelectClass} />
       </Stack.Navigator>
     </NavigationContainer>
   );
