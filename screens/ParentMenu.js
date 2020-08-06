@@ -1,11 +1,35 @@
+import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
 import Colors from '../Constants/colors';
 
-function ParentMenu({ rout, navigation }) {
+function ParentMenu({ route, navigation }) {
+  console.log('inside ParentMenu');
   const testPress = () => {
-    Alert.alert('was pressed')
-    console.log('was pressed')
+    Alert.alert('was pressed');
+    console.log('was pressed');
   };
+
+  const { feeDefaultStatus } = route.params;
+  const { welcomeMessage } = route.params;
+  
+  if (feeDefaultStatus == "yes") {
+    console.log('FeeDefaulter');
+    Toast.show({
+      type: 'error',
+      
+      text1: 'Fee Status: Pending',
+      text2: welcomeMessage,
+    });
+  }
+  else  {
+    console.log('Fee status good');
+    Toast.show({
+      type: 'success',
+      text1: 'Login Successful',
+      text2: welcomeMessage
+    });
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.StudentName}>Student Name</Text>
@@ -121,7 +145,7 @@ const styles = StyleSheet.create({
 
   font: {
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center'
   },
 

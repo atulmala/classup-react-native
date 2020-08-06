@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Colors from '../Constants/colors';
 
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
 
   font: {
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
     color: "white"
   },

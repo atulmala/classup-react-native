@@ -1,9 +1,12 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
 import * as Device from 'expo-device';
 import OneSignal from 'react-native-onesignal';
+
+var player_id;
 
 function componentWillUnmount() {
   OneSignal.removeEventListener('received', this.onReceived);
@@ -23,10 +26,10 @@ function onOpened(openResult) {
 }
 
 function onIds(device) {
-  console.log('Device info: ', device);
+  player_id = device.userId;
 }
 
-function myiOSPromptCallback(permission){
+function myiOSPromptCallback(permission) {
   // do something with permission value
 }
 
@@ -60,9 +63,11 @@ function LoginScreen({ navigation }) {
       });
       return;
     }
-    // let url = 'https://wwww.classupclient.com/auth/login1/';
-    let url = 'http://10.0.2.2:8000/auth/login1/';
-    // let url = 'http://127.0.0.1:8000/auth/login1/';
+
+    // let server_ip = 'https://wwww.classupclient.com;
+    // let server_ip = 'http://10.0.2.2:8000';
+    let server_ip = 'http://127.0.0.1:8000';
+    var url = server_ip.concat('/auth/login1/');
     fetch(url, {
       method: 'POST',
       headers: {
@@ -115,6 +120,24 @@ function LoginScreen({ navigation }) {
               text1: 'Login Successful',
               text2: json.welcome_message,
             });
+
+            // send the device/player_id for push notification to backend
+            let platform = Platform.OS;
+            console.log(platform);
+            url = server_ip.concat('/auth/map_device_token/');
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                'user': login_id,
+                'device_type': platform,
+                'device_token': "N/A",
+                'player_id': player_id
+              })
+            });
             if (json.is_staff == "true") {
               if (json.subscription != "active") {
                 Toast.show({
@@ -143,11 +166,39 @@ function LoginScreen({ navigation }) {
               }
             }
             else {
-              // parent user
-              navigation.navigate('ParentMenu', {
-                url: url,
-                userName: json.user_name
-              });
+              // parent user first check fee default status
+              let feeDefaultStatus = json.fee_defaulter;
+              console.log('feeDefaultStatus = ', feeDefaultStatus);
+              if (feeDefaultStatus == "yes") {
+                let welcomeMessage = json.welcome_message;
+                let stopAccess = json.stop_access;
+                if (stopAccess == "false") {
+                  navigation.navigate('ParentMenu', {
+                    url: url,
+                    userName: json.user_name,
+                    feeDefaultStatus: feeDefaultStatus,
+                    welcomeMessage: welcomeMessage,
+
+                  });
+                }
+                else  {
+                  Toast.show({
+                    type: 'error',
+                    position: 'top',
+                    text1: 'Attention: Fee Oustaning',
+                    text2: welcomeMessage,
+                  });
+                }
+              }
+              else {
+                navigation.navigate('ParentMenu', {
+                  url: url,
+                  userName: json.user_name,
+                  feeDefaultStatus: feeDefaultStatus,
+                  welcomeMessage: welcomeMessage
+                });
+              }
+
             }
           }
         }
