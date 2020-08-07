@@ -71,9 +71,8 @@ const LoginScreen = ({ navigation }) => {
     }
     showSpinner = true;
     // let server_ip = 'https://wwww.classupclient.com;
-    let server_ip = 'http://10.0.2.2:8000';
-    // let server_ip = 'http://127.0.0.1:8000';
-    var url = server_ip.concat('/auth/login1/');
+    let serverIP = Platform.OS === 'android'? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    let url = serverIP.concat('/auth/login1/');
     fetch(url, {
       method: 'POST',
       headers: {
@@ -130,7 +129,7 @@ const LoginScreen = ({ navigation }) => {
             // send the device/player_id for push notification to backend
             let platform = Platform.OS;
             console.log(platform);
-            url = server_ip.concat('/auth/map_device_token/');
+            url = serverIP.concat('/auth/map_device_token/');
             fetch(url, {
               method: 'POST',
               headers: {
@@ -156,7 +155,7 @@ const LoginScreen = ({ navigation }) => {
                 // admin user
                 if (json.school_admin == "true") {
                   navigation.navigate('AdminMenu', {
-                    url: url,
+                    serverIP: serverIP,
                     schoolId: json.school_id,
                     userName: json.user_name
                   });
@@ -164,7 +163,7 @@ const LoginScreen = ({ navigation }) => {
                 else {
                   // teacher user
                   navigation.navigate('TeacherMenu', {
-                    url: url,
+                    serverIP: serverIP,
                     schoolId: json.school_id,
                     userName: json.user_name
                   });
@@ -180,7 +179,7 @@ const LoginScreen = ({ navigation }) => {
                 let stopAccess = json.stop_access;
                 if (stopAccess == "false") {
                   navigation.navigate('ParentMenu', {
-                    url: url,
+                    serverIP: serverIP,
                     schoolId: json.school_id,
                     userName: json.user_name,
                     feeDefaultStatus: feeDefaultStatus,
@@ -199,7 +198,7 @@ const LoginScreen = ({ navigation }) => {
               }
               else {
                 navigation.navigate('ParentMenu', {
-                  url: url,
+                  serverIP: serverIP,
                   userName: json.user_name,
                   feeDefaultStatus: feeDefaultStatus,
                   welcomeMessage: welcomeMessage

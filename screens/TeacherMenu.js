@@ -3,13 +3,13 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'reac
 import Colors from '../Constants/colors';
 
 const TeacherMenu = ({ route, navigation }) => {
-  const { url } = route.params;
+  const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
 
   const _gotoSelectClass = () => {
     navigation.navigate('SelectClass', {
-      url: url,
+      serverIP: serverIP,
       schoolId: schoolId,
       userName: userName,
       comingFrom: "takeAttendance"

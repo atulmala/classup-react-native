@@ -430,7 +430,7 @@ DEPENDENCIES:
   - ReactCommon/callinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
-  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
+  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker/RNDateTimePicker.podspec`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -548,7 +548,7 @@ EXTERNAL SOURCES:
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
   RNDateTimePicker:
-    :path: "../node_modules/@react-native-community/datetimepicker"
+    :path: "../node_modules/@react-native-community/datetimepicker/RNDateTimePicker.podspec"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -657,6 +657,6 @@ SPEC CHECKSUMS:
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 7e2cf75c0ee2f1b61d762d6be027e5ce51cef1b9
+PODFILE CHECKSUM: 2503a9bbfbdd60070ef09ec3df9cfbe02144f533
 
 COCOAPODS: 1.9.3
