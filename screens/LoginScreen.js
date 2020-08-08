@@ -157,6 +157,7 @@ const LoginScreen = ({ navigation }) => {
                   navigation.navigate('AdminMenu', {
                     serverIP: serverIP,
                     schoolId: json.school_id,
+                    userID: login_id,
                     userName: json.user_name
                   });
                 }
@@ -165,6 +166,7 @@ const LoginScreen = ({ navigation }) => {
                   navigation.navigate('TeacherMenu', {
                     serverIP: serverIP,
                     schoolId: json.school_id,
+                    userID: login_id,
                     userName: json.user_name
                   });
                 }
@@ -181,6 +183,7 @@ const LoginScreen = ({ navigation }) => {
                   navigation.navigate('ParentMenu', {
                     serverIP: serverIP,
                     schoolId: json.school_id,
+                    userID: login_id,
                     userName: json.user_name,
                     feeDefaultStatus: feeDefaultStatus,
                     welcomeMessage: welcomeMessage,

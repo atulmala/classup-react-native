@@ -10,6 +10,7 @@ const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
+  const { userID } = route.params;
 
   var classList = [];
   var sectionList = [];
@@ -25,7 +26,7 @@ const SelectClass = ({ route, navigation }) => {
   };
 
   const getSubjectList = () => {
-    return axios.get(serverIP.concat("/academics/subject_list/", schoolId, "/"));
+    return axios.get(serverIP.concat("/teachers/teacher_subject_list/", userID, "/"));
   };
 
   const [spinner, setShowSpinner] = useState(false);
@@ -52,13 +53,21 @@ const SelectClass = ({ route, navigation }) => {
       console.log("sectionList = ", sectionList);
       for (i = 0; i < subjects.data.length; i++) {
         let aSubject = {};
-        aSubject.label = subjects.data[i].subject_name;
-        aSubject.value = subjects.data[i].subject_name;
+        aSubject.label = subjects.data[i].subject;
+        aSubject.value = subjects.data[i].subject;
+        if (subjects.data[i].subject === "Main") {
+          console.log("subject", subjects.data[i].subject);
+          aSubject.selected = true;
+        }
         subjectList.push(aSubject);
       }
       console.log("subjectList = ", subjectList);
     })
   );
+
+  defaultSubject = {
+    defaultSubject: ['Main']
+  };
 
   let today = new Date();
   var selectedDay = today.getDate();
@@ -221,8 +230,6 @@ const SelectClass = ({ route, navigation }) => {
             <Text style={styles.heading}>Subject</Text>
             <DropDownPicker
               items={subjectList}
-              placeholder="Select a Subject"
-              defaultIndex={0}
               containerStyle={{ height: 40, width: "100%" }}
               style={{ backgroundColor: '#fafafa' }}
               itemStyle={{

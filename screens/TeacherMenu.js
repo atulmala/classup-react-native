@@ -6,11 +6,13 @@ const TeacherMenu = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
+  const { userID } = route.params;
 
   const _gotoSelectClass = () => {
     navigation.navigate('SelectClass', {
       serverIP: serverIP,
       schoolId: schoolId,
+      userID: userID,
       userName: userName,
       comingFrom: "takeAttendance"
 
