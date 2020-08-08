@@ -140,6 +140,21 @@ const SelectClass = ({ route, navigation }) => {
       });
       return;
     }
+
+    navigation.navigate('TakeAttendance', {
+      serverIP: serverIP,
+      schoolId: schoolId,
+      userID: userID,
+      userName: userName,
+      selectedDay: selectedDay,
+      selectedMonth: selectedMonth,
+      selectedYear: selectedYear,
+      selectedClass: selectedClass,
+      selectedSection: selectedSection,
+      selectedSubject: selectedSubject,
+      comingFrom: "takeAttendance"
+
+    });
   };
 
   React.useLayoutEffect(() => {

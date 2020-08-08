@@ -18,6 +18,9 @@ const TeacherMenu = ({ route, navigation }) => {
 
     });
   };
+  React.useLayoutEffect(() => {
+    navigation.setOptions();
+  });
   return (
     <View style={styles.container}>
       <View style={styles.parallel}>

@@ -7,26 +7,41 @@ import TeacherMenu from './screens/TeacherMenu';
 import ParentMenu from './screens/ParentMenu';
 import AdminMenu from './screens/AdminMenu';
 import SelectClass from './screens/SelectClass';
+import TakeAttendance from './screens/TakeAttendance';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginScreen">
-        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="TeacherMenu" component={TeacherMenu} />
-        <Stack.Screen name="ParentMenu" component={ParentMenu} />
-        <Stack.Screen name="AdminMenu" component={AdminMenu} />
+      <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
+        headerStyle: {
+          backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}>
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{
+          headerShown: false,
+          title: 'Login'
+        }} />
+        <Stack.Screen name="TeacherMenu" component={TeacherMenu} options={{
+          title: 'Teacher Menu',
+        }} />
+        <Stack.Screen name="ParentMenu" component={ParentMenu} options={{
+          title: 'Parent Menu',
+        }} />
+        <Stack.Screen name="AdminMenu" component={AdminMenu}
+          options={{
+            title: 'Admin Menu',
+          }} />
         <Stack.Screen name="SelectClass" component={SelectClass} options={{
-          title: 'Provide Details', 
-          headerStyle: {
-            backgroundColor: '#f4511e',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+          title: 'Provide Details',
+        }} />
+        <Stack.Screen name="TakeAttendance" component={TakeAttendance} options={{
+          title: 'Take Attendance'
         }} />
       </Stack.Navigator>
     </NavigationContainer>

@@ -263,8 +263,6 @@ const LoginScreen = ({ navigation }) => {
       </TouchableOpacity>
     </View>
   );
-
-
 }
 
 export default LoginScreen;
