@@ -1,17 +1,10 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { useState } from 'react';
-import {
-  StyleSheet, Platform, ScrollView, Modal, Button, Text,
-  View, TextInput, TouchableOpacity, Alert
-} from 'react-native';
+import { StyleSheet, Platform, ScrollView, Button, Text, View } from 'react-native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
-
-import { Chevron } from 'react-native-shapes';
-import { Ionicons } from '@expo/vector-icons';
-import Colors from '../Constants/colors';
 
 const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -21,10 +14,6 @@ const SelectClass = ({ route, navigation }) => {
   var classList = [];
   var sectionList = [];
   var subjectList = [];
-
-  var selectedClass;
-  var selectedSection;
-  var selectedSubject;
 
   // retrieve the list of classes, sections, and subjects for this school
   const getClassList = () => {
@@ -72,11 +61,20 @@ const SelectClass = ({ route, navigation }) => {
   );
 
   let today = new Date();
+  var selectedDay = today.getDate();
+  var selectedMonth = today.getMonth() + 1;
+  var selectedYear = today.getFullYear();
   const [date, setDate] = useState(today);
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
+    selectedMonth = selectedDate.getMonth() + 1;
+    console.log("selectedMonth = ", selectedMonth);
+    selectedDay = selectedDate.getDate();
+    console.log("SelectedDay = ", selectedDay);
+    selectedYear = selectedDate.getFullYear();
+    console.log("SelectedYear = ", selectedYear);
     console.log(new Date(selectedDate));
     const currentDate = selectedDate || date;
     console.log("currentDate = ", currentDate);
@@ -91,7 +89,6 @@ const SelectClass = ({ route, navigation }) => {
 
     return day + "/" + month + "/" + year;
   };
-
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
@@ -100,86 +97,147 @@ const SelectClass = ({ route, navigation }) => {
   const showDatepicker = () => {
     showMode('date');
   };
-
-  var selectedDate = "";
   var selectedClass = "";
   var selectedSection = "";
   var selectedSubject = "";
 
+  const showTakeAttendance = () => {
+    if (selectedClass == "") {
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Error: Class Not Selected',
+        text2: "Please Select a Class",
+      });
+      return;
+    }
+
+    if (selectedSection == "") {
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Error: Section Not Selected',
+        text2: "Please Select a Section",
+      });
+      return;
+    }
+
+    if (selectedSubject == "") {
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Error: Subject Not Selected',
+        text2: "Please Select a Subject",
+      });
+      return;
+    }
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        <Button
+          onPress={() => showTakeAttendance()}
+          title="Next"
+        />
+    });
+  });
+
   return (
     <View style={styles.container}>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.scrollContentContainer}>
-        <View style={styles.parallel}>
-          <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
-            <Text style={styles.font}>Select Date</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.dateButton}>
-            <Text style={styles.font}>{ddmmyy(date)}</Text>
-          </TouchableOpacity>
-        </View>
-        {Platform.OS === 'ios' && show && (
-          <DateTimePicker
-            style={{ width: '100%' }}
-            value={date}
-            mode={mode}
-            maximumDate={new Date()}
-            onChange={onChange}
-          />
+
+        {Platform.OS === 'ios' && (
+          <View>
+            <View style={styles.scrollContainer}>
+              <Text style={styles.heading}>Select Date</Text>
+            </View>
+            <DateTimePicker
+              style={{ width: '100%' }}
+              value={date}
+              mode={mode}
+              maximumDate={new Date()}
+              onChange={onChange}
+            />
+          </View>
         )}
         {Platform.OS === 'android' && show && (
-          <DateTimePicker
-            value={date}
-            mode={mode}
-            display="spinner"
-            maximumDate={new Date()}
-            onChange={onChange}
-          />
+          <View>
+            <View style={styles.parallel}>
+              <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
+                <Text style={styles.font}>Select Date</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.dateButton}>
+                <Text style={styles.font}>{ddmmyy(date)}</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <DateTimePicker
+                value={date}
+                mode={mode}
+                display="spinner"
+                maximumDate={new Date()}
+                onChange={onChange}
+              />
+            </View>
+          </View>
         )}
 
-        <View paddingVertical={5} />
-
-        <Text style={styles.heading}>Select Class</Text>
-        <DropDownPicker
-          items={[
-            { label: 'Item 1', value: 'item1' },
-            { label: 'Item 2', value: 'item2' },
-          ]}
-          defaultIndex={0}
-          containerStyle={{ height: 40 }}
-          onChangeItem={item => console.log(item.label, item.value)}
-        />
-
-        {/* and iOS onUpArrow/onDownArrow toggle example */}
-
+        <View style={styles.parallel}>
+          <View style={styles.scrollContainer1}>
+            <Text style={styles.heading}>Class</Text>
+            <DropDownPicker
+              items={classList}
+              placeholder="Select a Class"
+              defaultIndex={0}
+              containerStyle={{ height: 40, width: "100%" }}
+              style={{ backgroundColor: '#fafafa' }}
+              itemStyle={{
+                justifyContent: 'flex-start'
+              }}
+              dropDownStyle={{ backgroundColor: '#fafafa' }}
+              onChangeItem={item => selectedClass = item.value}
+            />
+          </View>
+          <View style={styles.scrollContainer1}>
+            <Text style={styles.heading}>Section</Text>
+            <DropDownPicker
+              items={sectionList}
+              placeholder="Select a Section"
+              defaultIndex={0}
+              containerStyle={{ height: 40 }}
+              style={{ backgroundColor: '#fafafa' }}
+              itemStyle={{
+                justifyContent: 'flex-start'
+              }}
+              dropDownStyle={{ backgroundColor: '#fafafa' }}
+              onChangeItem={item => selectedSection = item.value}
+            />
+          </View>
+          <View style={styles.scrollContainer2}>
+            <Text style={styles.heading}>Subject</Text>
+            <DropDownPicker
+              items={subjectList}
+              placeholder="Select a Subject"
+              defaultIndex={0}
+              containerStyle={{ height: 40, width: "100%" }}
+              style={{ backgroundColor: '#fafafa' }}
+              itemStyle={{
+                justifyContent: 'flex-start'
+              }}
+              dropDownStyle={{ backgroundColor: '#fafafa' }}
+              onChangeItem={item => selectedSubject = item.value}
+            />
+          </View>
+        </View>
       </ScrollView>
     </View>
   );
 };
 
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-});
 
 const styles = StyleSheet.create({
   container: {
@@ -187,18 +245,26 @@ const styles = StyleSheet.create({
     width: "100%"
 
   },
-  scrollContainer: {
+  scrollContainer1: {
     flex: 1,
-    paddingHorizontal: 15,
-    width: "100%"
+    paddingHorizontal: 5,
+    width: "100%",
+  },
+  scrollContainer2: {
+    flex: 2,
+    paddingHorizontal: 5,
+    width: "100%",
   },
   scrollContentContainer: {
+    paddingLeft: 10,
+    paddingRight: 10,
     paddingTop: 40,
     paddingBottom: 10,
   },
   parallel: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    alignItems: 'stretch',
+    width: "100%"
   },
   dateButton: {
     backgroundColor: '#BBDEFB',

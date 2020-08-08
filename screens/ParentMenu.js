@@ -32,7 +32,6 @@ const ParentMenu = ({ route, navigation }) => {
       );
       Toast.show({
         type: 'error',
-
         text1: 'Fee Status: Pending',
         text2: welcomeMessage,
       });

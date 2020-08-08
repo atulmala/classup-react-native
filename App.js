@@ -18,11 +18,20 @@ const App = () => {
         <Stack.Screen name="TeacherMenu" component={TeacherMenu} />
         <Stack.Screen name="ParentMenu" component={ParentMenu} />
         <Stack.Screen name="AdminMenu" component={AdminMenu} />
-        <Stack.Screen name="SelectClass" component={SelectClass} />
+        <Stack.Screen name="SelectClass" component={SelectClass} options={{
+          title: 'Provide Details', 
+          headerStyle: {
+            backgroundColor: '#f4511e',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
 export default App;
-export {Stack};
+export { Stack };
