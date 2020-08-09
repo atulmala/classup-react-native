@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { StyleSheet, Platform, ScrollView, Button, Text, View } from 'react-native';
+import { StyleSheet, Platform, ScrollView, Button, Text, View, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -188,34 +188,37 @@ const SelectClass = ({ route, navigation }) => {
             />
           </View>
         )}
+        {Platform.OS === 'android' && (
+          <View style={styles.parallel}>
+            <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
+              <Text style={styles.font}>Select Date</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
+              <Text style={styles.font}>{ddmmyy(date)}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {Platform.OS === 'android' && show && (
           <View>
-            <View style={styles.parallel}>
-              <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
-                <Text style={styles.font}>Select Date</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.dateButton}>
-                <Text style={styles.font}>{ddmmyy(date)}</Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <DateTimePicker
-                value={date}
-                mode={mode}
-                display="spinner"
-                maximumDate={new Date()}
-                onChange={onChange}
-              />
-            </View>
+            <DateTimePicker
+              value={date}
+              mode={mode}
+              display="spinner"
+              maximumDate={new Date()}
+              onChange={onChange}
+            />
           </View>
         )}
 
         <View style={styles.parallel}>
+          {Platform.OS === 'android' && (
+            <View style={styles.verticalSpace} />
+          )}
           <View style={styles.scrollContainer1}>
             <Text style={styles.heading}>Class</Text>
             <DropDownPicker
               items={classList}
-              placeholder="Select a Class"
+              placeholder="Select"
               defaultIndex={0}
               containerStyle={{ height: 40, width: "100%" }}
               style={{ backgroundColor: '#fafafa' }}
@@ -230,7 +233,7 @@ const SelectClass = ({ route, navigation }) => {
             <Text style={styles.heading}>Section</Text>
             <DropDownPicker
               items={sectionList}
-              placeholder="Select a Section"
+              placeholder="Select"
               defaultIndex={0}
               containerStyle={{ height: 40 }}
               style={{ backgroundColor: '#fafafa' }}
@@ -245,6 +248,7 @@ const SelectClass = ({ route, navigation }) => {
             <Text style={styles.heading}>Subject</Text>
             <DropDownPicker
               items={subjectList}
+              placeholder="Select"
               containerStyle={{ height: 40, width: "100%" }}
               style={{ backgroundColor: '#fafafa' }}
               itemStyle={{
@@ -260,17 +264,20 @@ const SelectClass = ({ route, navigation }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%"
-
+  },
+  verticalSpace: {
+    paddingVertical: 100,
+    marginTop: 100
   },
   scrollContainer1: {
     flex: 1,
     paddingHorizontal: 5,
     width: "100%",
+    
   },
   scrollContainer2: {
     flex: 2,
@@ -320,14 +327,13 @@ const styles = StyleSheet.create({
     color: "#1a237e",
     fontSize: 18,
     fontWeight: "bold",
-    fontStyle: "italic"
+    fontStyle: "italic",
+    marginTop: 10
   },
 
   spinnerTextStyle: {
     color: '#FFF'
   },
 });
-
-
 
 export default SelectClass;
