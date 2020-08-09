@@ -33,24 +33,18 @@ const SelectClass = ({ route, navigation }) => {
 
   axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
     axios.spread(function (classes, sections, subjects) {
-      self.class_list = classes.data;
-      self.section_list = sections.data;
-      self.subject_list = subjects.data;
-
       for (var i = 0; i < classes.data.length; i++) {
         let aClass = {};
         aClass.label = classes.data[i].standard;
         aClass.value = classes.data[i].standard;
         classList.push(aClass);
       }
-      console.log("classList = ", classList);
       for (i = 0; i < sections.data.length; i++) {
         let aSection = {};
         aSection.label = sections.data[i].section;
         aSection.value = sections.data[i].section;
         sectionList.push(aSection);
       }
-      console.log("sectionList = ", sectionList);
       for (i = 0; i < subjects.data.length; i++) {
         let aSubject = {};
         aSubject.label = subjects.data[i].subject;
@@ -61,7 +55,6 @@ const SelectClass = ({ route, navigation }) => {
         }
         subjectList.push(aSubject);
       }
-      console.log("subjectList = ", subjectList);
     })
   );
 
@@ -328,7 +321,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     fontStyle: "italic",
-    marginTop: 10
+    marginTop: 10,
+    marginBottom: 5
   },
 
   spinnerTextStyle: {
