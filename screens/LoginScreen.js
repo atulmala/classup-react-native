@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -38,6 +38,7 @@ function myiOSPromptCallback(permission) {
 }
 
 const LoginScreen = ({ navigation }) => {
+  const [isLoading, setLoading] = useState(true);
   var login_id = "";
   var password = "";
   var toastMessage = "";

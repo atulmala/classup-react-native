@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, FlatList } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, FlatList, Switch, Image } from 'react-native';
 import axios from 'axios';
 
 const TakeAttendance = ({ route, navigation }) => {
-  const [isLoading, setLoading] = useState(true);
-  const [studentList, setStudentList] = useState([]);
-
   const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
@@ -22,12 +19,27 @@ const TakeAttendance = ({ route, navigation }) => {
   var present;
   var absent;
 
+  const [isLoading, setLoading] = useState(true);
+  const [studentList, setStudentList] = useState([]);
+
+  const [isEnabled, setIsEnabled] = useState(true);
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => !previousState);
+    setAttendance('A');
+  };
+
+  const [attendance, setAttendance] = useState('P');
+
   const getStudentList = () => {
     return axios.get(serverIP.concat("/student/list/", schoolId, "/", selectedClass, "/", selectedSection, "/"));
   };
 
+  const getAbsenteeList = () => {
+    return axios.get(serverIP.concat("/attendance/retrieve/", schoolId, "/", selectedClass, "/", selectedSection,
+      "/", selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/"));
+  };
+
   useEffect(() => {
-    console.log("Being called from Flatlist");
     axios.all([getStudentList(), getAbsenteeList()]).then(
       axios.spread(function (students, absentees) {
         absent = absentees.data.length;
@@ -49,7 +61,7 @@ const TakeAttendance = ({ route, navigation }) => {
             student.toggle = "toggle_on";
             student.presence_color = "green darken-2";
           }
-          student.title = s_no + ".  " +
+          student.title = s_no + ". " +
             students.data[i].fist_name +
             " " +
             students.data[i].last_name;
@@ -62,13 +74,7 @@ const TakeAttendance = ({ route, navigation }) => {
         console.log("studentList = ", studentList);
         setLoading(false);
       }));
-    
   }, []);
-
-  const getAbsenteeList = () => {
-    return axios.get(serverIP.concat("/attendance/retrieve/", schoolId, "/", selectedClass, "/", selectedSection,
-      "/", selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/"));
-  };
 
   const CustomRow = ({ title }) => (
     <View style={styles.containerRow}>
@@ -77,7 +83,21 @@ const TakeAttendance = ({ route, navigation }) => {
           {title}
         </Text>
       </View>
+      <Image
+        style={styles.tinyLogo}
+        source={require('../assets/P.png')}
+      />
+      <View style={styles.attendanceSwitch}>
+        <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
+      </View>
     </View>
+
   );
 
   const CustomListview = ({ itemList }) => (
@@ -93,10 +113,12 @@ const TakeAttendance = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? <ActivityIndicator /> : (
-      <CustomListview
-        itemList={studentList}
-      />)}
+      {isLoading ? <View style={styles.loading}>
+        <ActivityIndicator size='large' />
+      </View> : (
+          <CustomListview
+            itemList={studentList}
+          />)}
     </View>
   )
 }
@@ -108,35 +130,57 @@ const styles = StyleSheet.create({
   containerRow: {
     flex: 1,
     flexDirection: 'row',
-    paddingLeft: 8,
+    paddingLeft: 2,
     paddingTop: 8,
     paddingBottom: 8,
     marginLeft: 4,
     marginRight: 4,
     marginTop: 4,
-    marginBottom: 4,
+    marginBottom: 2,
     borderRadius: 10,
     backgroundColor: '#FFF',
     elevation: 6,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#000',
+    fontFamily: 'Cochin'
+  },
+  tinyLogo: {
+    margin: 6,
+    width: 16,
+    height: 16,
+  },
+  prsent: {
+    color: '#000',
+    fontSize: 18,
+    marginRight: 4
+  },
+  absent: {
+    color: '#000',
+    fontSize: 18,
+    color: 'red'
   },
   container_text: {
-    flex: 1,
+    flex: 3,
     flexDirection: 'column',
     marginLeft: 12,
     justifyContent: 'center',
   },
-  description: {
-    fontSize: 11,
-    fontStyle: 'italic',
+  attendanceSwitch: {
+    flex: 1,
+    marginRight: 12
   },
-  photo: {
-    height: 50,
-    width: 50,
-  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5FCFF88'
+  }
 });
 
 export default TakeAttendance;
