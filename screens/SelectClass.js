@@ -262,6 +262,11 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%"
   },
+  parallel: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    height: 100
+  },
   verticalSpace: {
     paddingVertical: 100,
     marginTop: 100
