@@ -22,10 +22,6 @@ const TakeAttendance = ({ route, navigation }) => {
   const [isLoading, setLoading] = useState(true);
   const [studentList, setStudentList] = useState([]);
   const [totalStudents, setTotalStudents] = useState(0);
-  const [absentCount, setAbsentCount] = useState(0);
-  const [presentCount, setPresentCount] = useState(0);
-
-  const [isEnabled, setIsEnabled] = useState(true);
 
   const getStudentList = () => {
     return axios.get(serverIP.concat("/student/list/", schoolId, "/", selectedClass, "/", selectedSection, "/"));
@@ -44,13 +40,12 @@ const TakeAttendance = ({ route, navigation }) => {
         }
 
         total = students.data.length;
-        console.log("total students = ", total);
-        setTotalStudents(total);
+        absent = absentees.data.length;
         present = total - absentees.data.length;
+        console.log("total students = ", total);
         console.log("present = ", present);
-
-        setAbsentCount(absentees.data.length);
-        setPresentCount(present);
+        console.log("absent = ", absent);
+        setTotalStudents(total);
 
         for (i = 0; i < students.data.length; i++) {
           let student = {};
@@ -75,91 +70,104 @@ const TakeAttendance = ({ route, navigation }) => {
       }));
   }, []);
 
-  const CustomRow = ({ title, index }) => (
-    <View style={styles.containerRow}>
-      <View style={styles.container_text}>
-        <Text style={styles.title}>
-          {title.title}
-        </Text>
-      </View>
-      <Image
-        style={styles.tinyLogo}
-        source={title.presence ? require('../assets/P.png') : require('../assets/A.png')}
-      />
+  const CustomRow = ({ title, index }) => {
+    const [absentCount, setAbsentCount] = useState(absent);
+    const [presentCount, setPresentCount] = useState(present);
 
-      <View style={styles.attendanceSwitch}>
-        <Switch
-          trackColor={{ false: "#ffb6c1", true: "#8fbc8f" }}
-          thumbColor={title.presence ? "#ffe4b5" : "#f4f3f4"}
-          ios_backgroundColor="#f08080"
-          value={title.presence}
-          onValueChange={(value) => {
-            for (student of studentList) {
-              if (student.id == index) {
-                console.log("student ", student.title, " will be marked ", value);
-                student.presence = value;
+    const [isEnabled, setIsEnabled] = useState(true);
+    return (
+      <View style={styles.containerRow}>
+        <View style={styles.container_text}>
+          <Text style={styles.title}>
+            {title.title}
+          </Text>
+        </View>
+        <Image
+          style={styles.tinyLogo}
+          source={title.presence ? require('../assets/P.png') : require('../assets/A.png')}
+        />
+
+        <View style={styles.attendanceSwitch}>
+          <Switch
+            trackColor={{ false: "#ffb6c1", true: "#8fbc8f" }}
+            thumbColor={title.presence ? "#ffe4b5" : "#f4f3f4"}
+            ios_backgroundColor="#f08080"
+            value={title.presence}
+            onValueChange={(value) => {
+              for (student of studentList) {
+                if (student.id == index) {
+                  console.log("student ", student.title, " will be marked ", value);
+                  student.presence = value;
+                }
               }
-            }
-            if (value) {
-              setPresentCount(presentCount + 1);
-              setAbsentCount(absentCount - 1);
-            }
-            else {
-              setPresentCount(presentCount - 1);
-              setAbsentCount(absentCount + 1);
-            }
-            setIsEnabled(previousState => !previousState);
-            console.log(value)
-            console.log(index)
-          }}
+              if (value) {
+                setPresentCount(presentCount + 1);
+                setAbsentCount(absentCount - 1);
+              }
+              else {
+                setPresentCount(presentCount - 1);
+                setAbsentCount(absentCount + 1);
+              }
+              console.log(value)
+              console.log(index)
+            }}
+          />
+        </View>
+      </View>)
+  };
+
+  const Header = ({present, absent}) => {
+    const [absentCount] = useState(absent);
+    const [presentCount] = useState(present);
+    return (
+      <View >
+        <View style={styles.parallel}>
+          <Text style={styles.baseText}>
+            Class:
+              <Text style={styles.innerText}> {selectedClass} - {selectedSection}</Text>
+          </Text>
+          <Text style={styles.baseText}>
+            Date:
+              <Text style={styles.innerText}> {selectedDay} / {selectedMonth} / {selectedYear}</Text>
+          </Text>
+          <Text style={styles.baseText}>
+            Subject:
+              <Text style={styles.innerText}> {selectedSubject}</Text>
+          </Text>
+        </View>
+        <View style={styles.parallel}>
+          <Text style={styles.baseText}>
+            Total:
+              <Text style={styles.innerTotalText}> {totalStudents}</Text>
+          </Text>
+          { <Text style={styles.baseText}>
+            Present:
+              <Text style={styles.innerPresentText}> {presentCount}</Text>
+          </Text> }
+          {<Text style={styles.baseText}>
+            Absent:
+              <Text style={styles.innerAbsentText}> {absentCount}</Text>
+          </Text>}
+        </View>
+      </View>
+    )
+  }
+
+  const CustomListview = ({ itemList }) => {
+    return (
+      <View style={styles.container}>
+        <Header data={{present, absent}}/>
+        <FlatList
+          data={itemList}
+          renderItem={({ item }) => <CustomRow
+            title={item}
+            index={item.id}
+
+          />}
         />
       </View>
-    </View>
-  );
-
-  const CustomListview = ({ itemList }) => (
-    <View style={styles.container}>
-      <View style={styles.parallel}>
-        <Text style={styles.baseText}>
-          Class:
-      <Text style={styles.innerText}> {selectedClass} - {selectedSection}</Text>
-        </Text>
-        <Text style={styles.baseText}>
-          Date:
-      <Text style={styles.innerText}> {selectedDay} / {selectedMonth} / {selectedYear}</Text>
-        </Text>
-        <Text style={styles.baseText}>
-          Subject:
-      <Text style={styles.innerText}> {selectedSubject}</Text>
-        </Text>
-      </View>
-      <View style={styles.parallel}>
-        <Text style={styles.baseText}>
-          Total:
-  <Text style={styles.innerTotalText}> {totalStudents}</Text>
-        </Text>
-        <Text style={styles.baseText}>
-          Present:
-      <Text style={styles.innerPresentText}> {presentCount}</Text>
-        </Text>
-        <Text style={styles.baseText}>
-          Absent:
-      <Text style={styles.innerAbsentText}> {absentCount}</Text>
-        </Text>
-      </View>
-      <FlatList
-        data={itemList}
-        maintainVisibleContentPosition={{
-          minIndexForVisible: 0,
-       }}
-        renderItem={({ item }) => <CustomRow
-          title={item}
-          index={item.id}
-          
-        />}
-      />
-    </View>
-  );
+    )
+  };
 
   return (
     <View style={styles.container}>
