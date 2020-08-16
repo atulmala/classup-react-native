@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Platform, StyleSheet, Text, View, ActivityIndicator, FlatList, Switch, Image } from 'react-native';
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { markAbsent, markPresent } from '../redux/reducer';
 
 const TakeAttendance = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -18,10 +20,13 @@ const TakeAttendance = ({ route, navigation }) => {
   var total;
   var present;
   var absent;
+  const presentCount = useSelector(state => state);
+  const absentCount = useSelector(state => state);
+  const dispatch = useDispatch();
 
   const [isLoading, setLoading] = useState(true);
   
-  const [studentList, setStudentList] = useState([]);
+  const [studentList] = useState([]);
   const [totalStudents, setTotalStudents] = useState(0);
   const [presentStudent, setPresentStudent] = useState(0);
   const [absentStudent, setAbsentStudent] = useState(0);
@@ -51,6 +56,10 @@ const TakeAttendance = ({ route, navigation }) => {
         setTotalStudents(total);
         setPresentStudent(present);
         setAbsentStudent(absent);
+        console.log("presentStudent = ", presentStudent);
+        console.log("absentStudent = ", absentStudent);
+        const initializeAbsent = absent => dispatch(initializeAbsent(absent));
+        const initializePresent = present => dispatch(initializePresent(present));
 
         for (i = 0; i < students.data.length; i++) {
           let student = {};
@@ -108,13 +117,16 @@ const TakeAttendance = ({ route, navigation }) => {
               }
               if (value) {
                 setPresentCount(presentCount + 1);
+                markPresent(presentCount + 1);
                 setAbsentCount(absentCount - 1);
+                markAbsent(absentCount - 1);
               }
               else {
                 setPresentCount(presentCount - 1);
+                markPresent(presentCount - 1);
                 setAbsentCount(absentCount + 1);
+                markAbsent(absentCount + 1);
               }
-              {<Header data={{presentCount, absentCount}}/>}
               console.log(value)
               console.log(index)
             }}
@@ -124,7 +136,6 @@ const TakeAttendance = ({ route, navigation }) => {
   };
 
   const Header = ({present, absent}) => {
-    
     return (
       <View >
         <View style={styles.parallel}>
@@ -176,7 +187,7 @@ const TakeAttendance = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header data={{present, absent}}/>
+      {isLoading ? <ActivityIndicator size='large' /> : <Header data={{presentStudent, absentStudent}}/>}
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
