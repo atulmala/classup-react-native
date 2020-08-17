@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Platform, StyleSheet, Text, View, ActivityIndicator, FlatList, Switch, Image } from 'react-native';
 import axios from 'axios';
-import { useSelector, useDispatch } from 'react-redux';
-import { markAbsent, markPresent } from '../redux/reducer';
+import { AttendanceContext, AttendanceContextProvider } from './AttendanceContext';
+
 
 const TakeAttendance = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -18,18 +18,12 @@ const TakeAttendance = ({ route, navigation }) => {
 
   var absenteeList = [];
   var total;
-  var present;
-  var absent;
-  const presentCount = useSelector(state => state);
-  const absentCount = useSelector(state => state);
-  const dispatch = useDispatch();
 
   const [isLoading, setLoading] = useState(true);
-  
+
   const [studentList] = useState([]);
   const [totalStudents, setTotalStudents] = useState(0);
-  const [presentStudent, setPresentStudent] = useState(0);
-  const [absentStudent, setAbsentStudent] = useState(0);
+  const [present, setPresent] = useContext(AttendanceContext);
 
   const getStudentList = () => {
     return axios.get(serverIP.concat("/student/list/", schoolId, "/", selectedClass, "/", selectedSection, "/"));
@@ -48,18 +42,13 @@ const TakeAttendance = ({ route, navigation }) => {
         }
 
         total = students.data.length;
-        absent = absentees.data.length;
-        present = total - absentees.data.length;
+        let absentCount = absentees.data.length;
+        let presentCount = total - absentees.data.length;
+        setPresent(presentCount);
         console.log("total students = ", total);
-        console.log("present = ", present);
-        console.log("absent = ", absent);
+        console.log("present = ", presentCount);
+        console.log("absent = ", absentCount);
         setTotalStudents(total);
-        setPresentStudent(present);
-        setAbsentStudent(absent);
-        console.log("presentStudent = ", presentStudent);
-        console.log("absentStudent = ", absentStudent);
-        const initializeAbsent = absent => dispatch(initializeAbsent(absent));
-        const initializePresent = present => dispatch(initializePresent(present));
 
         for (i = 0; i < students.data.length; i++) {
           let student = {};
@@ -85,8 +74,8 @@ const TakeAttendance = ({ route, navigation }) => {
   }, []);
 
   const CustomRow = ({ title, index }) => {
-    const [absentCount, setAbsentCount] = useState(absent);
-    const [presentCount, setPresentCount] = useState(present);
+    // const [absentCount, setAbsentCount] = useState(absent);
+    // const [presentCount, setPresentCount] = useState(present);
     const [isEnabled, setIsEnabled] = useState(false);
 
     return (
@@ -116,16 +105,12 @@ const TakeAttendance = ({ route, navigation }) => {
                 }
               }
               if (value) {
-                setPresentCount(presentCount + 1);
-                markPresent(presentCount + 1);
-                setAbsentCount(absentCount - 1);
-                markAbsent(absentCount - 1);
+              //   setPresentCount(presentCount + 1);
+                // setAbsentCount(absentCount - 1);
               }
               else {
-                setPresentCount(presentCount - 1);
-                markPresent(presentCount - 1);
-                setAbsentCount(absentCount + 1);
-                markAbsent(absentCount + 1);
+                // setPresentCount(presentCount - 1);
+                // setAbsentCount(absentCount + 1);
               }
               console.log(value)
               console.log(index)
@@ -135,7 +120,7 @@ const TakeAttendance = ({ route, navigation }) => {
       </View>)
   };
 
-  const Header = ({present, absent}) => {
+  const Header = ({ present, absent }) => {
     return (
       <View >
         <View style={styles.parallel}>
@@ -157,10 +142,10 @@ const TakeAttendance = ({ route, navigation }) => {
             Total:
               <Text style={styles.innerTotalText}> {totalStudents}</Text>
           </Text>
-          { <Text style={styles.baseText}>
+          {<Text style={styles.baseText}>
             Present:
               <Text style={styles.innerPresentText}> {present}</Text>
-          </Text> }
+          </Text>}
           {<Text style={styles.baseText}>
             Absent:
               <Text style={styles.innerAbsentText}> {absent}</Text>
@@ -186,16 +171,17 @@ const TakeAttendance = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {isLoading ? <ActivityIndicator size='large' /> : <Header data={{presentStudent, absentStudent}}/>}
-      {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
-      </View> : (
-        
-          <CustomListview
-            itemList={studentList}
-          />)}
-    </View>
+    <AttendanceContextProvider>
+      <View style={styles.container}>
+        {isLoading ? <ActivityIndicator size='large' /> : <Header />}
+        {isLoading ? <View style={styles.loading}>
+          <ActivityIndicator size='large' />
+        </View> : (
+            <CustomListview
+              itemList={studentList}
+            />)}
+      </View>
+    </AttendanceContextProvider>
   )
 }
 

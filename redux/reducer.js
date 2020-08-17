@@ -1,5 +1,5 @@
 export const INITIALIZE_PRESENT = 'INITIALIZE_PRESENT';
-export const INITIALZE_ABSENT = 'INITIALIZE_ABSENT';
+export const INITIALIZE_ABSENT = 'INITIALIZE_ABSENT';
 export const MARK_PRESENCE = 'MARK_PRESENCE';
 export const MARK_ABSENCE = 'MARK_ABSENCE';
 
@@ -9,6 +9,7 @@ var absentCount = 0;
 export function initializePresent(count) {
   console.log('initializePresent called!');
   presentCount = count;
+  console.log("presentCount = ", presentCount);
   return {
     type: INITIALIZE_PRESENT,
     present: count,
@@ -19,6 +20,7 @@ export function initializePresent(count) {
 export function initializeAbsent(count) {
   console.log('initializeAbsent called!');
   absentCount = count;
+  console.log("absentCount = ", absentCount);
   return {
     type: INITIALIZE_ABSENT,
     absent: count,
@@ -48,7 +50,7 @@ const initialState = [];
 function attendanceReducer(state = initialState, action) {
   switch (action.type) {
     case INITIALIZE_PRESENT:
-    case INITIALZE_ABSENT:
+    case INITIALIZE_ABSENT:
     case MARK_ABSENCE:
     case MARK_PRESENCE:
       console.log("state = ", state);
