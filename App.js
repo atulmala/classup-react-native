@@ -2,8 +2,6 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Provider as StoreProvider } from 'react-redux';
-import store from './redux/store';
 import LoginScreen from './screens/LoginScreen';
 import TeacherMenu from './screens/TeacherMenu';
 import ParentMenu from './screens/ParentMenu';
@@ -15,7 +13,6 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <StoreProvider store={store}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
           headerStyle: {
@@ -48,7 +45,6 @@ const App = () => {
           }} />
         </Stack.Navigator>
       </NavigationContainer>
-    </StoreProvider>
   );
 }
 

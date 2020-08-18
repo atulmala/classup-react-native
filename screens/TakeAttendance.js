@@ -17,13 +17,15 @@ const TakeAttendance = ({ route, navigation }) => {
   const { selectedSubject } = route.params;
 
   var absenteeList = [];
+  var correctionList = [];
   var total;
 
   const [isLoading, setLoading] = useState(true);
+  const [firstTime, setFirstTime] = useState(true);
 
   const [studentList] = useState([]);
   const [totalStudents, setTotalStudents] = useState(0);
-  const [present, setPresent] = useContext(AttendanceContext);
+  const [presentCount, setPresentCount] = useState(0);
 
   const getStudentList = () => {
     return axios.get(serverIP.concat("/student/list/", schoolId, "/", selectedClass, "/", selectedSection, "/"));
@@ -42,14 +44,14 @@ const TakeAttendance = ({ route, navigation }) => {
         }
 
         total = students.data.length;
-        let absentCount = absentees.data.length;
-        let presentCount = total - absentees.data.length;
-        setPresent(presentCount);
-        console.log("total students = ", total);
-        console.log("present = ", presentCount);
-        console.log("absent = ", absentCount);
+        
         setTotalStudents(total);
-
+        console.log("total students = ", totalStudents);
+        let absentCount = absentees.data.length;
+        console.log("absent = ", absentCount);
+        setPresentCount(total - absentees.data.length);
+        console.log("present = ", presentCount);
+        
         for (i = 0; i < students.data.length; i++) {
           let student = {};
           let s_no = i + 1;
@@ -74,9 +76,8 @@ const TakeAttendance = ({ route, navigation }) => {
   }, []);
 
   const CustomRow = ({ title, index }) => {
-    // const [absentCount, setAbsentCount] = useState(absent);
-    // const [presentCount, setPresentCount] = useState(present);
     const [isEnabled, setIsEnabled] = useState(false);
+    const [present, setPresent] = useContext(AttendanceContext);
 
     return (
       <View style={styles.containerRow}>
@@ -102,15 +103,14 @@ const TakeAttendance = ({ route, navigation }) => {
                 if (student.id == index) {
                   console.log("student ", student.title, " will be marked ", value);
                   student.presence = value;
+                  break;
                 }
               }
               if (value) {
-              //   setPresentCount(presentCount + 1);
-                // setAbsentCount(absentCount - 1);
+                setPresent(present + 1);
               }
               else {
-                // setPresentCount(presentCount - 1);
-                // setAbsentCount(absentCount + 1);
+                setPresent(present - 1);
               }
               console.log(value)
               console.log(index)
@@ -120,7 +120,17 @@ const TakeAttendance = ({ route, navigation }) => {
       </View>)
   };
 
-  const Header = ({ present, absent }) => {
+  const Header = () => {
+    const [present, setPresent] = useContext(AttendanceContext);
+    {
+      if (firstTime)  {
+        setPresent(presentCount);
+        setFirstTime(false);
+      }
+      else  {
+        setPresent(present);
+      }
+    }
     return (
       <View >
         <View style={styles.parallel}>
@@ -148,7 +158,7 @@ const TakeAttendance = ({ route, navigation }) => {
           </Text>}
           {<Text style={styles.baseText}>
             Absent:
-              <Text style={styles.innerAbsentText}> {absent}</Text>
+              <Text style={styles.innerAbsentText}> {totalStudents - present}</Text>
           </Text>}
         </View>
       </View>

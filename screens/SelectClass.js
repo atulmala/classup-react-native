@@ -1,6 +1,6 @@
 import React from 'react';
-import { useState } from 'react';
-import { StyleSheet, Platform, ScrollView, Button, Text, View, TouchableOpacity } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Platform, ScrollView, Button, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -12,9 +12,12 @@ const SelectClass = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
 
-  var classList = [];
-  var sectionList = [];
-  var subjectList = [];
+  const [classList] = useState([]);
+  
+  const [sectionList] = useState([]);
+  const [subjectList] = useState([]);
+
+  const [isLoading, setLoading] = useState(true);
 
   // retrieve the list of classes, sections, and subjects for this school
   const getClassList = () => {
@@ -29,34 +32,35 @@ const SelectClass = ({ route, navigation }) => {
     return axios.get(serverIP.concat("/teachers/teacher_subject_list/", userID, "/"));
   };
 
-  const [spinner, setShowSpinner] = useState(false);
-
-  axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
-    axios.spread(function (classes, sections, subjects) {
-      for (var i = 0; i < classes.data.length; i++) {
-        let aClass = {};
-        aClass.label = classes.data[i].standard;
-        aClass.value = classes.data[i].standard;
-        classList.push(aClass);
-      }
-      for (i = 0; i < sections.data.length; i++) {
-        let aSection = {};
-        aSection.label = sections.data[i].section;
-        aSection.value = sections.data[i].section;
-        sectionList.push(aSection);
-      }
-      for (i = 0; i < subjects.data.length; i++) {
-        let aSubject = {};
-        aSubject.label = subjects.data[i].subject;
-        aSubject.value = subjects.data[i].subject;
-        if (subjects.data[i].subject === "Main") {
-          console.log("subject", subjects.data[i].subject);
-          aSubject.selected = true;
+  useEffect(() => {
+    axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
+      axios.spread(function (classes, sections, subjects) {
+        for (var i = 0; i < classes.data.length; i++) {
+          let aClass = {};
+          aClass.label = classes.data[i].standard;
+          aClass.value = classes.data[i].standard;
+          classList.push(aClass);
         }
-        subjectList.push(aSubject);
-      }
-    })
-  );
+        for (i = 0; i < sections.data.length; i++) {
+          let aSection = {};
+          aSection.label = sections.data[i].section;
+          aSection.value = sections.data[i].section;
+          sectionList.push(aSection);
+        }
+        for (i = 0; i < subjects.data.length; i++) {
+          let aSubject = {};
+          aSubject.label = subjects.data[i].subject;
+          aSubject.value = subjects.data[i].subject;
+          if (subjects.data[i].subject === "Main") {
+            console.log("subject", subjects.data[i].subject);
+            aSubject.selected = true;
+          }
+          subjectList.push(aSubject);
+        }
+        setLoading(false);
+      })
+    );
+  }, []);
 
   defaultSubject = {
     defaultSubject: ['Main']
@@ -163,96 +167,99 @@ const SelectClass = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
-      <ScrollView
-        style={styles.scrollContainer}
-        contentContainerStyle={styles.scrollContentContainer}>
+      {isLoading ? <View style={styles.loading}>
+        <ActivityIndicator size='large' />
+      </View> : (
+          <ScrollView
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContentContainer}>
 
-        {Platform.OS === 'ios' && (
-          <View>
-            <View style={styles.scrollContainer}>
-              <Text style={styles.heading}>Select Date</Text>
+            {Platform.OS === 'ios' && (
+              <View>
+                <View style={styles.scrollContainer}>
+                  <Text style={styles.heading}>Select Date</Text>
+                </View>
+                <DateTimePicker
+                  style={{ width: '100%' }}
+                  value={date}
+                  mode={mode}
+                  maximumDate={new Date()}
+                  onChange={onChange}
+                />
+              </View>
+            )}
+            {Platform.OS === 'android' && (
+              <View style={styles.parallel}>
+                <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
+                  <Text style={styles.font}>Select Date</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
+                  <Text style={styles.font}>{ddmmyy(date)}</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {Platform.OS === 'android' && show && (
+              <View>
+                <DateTimePicker
+                  value={date}
+                  mode={mode}
+                  display="spinner"
+                  maximumDate={new Date()}
+                  onChange={onChange}
+                />
+              </View>
+            )}
+
+            <View style={styles.parallel}>
+              {Platform.OS === 'android' && (
+                <View style={styles.verticalSpace} />
+              )}
+              <View style={styles.scrollContainer1}>
+                <Text style={styles.heading}>Class</Text>
+                <DropDownPicker
+                  items={classList}
+                  placeholder="Select"
+                  defaultIndex={0}
+                  containerStyle={{ height: 40, width: "100%" }}
+                  style={{ backgroundColor: '#fafafa' }}
+                  itemStyle={{
+                    justifyContent: 'flex-start'
+                  }}
+                  dropDownStyle={{ backgroundColor: '#fafafa' }}
+                  onChangeItem={item => selectedClass = item.value}
+                />
+              </View>
+              <View style={styles.scrollContainer1}>
+                <Text style={styles.heading}>Section</Text>
+                <DropDownPicker
+                  items={sectionList}
+                  placeholder="Select"
+                  defaultIndex={0}
+                  containerStyle={{ height: 40 }}
+                  style={{ backgroundColor: '#fafafa' }}
+                  itemStyle={{
+                    justifyContent: 'flex-start'
+                  }}
+                  dropDownStyle={{ backgroundColor: '#fafafa' }}
+                  onChangeItem={item => selectedSection = item.value}
+                />
+              </View>
+              <View style={styles.scrollContainer2}>
+                <Text style={styles.heading}>Subject</Text>
+                <DropDownPicker
+                  items={subjectList}
+                  placeholder="Select"
+                  containerStyle={{ height: 40, width: "100%" }}
+                  style={{ backgroundColor: '#fafafa' }}
+                  itemStyle={{
+                    justifyContent: 'flex-start'
+                  }}
+                  dropDownStyle={{ backgroundColor: '#fafafa' }}
+                  onChangeItem={item => selectedSubject = item.value}
+                />
+              </View>
             </View>
-            <DateTimePicker
-              style={{ width: '100%' }}
-              value={date}
-              mode={mode}
-              maximumDate={new Date()}
-              onChange={onChange}
-            />
-          </View>
-        )}
-        {Platform.OS === 'android' && (
-          <View style={styles.parallel}>
-            <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
-              <Text style={styles.font}>Select Date</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
-              <Text style={styles.font}>{ddmmyy(date)}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {Platform.OS === 'android' && show && (
-          <View>
-            <DateTimePicker
-              value={date}
-              mode={mode}
-              display="spinner"
-              maximumDate={new Date()}
-              onChange={onChange}
-            />
-          </View>
-        )}
-
-        <View style={styles.parallel}>
-          {Platform.OS === 'android' && (
-            <View style={styles.verticalSpace} />
-          )}
-          <View style={styles.scrollContainer1}>
-            <Text style={styles.heading}>Class</Text>
-            <DropDownPicker
-              items={classList}
-              placeholder="Select"
-              defaultIndex={0}
-              containerStyle={{ height: 40, width: "100%" }}
-              style={{ backgroundColor: '#fafafa' }}
-              itemStyle={{
-                justifyContent: 'flex-start'
-              }}
-              dropDownStyle={{ backgroundColor: '#fafafa' }}
-              onChangeItem={item => selectedClass = item.value}
-            />
-          </View>
-          <View style={styles.scrollContainer1}>
-            <Text style={styles.heading}>Section</Text>
-            <DropDownPicker
-              items={sectionList}
-              placeholder="Select"
-              defaultIndex={0}
-              containerStyle={{ height: 40 }}
-              style={{ backgroundColor: '#fafafa' }}
-              itemStyle={{
-                justifyContent: 'flex-start'
-              }}
-              dropDownStyle={{ backgroundColor: '#fafafa' }}
-              onChangeItem={item => selectedSection = item.value}
-            />
-          </View>
-          <View style={styles.scrollContainer2}>
-            <Text style={styles.heading}>Subject</Text>
-            <DropDownPicker
-              items={subjectList}
-              placeholder="Select"
-              containerStyle={{ height: 40, width: "100%" }}
-              style={{ backgroundColor: '#fafafa' }}
-              itemStyle={{
-                justifyContent: 'flex-start'
-              }}
-              dropDownStyle={{ backgroundColor: '#fafafa' }}
-              onChangeItem={item => selectedSubject = item.value}
-            />
-          </View>
-        </View>
-      </ScrollView>
+          </ScrollView>)}
     </View>
   );
 };
@@ -275,7 +282,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 5,
     width: "100%",
-    
+
   },
   scrollContainer2: {
     flex: 2,
@@ -330,9 +337,16 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
 
-  spinnerTextStyle: {
-    color: '#FFF'
-  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5FCFF88'
+  }
 });
 
 export default SelectClass;
