@@ -22,6 +22,10 @@ const App = () => {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
+          headerRightContainerStyle:  {
+            marginRight: 5
+          },
+          
         }}>
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{
             headerShown: false,

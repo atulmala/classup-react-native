@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Platform, StyleSheet, Text, View, ActivityIndicator, FlatList, Switch, Image } from 'react-native';
+import {
+  Platform, StyleSheet, Text, View, ActivityIndicator,
+  FlatList, Switch, Image, Button, Alert
+} from 'react-native';
 import axios from 'axios';
 import { AttendanceContext, AttendanceContextProvider } from './AttendanceContext';
 
@@ -16,8 +19,8 @@ const TakeAttendance = ({ route, navigation }) => {
   const { selectedSection } = route.params;
   const { selectedSubject } = route.params;
 
-  var absenteeList = [];
-  var correctionList = [];
+  var [absenteeList] = useState([]);
+  var [correctionList] = useState([]);
   var total;
 
   const [isLoading, setLoading] = useState(true);
@@ -42,16 +45,16 @@ const TakeAttendance = ({ route, navigation }) => {
         for (var i = 0; i < absentees.data.length; i++) {
           absenteeList.push(absentees.data[i].student);
         }
-
+        console.log("absenteeList at start = ", absenteeList);
         total = students.data.length;
-        
+
         setTotalStudents(total);
         console.log("total students = ", totalStudents);
         let absentCount = absentees.data.length;
         console.log("absent = ", absentCount);
         setPresentCount(total - absentees.data.length);
         console.log("present = ", presentCount);
-        
+
         for (i = 0; i < students.data.length; i++) {
           let student = {};
           let s_no = i + 1;
@@ -74,6 +77,75 @@ const TakeAttendance = ({ route, navigation }) => {
         setLoading(false);
       }));
   }, []);
+
+  const attendanceTaken = () => {
+    let url = serverIP.concat("/attendance/attendance_taken/", schoolId, "/", selectedClass, "/", selectedSection, "/",
+      selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/", userID, "/");
+    return axios.post(url);
+  };
+
+  const submitAttendance = () => {
+    let absentees = {};
+    for (var i = 0; i < absenteeList.length; i++) {
+      absentees[absenteeList[i]] = absenteeList[i];
+    }
+    let url = serverIP.concat("/attendance/update1/", schoolId, "/", selectedClass, "/", selectedSection, "/",
+      selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/", userID, "/");
+    return axios.post(url, absentees);
+  };
+
+  const submitCorrection = () => {
+    let corrections = {};
+    for (var i = 0; i < correctionList.length; i++) {
+      corrections[correctionList[i]] = correctionList[i];
+    }
+    let url = serverIP.concat("/attendance/delete2/", schoolId, "/", selectedClass, "/", selectedSection, "/",
+      selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/");
+    return axios.post(url, corrections);
+  };
+
+  const processAttendance = () => {
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to submit this Attendance?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            {isLoading && (
+              <View>
+                <ActivityIndicator style={styles.loading} size='large' />
+              </View>
+            )}
+            axios
+              .all([attendanceTaken(), submitAttendance(), submitCorrection()])
+              .then(
+                axios.spread(function (res1, res2, res3) {
+                  setLoading(false);
+                  Alert.alert(
+                    "Attendance Done",
+                    "Attendance Submitted to Server.",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                })
+              );
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  };
 
   const CustomRow = ({ title, index }) => {
     const [isEnabled, setIsEnabled] = useState(false);
@@ -103,17 +175,26 @@ const TakeAttendance = ({ route, navigation }) => {
                 if (student.id == index) {
                   console.log("student ", student.title, " will be marked ", value);
                   student.presence = value;
+                  if (value) {
+                    setPresent(present + 1);
+                    let position = absenteeList.indexOf(student.id);
+                    if (position > -1) {
+                      // this student was in the absentee list. will have to be marked as present
+                      absenteeList.splice(position, 1);
+                      correctionList.push(student.id);
+                    }
+                  }
+                  else {
+                    setPresent(present - 1);
+                    absenteeList.push(student.id)
+                  }
+                  console.log(value)
+                  console.log(index)
                   break;
                 }
               }
-              if (value) {
-                setPresent(present + 1);
-              }
-              else {
-                setPresent(present - 1);
-              }
-              console.log(value)
-              console.log(index)
+              console.log("absenteeList = ", absenteeList);
+              console.log("correctionList = ", correctionList);
             }}
           />
         </View>
@@ -123,11 +204,11 @@ const TakeAttendance = ({ route, navigation }) => {
   const Header = () => {
     const [present, setPresent] = useContext(AttendanceContext);
     {
-      if (firstTime)  {
+      if (firstTime) {
         setPresent(presentCount);
         setFirstTime(false);
       }
-      else  {
+      else {
         setPresent(present);
       }
     }
@@ -179,6 +260,16 @@ const TakeAttendance = ({ route, navigation }) => {
       </View>
     )
   };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        <Button style={styles.button}
+          onPress={() => processAttendance()}
+          title="Submit"
+        />
+    });
+  });
 
   return (
     <AttendanceContextProvider>
@@ -282,7 +373,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F5FCFF88'
-  }
+  },
+  button: {
+    backgroundColor: "#23b9d1",
+    borderRadius: 50,
+    color: 'blue',
+    paddingRight: 15
+  },
 });
 
 export default TakeAttendance;

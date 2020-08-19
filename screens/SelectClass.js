@@ -5,6 +5,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -13,7 +14,7 @@ const SelectClass = ({ route, navigation }) => {
   const { userID } = route.params;
 
   const [classList] = useState([]);
-  
+
   const [sectionList] = useState([]);
   const [subjectList] = useState([]);
 
@@ -67,19 +68,19 @@ const SelectClass = ({ route, navigation }) => {
   };
 
   let today = new Date();
-  var selectedDay = today.getDate();
-  var selectedMonth = today.getMonth() + 1;
-  var selectedYear = today.getFullYear();
+  const [selectedDay, setSelectedDay] = useState(today.getDate());
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
   const [date, setDate] = useState(today);
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    selectedMonth = selectedDate.getMonth() + 1;
+    setSelectedMonth(selectedDate.getMonth() + 1);
     console.log("selectedMonth = ", selectedMonth);
-    selectedDay = selectedDate.getDate();
+    setSelectedDay(selectedDate.getDate());
     console.log("SelectedDay = ", selectedDay);
-    selectedYear = selectedDate.getFullYear();
+    setSelectedYear(selectedDate.getFullYear());
     console.log("SelectedYear = ", selectedYear);
     console.log(new Date(selectedDate));
     const currentDate = selectedDate || date;
@@ -157,10 +158,14 @@ const SelectClass = ({ route, navigation }) => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
-        <Button
-          onPress={() => showTakeAttendance()}
-          title="Next"
-        />
+        // <TouchableOpacity
+        //   onPress={() => showTakeAttendance()}
+        //   title="Next"
+        // />
+        <TouchableOpacity  onPress={() => showTakeAttendance()}>
+         <Icon name="arrow-circle-right" size={40} padding={10} color="black" />
+          {/* <Text style={styles.font}>Next</Text> */}
+        </TouchableOpacity>
     });
   });
 
@@ -305,6 +310,16 @@ const styles = StyleSheet.create({
     width: '45%',
     margin: 5,
     padding: 10,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  nextButton: {
+    backgroundColor: '#BBDEFB',
+    width: '100%',
+    height: '60%',
+    margin: 10,
+    padding: 20,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center'
