@@ -16,7 +16,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
           headerStyle: {
-            backgroundColor: '#f4511e',
+            backgroundColor: 'salmon',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
@@ -33,6 +33,7 @@ const App = () => {
           }} />
           <Stack.Screen name="TeacherMenu" component={TeacherMenu} options={{
             title: 'Teacher Menu',
+            headerLeft: null
           }} />
           <Stack.Screen name="ParentMenu" component={ParentMenu} options={{
             title: 'Parent Menu',

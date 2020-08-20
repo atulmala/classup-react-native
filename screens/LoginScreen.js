@@ -1,16 +1,12 @@
 import 'react-native-gesture-handler';
 import React, { Component, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
 import * as Device from 'expo-device';
 import OneSignal from 'react-native-onesignal';
-import Spinner from 'react-native-loading-spinner-overlay';
 
 var player_id;
-let state = {
-  spinner: false
-};
 
 function componentWillUnmount() {
   OneSignal.removeEventListener('received', this.onReceived);
@@ -38,15 +34,14 @@ function myiOSPromptCallback(permission) {
 }
 
 const LoginScreen = ({ navigation }) => {
-  const [isLoading, setLoading] = useState(true);
-  var login_id = "";
-  var password = "";
+  const [isLoading, setLoading] = useState(false);
+  const [loginID, setLoginID] = useState("");
+  const [password, setPassword] = useState("");
   var toastMessage = "";
 
-  var showSpinner = false;
 
   const _onPressLogin = () => {
-    if (login_id == "") {
+    if (loginID == "") {
       toastMessage = "Please enter Login ID";
       Toast.show({
         type: 'error',
@@ -70,9 +65,9 @@ const LoginScreen = ({ navigation }) => {
       });
       return;
     }
-    showSpinner = true;
+    setLoading(true);
     // let server_ip = 'https://wwww.classupclient.com;
-    let serverIP = Platform.OS === 'android'? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
     let url = serverIP.concat('/auth/login1/');
     fetch(url, {
       method: 'POST',
@@ -81,7 +76,7 @@ const LoginScreen = ({ navigation }) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        'user': login_id,
+        'user': loginID,
         'password': password,
         'device_type': Device.brand,
         'model': Device.manufacturer,
@@ -92,6 +87,7 @@ const LoginScreen = ({ navigation }) => {
     })
       .then((response) => response.json())
       .then((json) => {
+        setLoading(false);
         console.log(json);
         if (json.login == "successful") {
           // OneSignal set up
@@ -138,7 +134,7 @@ const LoginScreen = ({ navigation }) => {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                'user': login_id,
+                'user': loginID,
                 'device_type': platform,
                 'device_token': "N/A",
                 'player_id': player_id
@@ -158,7 +154,7 @@ const LoginScreen = ({ navigation }) => {
                   navigation.navigate('AdminMenu', {
                     serverIP: serverIP,
                     schoolId: json.school_id,
-                    userID: login_id,
+                    userID: loginID,
                     userName: json.user_name
                   });
                 }
@@ -167,7 +163,7 @@ const LoginScreen = ({ navigation }) => {
                   navigation.navigate('TeacherMenu', {
                     serverIP: serverIP,
                     schoolId: json.school_id,
-                    userID: login_id,
+                    userID: loginID,
                     userName: json.user_name
                   });
                 }
@@ -184,7 +180,7 @@ const LoginScreen = ({ navigation }) => {
                   navigation.navigate('ParentMenu', {
                     serverIP: serverIP,
                     schoolId: json.school_id,
-                    userID: login_id,
+                    userID: loginID,
                     userName: json.user_name,
                     feeDefaultStatus: feeDefaultStatus,
                     welcomeMessage: welcomeMessage,
@@ -208,7 +204,6 @@ const LoginScreen = ({ navigation }) => {
                   welcomeMessage: welcomeMessage
                 });
               }
-
             }
           }
         }
@@ -228,21 +223,15 @@ const LoginScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
-      <Spinner
-        visible={showSpinner}
-        textContent={'Please Wait...'}
-        textStyle={styles.spinnerTextStyle}
-      />
       <Text style={styles.logo}>ClassUp</Text>
-
       <View style={styles.inputView} >
         <TextInput
           style={styles.inputText}
-          defaultValue={login_id}
+          defaultValue={loginID}
           placeholder="Enter Login ID"
           placeholderTextColor="#e8eaf6"
           keyboardType="email-address"
-          onChangeText={text => login_id = text} />
+          onChangeText={text => setLoginID(text)} />
       </View>
       <View style={styles.inputView} >
         <TextInput
@@ -251,9 +240,8 @@ const LoginScreen = ({ navigation }) => {
           defaultValue={password}
           placeholder="Enter Password"
           placeholderTextColor="#e8eaf6"
-          onChangeText={text => password = text} />
+          onChangeText={text => setPassword(text)} />
       </View>
-
       <TouchableOpacity
         style={styles.loginBtn}
         onPress={_onPressLogin}>
@@ -262,6 +250,7 @@ const LoginScreen = ({ navigation }) => {
       <TouchableOpacity>
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
+      {isLoading && <View style={styles.loading}><ActivityIndicator size='large' /></View>}
     </View>
   );
 }
@@ -314,7 +303,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontStyle: "italic"
   },
-  spinnerTextStyle: {
-    color: '#FFF'
-  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5FCFF88'
+  }
+
 });

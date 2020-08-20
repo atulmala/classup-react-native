@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
-  Platform, StyleSheet, Text, View, ActivityIndicator,
+  Platform, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity,
   FlatList, Switch, Image, Button, Alert
 } from 'react-native';
 import axios from 'axios';
@@ -117,11 +117,13 @@ const TakeAttendance = ({ route, navigation }) => {
         {
           text: "OK", onPress: () => {
             setLoading(true);
-            {isLoading && (
-              <View>
-                <ActivityIndicator style={styles.loading} size='large' />
-              </View>
-            )}
+            {
+              isLoading && (
+                <View>
+                  <ActivityIndicator style={styles.loading} size='large' />
+                </View>
+              )
+            }
             axios
               .all([attendanceTaken(), submitAttendance(), submitCorrection()])
               .then(
@@ -133,6 +135,14 @@ const TakeAttendance = ({ route, navigation }) => {
                     [
                       {
                         text: "OK", onPress: () => {
+                          navigation.navigate('TeacherMenu', {
+                            serverIP: serverIP,
+                            schoolId: schoolId,
+                            userID: userID,
+                            userName: userName,
+                            selectedSubject: selectedSubject,
+                            comingFrom: "TakeAttendance"
+                          });
                         }
                       }
                     ],
@@ -264,10 +274,9 @@ const TakeAttendance = ({ route, navigation }) => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
-        <Button style={styles.button}
-          onPress={() => processAttendance()}
-          title="Submit"
-        />
+        <TouchableOpacity style={styles.nextButton} onPress={() => processAttendance()}>
+          {!isLoading && <Text style={styles.nextText}>Submit</Text>}
+        </TouchableOpacity>
     });
   });
 
@@ -380,6 +389,19 @@ const styles = StyleSheet.create({
     color: 'blue',
     paddingRight: 15
   },
+  nextButton: {
+    backgroundColor: 'lavenderblush',
+    height: 25,
+    margin: 10,
+    padding: 5,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  nextText: {
+    fontSize: 12,
+    color: 'indigo',
+  }
 });
 
 export default TakeAttendance;

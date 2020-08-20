@@ -106,7 +106,7 @@ const SelectClass = ({ route, navigation }) => {
   };
   var selectedClass = "";
   var selectedSection = "";
-  var selectedSubject = "";
+  var selectedSubject = "Main";
 
   const showTakeAttendance = () => {
     if (selectedClass == "") {
@@ -150,21 +150,15 @@ const SelectClass = ({ route, navigation }) => {
       selectedClass: selectedClass,
       selectedSection: selectedSection,
       selectedSubject: selectedSubject,
-      comingFrom: "takeAttendance"
-
+      comingFrom: "SelectClass"
     });
   };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
-        // <TouchableOpacity
-        //   onPress={() => showTakeAttendance()}
-        //   title="Next"
-        // />
-        <TouchableOpacity  onPress={() => showTakeAttendance()}>
-         <Icon name="arrow-circle-right" size={40} padding={10} color="black" />
-          {/* <Text style={styles.font}>Next</Text> */}
+        <TouchableOpacity onPress={() => showTakeAttendance()}>
+          <Icon name="arrow-circle-right" size={30} padding={10} color="black" />
         </TouchableOpacity>
     });
   });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import Colors from '../Constants/colors';
 
 const TeacherMenu = ({ route, navigation }) => {
@@ -18,8 +19,20 @@ const TeacherMenu = ({ route, navigation }) => {
 
     });
   };
+
   React.useLayoutEffect(() => {
-    navigation.setOptions();
+    navigation.setOptions({
+      headerRight: () =>
+        <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('LoginScreen', {
+          serverIP: serverIP,
+          schoolId: schoolId,
+          userID: userID,
+          userName: userName,
+          
+        })}>
+          <Text style={styles.nextText}>Logout</Text>
+        </TouchableOpacity>
+    });
   });
   return (
     <View style={styles.container}>
@@ -168,6 +181,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     textAlign: 'center'
+  },
+  nextButton: {
+    backgroundColor: 'lavenderblush',
+    height: 25,
+    margin: 10,
+    padding: 5,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  nextText: {
+    fontSize: 12,
+    color: 'indigo',
   }
 })
 
