@@ -238,6 +238,7 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry
           style={styles.inputText}
           defaultValue={password}
+          keyboardType="email-address"
           placeholder="Enter Password"
           placeholderTextColor="#e8eaf6"
           onChangeText={text => setPassword(text)} />

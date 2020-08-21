@@ -8,6 +8,7 @@ import ParentMenu from './screens/ParentMenu';
 import AdminMenu from './screens/AdminMenu';
 import SelectClass from './screens/SelectClass';
 import TakeAttendance from './screens/TakeAttendance';
+import HWListTeacher from './screens/HWListTeacher';
 
 const Stack = createStackNavigator();
 
@@ -47,6 +48,9 @@ const App = () => {
           }} />
           <Stack.Screen name="TakeAttendance" component={TakeAttendance} options={{
             title: 'Take Attendance'
+          }} />
+          <Stack.Screen name="HWListTeacher" component={HWListTeacher} options={{
+            title: 'HW List'
           }} />
         </Stack.Navigator>
       </NavigationContainer>
