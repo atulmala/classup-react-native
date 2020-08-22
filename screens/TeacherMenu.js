@@ -15,8 +15,18 @@ const TeacherMenu = ({ route, navigation }) => {
       schoolId: schoolId,
       userID: userID,
       userName: userName,
-      comingFrom: "takeAttendance"
+      comingFrom: "teacherMenu"
 
+    });
+  };
+
+  const _gotoShowHW = () =>  {
+    navigation.navigate('HWListTeacher', {
+      serverIP: serverIP,
+      schoolId: schoolId,
+      userID: userID,
+      userName: userName,
+      comingFrom: "teacherMenu"
     });
   };
 
@@ -57,8 +67,8 @@ const TeacherMenu = ({ route, navigation }) => {
       </View>
 
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn5} >
-          <Text style={styles.font}>Homework</Text>
+        <TouchableOpacity style={styles.btn5} onPress={_gotoShowHW}>
+          <Text style={styles.font}>Homework List</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn6}>

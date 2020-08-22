@@ -45,15 +45,11 @@ const TakeAttendance = ({ route, navigation }) => {
         for (var i = 0; i < absentees.data.length; i++) {
           absenteeList.push(absentees.data[i].student);
         }
-        console.log("absenteeList at start = ", absenteeList);
         total = students.data.length;
 
         setTotalStudents(total);
-        console.log("total students = ", totalStudents);
         let absentCount = absentees.data.length;
-        console.log("absent = ", absentCount);
         setPresentCount(total - absentees.data.length);
-        console.log("present = ", presentCount);
 
         for (i = 0; i < students.data.length; i++) {
           let student = {};
@@ -183,7 +179,6 @@ const TakeAttendance = ({ route, navigation }) => {
               setIsEnabled(previousState => !previousState);
               for (student of studentList) {
                 if (student.id == index) {
-                  console.log("student ", student.title, " will be marked ", value);
                   student.presence = value;
                   if (value) {
                     setPresent(present + 1);
@@ -198,13 +193,9 @@ const TakeAttendance = ({ route, navigation }) => {
                     setPresent(present - 1);
                     absenteeList.push(student.id)
                   }
-                  console.log(value)
-                  console.log(index)
                   break;
                 }
               }
-              console.log("absenteeList = ", absenteeList);
-              console.log("correctionList = ", correctionList);
             }}
           />
         </View>

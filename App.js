@@ -17,7 +17,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
           headerStyle: {
-            backgroundColor: 'salmon',
+            backgroundColor: 'darkcyan',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
@@ -50,7 +50,7 @@ const App = () => {
             title: 'Take Attendance'
           }} />
           <Stack.Screen name="HWListTeacher" component={HWListTeacher} options={{
-            title: 'HW List'
+            title: 'HW List',
           }} />
         </Stack.Navigator>
       </NavigationContainer>
