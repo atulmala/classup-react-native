@@ -9,6 +9,7 @@ import AdminMenu from './screens/AdminMenu';
 import SelectClass from './screens/SelectClass';
 import TakeAttendance from './screens/TakeAttendance';
 import HWListTeacher from './screens/HWListTeacher';
+import CreateHW from './screens/CreateHW';
 
 const Stack = createStackNavigator();
 
@@ -52,6 +53,10 @@ const App = () => {
           <Stack.Screen name="HWListTeacher" component={HWListTeacher} options={{
             title: 'HW List',
           }} />
+          <Stack.Screen name="CreateHW" component={CreateHW} options={{
+            title: 'Create HomeWork',
+          }} />
+          
         </Stack.Navigator>
       </NavigationContainer>
   );

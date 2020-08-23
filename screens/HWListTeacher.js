@@ -48,19 +48,21 @@ const HWListTeacher = ({ route, navigation }) => {
       });
   }, []);
 
-  const BigPlus = () => {
+  const BigPlus = ({onPress}) => {
     return (
       <View style={{ flexDirection: 'row' }}>
-        <Image
-          source={require('../assets/big_plus.png')}
-          style={{
-            width: 25,
-            height: 25,
-            borderRadius: 40 / 2,
-            marginLeft: 15,
-            marginRight: 10
-          }}
-        />
+        <TouchableOpacity onPress={onPress}>
+          <Image
+            source={require('../assets/big_plus.png')}
+            style={{
+              width: 25,
+              height: 25,
+              borderRadius: 40 / 2,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
       </View>
     );
   }
@@ -130,9 +132,19 @@ const HWListTeacher = ({ route, navigation }) => {
     )
   };
 
+  const createHW = () => {
+    navigation.navigate('CreateHW', {
+      serverIP: serverIP,
+      schoolId: schoolId,
+      userID: userID,
+      userName: userName,
+      comingFrom: "teacherMenu"
+    });
+  };
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <BigPlus />,
+      headerRight: () => <BigPlus onPress={createHW}/>,
       headerStyle: {
         backgroundColor: 'darkslategrey',
       },
@@ -192,19 +204,53 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     justifyContent: 'center',
   },
+  attendanceSwitch: {
+    ...Platform.select({
+      ios: {
+        flex: 0
+      },
+      android: {
+        flex: 1
+      }
+    }),
+    marginRight: 6,
+    marginLeft: 6
+  },
   baseText: {
-    fontSize: 16,
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+
     fontWeight: 'bold',
     color: '#708090',
     margin: 4
   },
   innerText: {
-    fontSize: 16,
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
     color: '#4b0082',
     margin: 4
   },
   innerTextDescription: {
-    fontSize: 16,
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
     color: 'dodgerblue',
     margin: 4
   },
@@ -244,7 +290,7 @@ const styles = StyleSheet.create({
   },
   ImageIconStyle: {
     padding: 10,
-    margin: 10,
+    margin: 5,
     height: 25,
     width: 25,
     resizeMode: 'stretch',

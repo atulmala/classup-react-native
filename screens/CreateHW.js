@@ -1,13 +1,16 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Platform, ScrollView, Button, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet, Platform, ScrollView, Button, Text, TextInput,
+  View, TouchableOpacity, ActivityIndicator
+} from 'react-native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const SelectClass = ({ route, navigation }) => {
+const CreateHW = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
@@ -74,6 +77,7 @@ const SelectClass = ({ route, navigation }) => {
   const [date, setDate] = useState(today);
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [value, onChangeText] = useState('');
 
   const onChange = (event, selectedDate) => {
     setSelectedMonth(selectedDate.getMonth() + 1);
@@ -172,43 +176,6 @@ const SelectClass = ({ route, navigation }) => {
           <ScrollView
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContentContainer}>
-
-            {Platform.OS === 'ios' && (
-              <View>
-                <View style={styles.scrollContainer}>
-                  <Text style={styles.heading}>Select Date</Text>
-                </View>
-                <DateTimePicker
-                  style={{ width: '100%' }}
-                  value={date}
-                  mode={mode}
-                  maximumDate={new Date()}
-                  onChange={onChange}
-                />
-              </View>
-            )}
-            {Platform.OS === 'android' && (
-              <View style={styles.parallel}>
-                <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
-                  <Text style={styles.font}>Select Date</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.dateButton} onPress={showDatepicker}>
-                  <Text style={styles.font}>{ddmmyy(date)}</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-            {Platform.OS === 'android' && show && (
-              <View>
-                <DateTimePicker
-                  value={date}
-                  mode={mode}
-                  display="spinner"
-                  maximumDate={new Date()}
-                  onChange={onChange}
-                />
-              </View>
-            )}
-
             <View style={styles.parallel}>
               {Platform.OS === 'android' && (
                 <View style={styles.verticalSpace} />
@@ -258,6 +225,16 @@ const SelectClass = ({ route, navigation }) => {
                 />
               </View>
             </View>
+            <View style={styles.verticalSpace} >
+            
+            <TextInput
+              style={styles.hwDescription}
+              onChangeText={text => onChangeText()}
+              value={value}
+              multiline='true'
+              placeholder = "Enter HW Description (Mandatory)"
+            />
+            </View>
           </ScrollView>)}
     </View>
   );
@@ -273,7 +250,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     height: 100
   },
-  verticalSpace: {
+  ƒ: {
     paddingVertical: 100,
     marginTop: 100
   },
@@ -337,12 +314,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white"
   },
+  hwDescription:  { 
+    height: 60, 
+    borderColor: 'gray', 
+    borderWidth: 1, 
+    padding: 10,
+    marginTop: 150, 
+    borderRadius: 10,
+  },
   heading: {
     color: "#1a237e",
     fontSize: 18,
     fontWeight: "bold",
     fontStyle: "italic",
-    marginTop: 10,
     marginBottom: 5
   },
 
@@ -358,4 +342,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SelectClass;
+export default CreateHW;

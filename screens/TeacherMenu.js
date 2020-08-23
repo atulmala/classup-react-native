@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Colors from '../Constants/colors';
 
@@ -20,7 +20,7 @@ const TeacherMenu = ({ route, navigation }) => {
     });
   };
 
-  const _gotoShowHW = () =>  {
+  const _gotoShowHW = () => {
     navigation.navigate('HWListTeacher', {
       serverIP: serverIP,
       schoolId: schoolId,
@@ -38,7 +38,7 @@ const TeacherMenu = ({ route, navigation }) => {
           schoolId: schoolId,
           userID: userID,
           userName: userName,
-          
+
         })}>
           <Text style={styles.nextText}>Logout</Text>
         </TouchableOpacity>
@@ -48,44 +48,75 @@ const TeacherMenu = ({ route, navigation }) => {
     <View style={styles.container}>
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn1} onPress={_gotoSelectClass}>
+          <Image
+            source={require('../assets/attendance.png')}
+            style={styles.ImageIconStyle}
+          />
           <Text style={styles.font}>Take/Update Attendance</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn2}>
+        <Image
+            source={require('../assets/attendance_summary.png')}
+            style={styles.ImageIconStyle}
+          />
           <Text style={styles.font}>Attendance Summaries</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn3} >
+        <Image
+            source={require('../assets/school_bus.png')}
+            style={styles.ImageIconStyle2}
+          />
           <Text style={styles.font}>Bus Attendance</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn4}>
+        <Image
+            source={require('../assets/communication_center.png')}
+            style={styles.ImageIconStyle2}
+          />
           <Text style={styles.font}>Communication Center</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn5} onPress={_gotoShowHW}>
+        <Image
+            source={require('../assets/homework.png')}
+            style={styles.ImageIconStyle}
+          />
           <Text style={styles.font}>Homework List</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn6}>
+        <Image
+            source={require('../assets/online_class.png')}
+            style={styles.ImageIconStyle2}
+          />
           <Text style={styles.font}>Online Classes</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn7} >
+        <Image
+            source={require('../assets/exam_management.png')}
+            style={styles.ImageIconStyle}
+          />
           <Text style={styles.font}>Test/Exam Management</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn8}>
+        <Image
+            source={require('../assets/set_my_subjects.png')}
+            style={styles.ImageIconStyle2}
+          />
           <Text style={styles.font}>Set My Subjects</Text>
         </TouchableOpacity>
       </View>
-
     </View>
   )
 }
@@ -190,7 +221,8 @@ const styles = StyleSheet.create({
   font: {
     fontWeight: 'bold',
     fontSize: 16,
-    textAlign: 'center'
+    textAlign: 'center',
+    color: 'midnightblue'
   },
   nextButton: {
     backgroundColor: 'lavenderblush',
@@ -204,6 +236,40 @@ const styles = StyleSheet.create({
   nextText: {
     fontSize: 12,
     color: 'indigo',
+  },
+  FacebookStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'cornflowerblue',
+    borderWidth: 0.5,
+    borderColor: '#fff',
+    borderRadius: 10,
+    margin: 5,
+  },
+  TextStyle: {
+    color: 'white',
+    fontSize: 18,
+    marginBottom: 4,
+    marginRight: 4,
+  },
+  ImageIconStyle: {
+    padding: 10,
+    margin: 5,
+    height: 40,
+    width: 40,
+    resizeMode: 'stretch',
+  },
+  ImageIconStyle2: {
+    padding: 10,
+    margin: 3,
+    height: 45,
+    width: 50,
+    resizeMode: 'stretch',
+  },
+  SeparatorLine: {
+    backgroundColor: '#fff',
+    width: 0,
+    height: 40,
   }
 })
 
