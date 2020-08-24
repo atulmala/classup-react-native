@@ -1,14 +1,24 @@
+import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import {
   StyleSheet, Platform, ScrollView, Button, Text, TextInput,
   View, TouchableOpacity, ActivityIndicator
 } from 'react-native';
+import {
+  Colors,
+  Dialog,
+  Picker,
+  Avatar,
+  Assets,
+  PanningProvider
+} from 'react-native-ui-lib';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import dropdown from '../assets/chevronDown.png';
 
 const CreateHW = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -182,6 +192,17 @@ const CreateHW = ({ route, navigation }) => {
               )}
               <View style={styles.scrollContainer1}>
                 <Text style={styles.heading}>Class</Text>
+                <Picker
+                  placeholder="Select Class"
+                  value={classList}
+                  onChange={items => setState({ languages: items })}
+                  mode={Picker.modes.MULTI}
+                  rightIconSource={dropdown}
+                >
+                  {_.map(classList, option => (
+                    <Picker.Item key={classList.value} value={option} disabled={option.disabled} />
+                  ))}
+                </Picker>
                 <DropDownPicker
                   items={classList}
                   placeholder="Select"
@@ -226,14 +247,14 @@ const CreateHW = ({ route, navigation }) => {
               </View>
             </View>
             <View style={styles.verticalSpace} >
-            
-            <TextInput
-              style={styles.hwDescription}
-              onChangeText={text => onChangeText()}
-              value={value}
-              multiline='true'
-              placeholder = "Enter HW Description (Mandatory)"
-            />
+
+              <TextInput
+                style={styles.hwDescription}
+                onChangeText={text => onChangeText()}
+                value={value}
+                multiline={true}
+                placeholder="Enter HW Description (Mandatory)"
+              />
             </View>
           </ScrollView>)}
     </View>
@@ -314,12 +335,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white"
   },
-  hwDescription:  { 
-    height: 60, 
-    borderColor: 'gray', 
-    borderWidth: 1, 
+  hwDescription: {
+    height: 60,
+    borderColor: 'gray',
+    borderWidth: 1,
     padding: 10,
-    marginTop: 150, 
+    marginTop: 150,
     borderRadius: 10,
   },
   heading: {
