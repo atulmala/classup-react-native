@@ -3,9 +3,10 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import {
   StyleSheet, Platform, ScrollView, Button, Text, TextInput,
-  View, TouchableOpacity, ActivityIndicator
+  TouchableOpacity, ActivityIndicator
 } from 'react-native';
 import {
+  View,
   Colors,
   Dialog,
   Picker,
@@ -15,10 +16,50 @@ import {
 } from 'react-native-ui-lib';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import dropdown from '../assets/chevronDown.png';
+
+Colors.loadColors({
+  primaryColor: '#2364AA',
+  secondaryColor: '#81C3D7',
+  textColor: '##221D23',
+  errorColor: '#E63B2E',
+  successColor: '#ADC76F',
+  warnColor: '##FF963C'
+});
+
+dialogHeader = props => {
+  const { title } = props;
+  return (
+    <Text margin-15 text60>
+      {title}
+    </Text>
+  );
+};
+
+renderDialog = modalProps => {
+  const { visible, toggleModal, children, } = modalProps;
+
+  return (
+    <Dialog
+      migrate
+      visible={visible}
+      onDismiss={() => toggleModal(false)}
+      width="90%"
+      borderRadius="10"
+      height="45%"
+      bottom
+      useSafeArea
+      containerStyle={{ backgroundColor: "oldlace" }}
+      renderPannableHeader={dialogHeader}
+      panDirection={PanningProvider.Directions.DOWN}
+      pannableHeaderProps={{ title: '' }}
+    >
+      <ScrollView>{children}</ScrollView>
+    </Dialog>
+  );
+};
 
 const CreateHW = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -27,9 +68,11 @@ const CreateHW = ({ route, navigation }) => {
   const { userID } = route.params;
 
   const [classList] = useState([]);
-
+  const [selectedClass, setSelectedClass] = useState();
   const [sectionList] = useState([]);
+  const [selectedSection, setSelectedSection] = useState();
   const [subjectList] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState();
 
   const [isLoading, setLoading] = useState(true);
 
@@ -80,47 +123,7 @@ const CreateHW = ({ route, navigation }) => {
     defaultSubject: ['Main']
   };
 
-  let today = new Date();
-  const [selectedDay, setSelectedDay] = useState(today.getDate());
-  const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
-  const [date, setDate] = useState(today);
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
   const [value, onChangeText] = useState('');
-
-  const onChange = (event, selectedDate) => {
-    setSelectedMonth(selectedDate.getMonth() + 1);
-    console.log("selectedMonth = ", selectedMonth);
-    setSelectedDay(selectedDate.getDate());
-    console.log("SelectedDay = ", selectedDay);
-    setSelectedYear(selectedDate.getFullYear());
-    console.log("SelectedYear = ", selectedYear);
-    console.log(new Date(selectedDate));
-    const currentDate = selectedDate || date;
-    console.log("currentDate = ", currentDate);
-    setShow(false);
-    setDate(currentDate);
-  };
-
-  const ddmmyy = (date) => {
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let year = date.getFullYear();
-
-    return day + "/" + month + "/" + year;
-  };
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-  var selectedClass = "";
-  var selectedSection = "";
-  var selectedSubject = "Main";
 
   const showTakeAttendance = () => {
     if (selectedClass == "") {
@@ -183,80 +186,58 @@ const CreateHW = ({ route, navigation }) => {
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
-          <ScrollView
+          <View flex padding-20
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContentContainer}>
-            <View style={styles.parallel}>
-              {Platform.OS === 'android' && (
-                <View style={styles.verticalSpace} />
-              )}
-              <View style={styles.scrollContainer1}>
-                <Text style={styles.heading}>Class</Text>
-                <Picker
-                  placeholder="Select Class"
-                  value={classList}
-                  onChange={items => setState({ languages: items })}
-                  mode={Picker.modes.MULTI}
-                  rightIconSource={dropdown}
-                >
-                  {_.map(classList, option => (
-                    <Picker.Item key={classList.value} value={option} disabled={option.disabled} />
-                  ))}
-                </Picker>
-                <DropDownPicker
-                  items={classList}
-                  placeholder="Select"
-                  defaultIndex={0}
-                  containerStyle={{ height: 40, width: "100%" }}
-                  style={{ backgroundColor: '#fafafa' }}
-                  itemStyle={{
-                    justifyContent: 'flex-start'
-                  }}
-                  dropDownStyle={{ backgroundColor: '#fafafa' }}
-                  onChangeItem={item => selectedClass = item.value}
-                />
-              </View>
-              <View style={styles.scrollContainer1}>
-                <Text style={styles.heading}>Section</Text>
-                <DropDownPicker
-                  items={sectionList}
-                  placeholder="Select"
-                  defaultIndex={0}
-                  containerStyle={{ height: 40 }}
-                  style={{ backgroundColor: '#fafafa' }}
-                  itemStyle={{
-                    justifyContent: 'flex-start'
-                  }}
-                  dropDownStyle={{ backgroundColor: '#fafafa' }}
-                  onChangeItem={item => selectedSection = item.value}
-                />
-              </View>
-              <View style={styles.scrollContainer2}>
-                <Text style={styles.heading}>Subject</Text>
-                <DropDownPicker
-                  items={subjectList}
-                  placeholder="Select"
-                  containerStyle={{ height: 40, width: "100%" }}
-                  style={{ backgroundColor: '#fafafa' }}
-                  itemStyle={{
-                    justifyContent: 'flex-start'
-                  }}
-                  dropDownStyle={{ backgroundColor: '#fafafa' }}
-                  onChangeItem={item => selectedSubject = item.value}
-                />
-              </View>
-            </View>
-            <View style={styles.verticalSpace} >
+            <Picker
+              placeholder="Select Class"
+              value={selectedClass}
+              floatingPlaceholder
+              style={{ color: Colors.violet10 }}
+              onChange={item => setSelectedClass(item)}
+              rightIconSource={dropdown}
+              renderCustomModal={renderDialog}
+            >
+              {_.map(classList, option => (
+                <Picker.Item key={classList.value} value={option} disabled={option.disabled} />
+              ))}
+            </Picker>
+            <Picker
+              placeholder="Select Section"
+              floatingPlaceholder
+              style={{ color: Colors.purple10 }}
+              value={selectedSection}
+              onChange={item => setSelectedSection(item)}
+              rightIconSource={dropdown}
+              renderCustomModal={renderDialog}
+            >
+              {_.map(sectionList, option => (
+                <Picker.Item key={sectionList.value} value={option} disabled={option.disabled} />
+              ))}
+            </Picker>
+            <Picker
+              placeholder="Select Subject"
+              topBarProps={{ title: 'Please Select Subject' }}
+              floatingPlaceholder
+              style={{ color: Colors.green10 }}
+              value={selectedSubject}
+              onChange={item => setSelectedSubject(item)}
+              rightIconSource={dropdown}
+              renderCustomModal={renderDialog}
+            >
+              {_.map(subjectList, option => (
+                <Picker.Item key={subjectList.value} value={option} disabled={option.disabled} />
+              ))}
+            </Picker>
 
-              <TextInput
-                style={styles.hwDescription}
-                onChangeText={text => onChangeText()}
-                value={value}
-                multiline={true}
-                placeholder="Enter HW Description (Mandatory)"
-              />
-            </View>
-          </ScrollView>)}
+            <TextInput
+              style={styles.hwDescription}
+              onChangeText={text => onChangeText()}
+              value={value}
+              multiline={true}
+              placeholder="Enter HW Description (Mandatory)"
+            />
+          </View>)}
     </View>
   );
 };
@@ -336,11 +317,10 @@ const styles = StyleSheet.create({
     color: "white"
   },
   hwDescription: {
-    height: 60,
-    borderColor: 'gray',
+    height: 80,
+    borderColor: 'olive',
     borderWidth: 1,
     padding: 10,
-    marginTop: 150,
     borderRadius: 10,
   },
   heading: {
