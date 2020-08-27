@@ -26,6 +26,7 @@
     "react-native": "~0.62.2",
     "react-native-dropdown-picker": "^3.1.11",
     "react-native-gesture-handler": "^1.7.0",
+    "react-native-input-scroll-view": "^1.11.0",
     "react-native-loading-spinner-overlay": "^1.1.0",
     "react-native-onesignal": "^3.9.0",
     "react-native-reanimated": "^1.10.1",

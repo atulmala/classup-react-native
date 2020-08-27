@@ -1,7 +1,27 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Colors from '../Constants/colors';
+import { StyleSheet, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import {Colors, Typography, Spacings, Text} from 'react-native-ui-lib';
+
+Colors.loadColors({
+  primaryColor: '#2364AA',
+  secondaryColor: '#81C3D7',
+  textColor: '##221D23',
+  errorColor: '#E63B2E',
+  successColor: '#ADC76F',
+  warnColor: '##FF963C'
+});
+
+Typography.loadTypographies({
+  heading: {fontSize: 36, fontWeight: '600'},
+  subheading: {fontSize: 28, fontWeight: '500'},
+  body: {fontSize: 14, fontWeight: '600'},
+});
+
+Spacings.loadSpacings({
+  page: 20,
+  card: 12,
+  gridGutter: 16
+});
 
 const TeacherMenu = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -52,7 +72,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/attendance.png')}
             style={styles.ImageIconStyle}
           />
-          <Text style={styles.font}>Take/Update Attendance</Text>
+          <Text body>Take/Update Attendance</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn2}>
@@ -60,7 +80,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/attendance_summary.png')}
             style={styles.ImageIconStyle}
           />
-          <Text style={styles.font}>Attendance Summaries</Text>
+          <Text body>Attendance Summaries</Text>
         </TouchableOpacity>
       </View>
 
@@ -70,7 +90,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/school_bus.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text style={styles.font}>Bus Attendance</Text>
+          <Text body>Bus Attendance</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn4}>
@@ -78,7 +98,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/communication_center.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text style={styles.font}>Communication Center</Text>
+          <Text body>Communication Center</Text>
         </TouchableOpacity>
       </View>
 
@@ -88,7 +108,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/homework.png')}
             style={styles.ImageIconStyle}
           />
-          <Text style={styles.font}>Homework List</Text>
+          <Text body>Homework List</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn6}>
@@ -96,7 +116,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/online_class.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text style={styles.font}>Online Classes</Text>
+          <Text>Online Classes</Text>
         </TouchableOpacity>
       </View>
 
@@ -106,7 +126,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/exam_management.png')}
             style={styles.ImageIconStyle}
           />
-          <Text style={styles.font}>Test/Exam Management</Text>
+          <Text body>Test/Exam Management</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn8}>
@@ -114,7 +134,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/set_my_subjects.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text style={styles.font}>Set My Subjects</Text>
+          <Text body>Set My Subjects</Text>
         </TouchableOpacity>
       </View>
     </View>

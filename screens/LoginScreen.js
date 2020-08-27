@@ -1,7 +1,11 @@
 import 'react-native-gesture-handler';
 import React, { Component, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, TextInput, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Platform } from 'react-native';
+import {
+  Text,
+  View
+} from 'react-native-ui-lib';
 import Toast from 'react-native-toast-message';
 import * as Device from 'expo-device';
 import OneSignal from 'react-native-onesignal';
@@ -221,7 +225,10 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
       <Toast ref={(ref) => Toast.setRef(ref)} />
       <Text style={styles.logo}>ClassUp</Text>
       <View style={styles.inputView} >
@@ -252,7 +259,7 @@ const LoginScreen = ({ navigation }) => {
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
       {isLoading && <View style={styles.loading}><ActivityIndicator size='large' /></View>}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

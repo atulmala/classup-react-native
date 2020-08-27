@@ -52,21 +52,21 @@ const SelectClass = ({ route, navigation }) => {
       axios.spread(function (classes, sections, subjects) {
         for (var i = 0; i < classes.data.length; i++) {
           let aClass = {};
-          aClass.key = classes.data[i].standard;
+          aClass.key = classes.data[i].id;
           aClass.label = classes.data[i].standard;
           aClass.value = classes.data[i].standard;
           classList.push(aClass);
         }
         for (i = 0; i < sections.data.length; i++) {
           let aSection = {};
-          aSection.key = sections.data[i].section;
+          aSection.key = sections.data[i].id;
           aSection.label = sections.data[i].section;
           aSection.value = sections.data[i].section;
           sectionList.push(aSection);
         }
         for (i = 0; i < subjects.data.length; i++) {
           let aSubject = {};
-          aSubject.key = subjects.data[i].subject;
+          aSubject.key = subjects.data[i].id;
           aSubject.label = subjects.data[i].subject;
           aSubject.value = subjects.data[i].subject;
           if (subjects.data[i].subject === "Main") {

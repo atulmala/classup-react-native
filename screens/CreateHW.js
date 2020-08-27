@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import {
-  StyleSheet, Platform, ScrollView, Button, Text, TextInput,
+  StyleSheet, Platform, ScrollView, Text, TextInput, KeyboardAvoidingView,
   TouchableOpacity, ActivityIndicator
 } from 'react-native';
 import {
@@ -10,15 +10,21 @@ import {
   Colors,
   Dialog,
   Picker,
+  TextField,
+  Button,
   Avatar,
   Assets,
-  PanningProvider
+  PanningProvider,
+  KeyboardAwareScrollView,
+  KeyboardAwareListView,
 } from 'react-native-ui-lib';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import dropdown from '../assets/chevronDown.png';
+const plusIcon = require('../assets/attachmemt.jpg');
+import InputScrollView from 'react-native-input-scroll-view';
 
 Colors.loadColors({
   primaryColor: '#2364AA',
@@ -180,13 +186,22 @@ const CreateHW = ({ route, navigation }) => {
     });
   });
 
+  var myScrollView;
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+    enabled
+    behavior="padding"
+    style={{flex: 1, flexDirection: "column"}}
+    >
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
-          <View flex padding-20
+          <ScrollView 
+          keyboardShouldPersistTaps="always"
+          ref={component => { myScrollView = component; }}
+          flex padding-20
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContentContainer}>
             <Picker
@@ -230,15 +245,21 @@ const CreateHW = ({ route, navigation }) => {
               ))}
             </Picker>
 
-            <TextInput
-              style={styles.hwDescription}
-              onChangeText={text => onChangeText()}
-              value={value}
-              multiline={true}
-              placeholder="Enter HW Description (Mandatory)"
+            
+
+            <View flex paddingTop-40>
+            <TextField
+              style={styles.TextField}
+              placeholder={'Home Work Description (Mandatory'}
+              multiline
+              scrollEnable={false}
             />
-          </View>)}
-    </View>
+              <Button enableShadow label="Optional: Attach PDF Document" style={{ "marginTop": 20 }} />
+            </View>
+           
+          </ScrollView>
+        )}
+    </KeyboardAvoidingView>
   );
 };
 
