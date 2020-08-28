@@ -1,11 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { Component, useState } from 'react';
-import { StyleSheet, TextInput, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator, } from 'react-native';
 import { Platform } from 'react-native';
-import {
-  Text,
-  View
-} from 'react-native-ui-lib';
 import Toast from 'react-native-toast-message';
 import * as Device from 'expo-device';
 import OneSignal from 'react-native-onesignal';

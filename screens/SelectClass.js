@@ -1,22 +1,11 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Platform, ScrollView, Button, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import {
-  View,
-  Colors,
-  Dialog,
-  Picker,
-  DateTimePicker,
-  Avatar,
-  Assets,
-  PanningProvider
-} from 'react-native-ui-lib';
+import { StyleSheet, View, Platform, ScrollView, Button, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Container, Form, Header, Content, DatePicker, Picker, Icon, Text, Item } from 'native-base';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 // import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import dropdown from '../assets/chevronDown.png';
 
 const SelectClass = ({ route, navigation }) => {
@@ -26,7 +15,7 @@ const SelectClass = ({ route, navigation }) => {
   const { userID } = route.params;
 
   const [classList] = useState([]);
-  const [selectedClass, setSelectedClass] = useState();
+  const [selectedClass, setSelectedClass] = useState("");
   const [sectionList] = useState([]);
   const [selectedSection, setSelectedSection] = useState();
   const [subjectList] = useState([]);
@@ -56,6 +45,7 @@ const SelectClass = ({ route, navigation }) => {
           aClass.label = classes.data[i].standard;
           aClass.value = classes.data[i].standard;
           classList.push(aClass);
+          console.log("class = ", aClass.label);
         }
         for (i = 0; i < sections.data.length; i++) {
           let aSection = {};
@@ -122,7 +112,6 @@ const SelectClass = ({ route, navigation }) => {
     showMode('date');
   };
 
-
   const showTakeAttendance = () => {
     if (selectedClass == "") {
       Toast.show({
@@ -179,65 +168,70 @@ const SelectClass = ({ route, navigation }) => {
   });
 
   return (
-    <View style={styles.container}>
+    <Container>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
-          <ScrollView
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.scrollContentContainer}>
-            <View flex padding-20
-              style={styles.scrollContainer}
-              contentContainerStyle={styles.scrollContentContainer}>
-              <DateTimePicker
-                containerStyle={{ marginVertical: 20 }}
-                title={'Selecte Attendance Date'}
-                placeholder={'Select date'}
-              />
-              <Picker
-                placeholder="Select Class"
-                value={selectedClass}
-                floatingPlaceholder
-                style={{ color: Colors.violet10 }}
-                onChange={item => setSelectedClass(item)}
-                rightIconSource={dropdown}
-                renderCustomModal={renderDialog}
-              >
-                {_.map(classList, option => (
-                  <Picker.Item key={classList.value} value={option} disabled={option.disabled} />
-                ))}
-              </Picker>
-              <Picker
-                placeholder="Select Section"
-                floatingPlaceholder
-                style={{ color: Colors.purple10 }}
-                value={selectedSection}
-                onChange={item => setSelectedSection(item)}
-                rightIconSource={dropdown}
-                renderCustomModal={renderDialog}
-              >
-                {_.map(sectionList, option => (
-                  <Picker.Item key={sectionList.value} value={option} disabled={option.disabled} />
-                ))}
-              </Picker>
-              <Picker
-                placeholder="Select Subject"
-                topBarProps={{ title: 'Please Select Subject' }}
-                floatingPlaceholder
-                style={{ color: Colors.green10 }}
-                value={selectedSubject}
-                onChange={item => setSelectedSubject(item)}
-                rightIconSource={dropdown}
-                renderCustomModal={renderDialog}
-              >
-                {_.map(subjectList, option => (
-                  <Picker.Item key={subjectList.value} value={option} disabled={option.disabled} />
-                ))}
-              </Picker>
-            </View>
-          </ScrollView>)}
-    </View>
+          <Container>
+            <DatePicker
+              defaultDate={new Date(2018, 4, 4)}
+              minimumDate={new Date(2018, 1, 1)}
+              maximumDate={new Date(2018, 12, 31)}
+              locale={"en"}
+              timeZoneOffsetInMinutes={undefined}
+              modalTransparent={false}
+              animationType={"fade"}
+              androidMode={"default"}
+              placeHolderText="Select date"
+              textStyle={{ color: "green" }}
+              placeHolderTextStyle={{ color: "#d3d3d3" }}
+              onDateChange={this.setDate}
+              disabled={false}
+            />
+            <Picker
+              placeholder="Select Class"
+              mode="dialog"
+              iosHeader="Select Class"
+              iosIcon={<Icon name="arrow-dropdown-circle" style={{ color: "#007aff", fontSize: 25 }} />}
+              style={{ width: undefined }}
+              selectedValue={selectedClass}
+              onValueChange={(value)=>setSelectedClass(value)}
+            >
+              {_.map(classList, option => (
+                <Item label={classList.label} value={classList.key} key={option} />
+                
+              ))}
+
+            </Picker>
+            <Picker
+              placeholder="Select Section"
+              floatingPlaceholder
+              value={selectedSection}
+              onChange={item => setSelectedSection(item)}
+              rightIconSource={dropdown}
+              renderCustomModal={renderDialog}
+            >
+              {_.map(sectionList, option => (
+                <Picker.Item key={sectionList.value} value={option} disabled={option.disabled} />
+              ))}
+            </Picker>
+            <Picker
+              placeholder="Select Subject"
+              topBarProps={{ title: 'Please Select Subject' }}
+              floatingPlaceholder
+              value={selectedSubject}
+              onChange={item => setSelectedSubject(item)}
+              rightIconSource={dropdown}
+              renderCustomModal={renderDialog}
+            >
+              {_.map(subjectList, option => (
+                <Picker.Item key={subjectList.value} value={option} disabled={option.disabled} />
+              ))}
+            </Picker>
+
+          </Container>)}
+    </Container>
   );
 };
 

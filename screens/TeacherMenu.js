@@ -1,27 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
-import {Colors, Typography, Spacings, Text} from 'react-native-ui-lib';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 
-Colors.loadColors({
-  primaryColor: '#2364AA',
-  secondaryColor: '#81C3D7',
-  textColor: '##221D23',
-  errorColor: '#E63B2E',
-  successColor: '#ADC76F',
-  warnColor: '##FF963C'
-});
-
-Typography.loadTypographies({
-  heading: {fontSize: 36, fontWeight: '600'},
-  subheading: {fontSize: 28, fontWeight: '500'},
-  body: {fontSize: 14, fontWeight: '600'},
-});
-
-Spacings.loadSpacings({
-  page: 20,
-  card: 12,
-  gridGutter: 16
-});
 
 const TeacherMenu = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -144,7 +123,6 @@ const TeacherMenu = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.LightBlue,
     alignItems: 'center',
     justifyContent: 'center',
     width: "100%"

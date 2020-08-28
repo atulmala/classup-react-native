@@ -5,19 +5,7 @@ import {
   StyleSheet, Platform, ScrollView, Text, TextInput, KeyboardAvoidingView,
   TouchableOpacity, ActivityIndicator
 } from 'react-native';
-import {
-  View,
-  Colors,
-  Dialog,
-  Picker,
-  TextField,
-  Button,
-  Avatar,
-  Assets,
-  PanningProvider,
-  KeyboardAwareScrollView,
-  KeyboardAwareListView,
-} from 'react-native-ui-lib';
+
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -26,14 +14,7 @@ import dropdown from '../assets/chevronDown.png';
 const plusIcon = require('../assets/attachmemt.jpg');
 import InputScrollView from 'react-native-input-scroll-view';
 
-Colors.loadColors({
-  primaryColor: '#2364AA',
-  secondaryColor: '#81C3D7',
-  textColor: '##221D23',
-  errorColor: '#E63B2E',
-  successColor: '#ADC76F',
-  warnColor: '##FF963C'
-});
+
 
 dialogHeader = props => {
   const { title } = props;
@@ -190,9 +171,9 @@ const CreateHW = ({ route, navigation }) => {
 
   return (
     <KeyboardAvoidingView
-    enabled
-    behavior="padding"
-    style={{flex: 1, flexDirection: "column"}}
+    behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.container}
+    
     >
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <View style={styles.loading}>
@@ -244,9 +225,6 @@ const CreateHW = ({ route, navigation }) => {
                 <Picker.Item key={subjectList.value} value={option} disabled={option.disabled} />
               ))}
             </Picker>
-
-            
-
             <View flex paddingTop-40>
             <TextField
               style={styles.TextField}
