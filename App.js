@@ -2,6 +2,9 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry, Layout, Text } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import LoginScreen from './screens/LoginScreen';
 import TeacherMenu from './screens/TeacherMenu';
 import ParentMenu from './screens/ParentMenu';
@@ -15,6 +18,7 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
+    <ApplicationProvider {...eva} theme={eva.light}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
           headerStyle: {
@@ -24,10 +28,10 @@ const App = () => {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          headerRightContainerStyle:  {
+          headerRightContainerStyle: {
             marginRight: 5
           },
-          
+
         }}>
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{
             headerShown: false,
@@ -56,9 +60,10 @@ const App = () => {
           <Stack.Screen name="CreateHW" component={CreateHW} options={{
             title: 'Create HomeWork',
           }} />
-          
+
         </Stack.Navigator>
       </NavigationContainer>
+    </ApplicationProvider>
   );
 }
 

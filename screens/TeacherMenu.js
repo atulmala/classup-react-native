@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import { Layout, Text } from '@ui-kitten/components';
 
 
 const TeacherMenu = ({ route, navigation }) => {
@@ -51,7 +52,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/attendance.png')}
             style={styles.ImageIconStyle}
           />
-          <Text body>Take/Update Attendance</Text>
+          <Text style={styles.text} status='primary'>Take/Update Attendance</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn2}>
@@ -133,7 +134,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     height: 100
   },
-
+  text: {
+    margin: 4,
+  },
   btn1: {
     backgroundColor: '#FFCDD2',
     width: '45%',

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, Platform, ScrollView, Button, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Container, Form, Header, Content, DatePicker, Picker, Icon, Text, Item } from 'native-base';
+import { StyleSheet, View, Platform, ScrollView, Button, Picker, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { IndexPath, Datepicker, Layout, Text, Icon, Select, SelectItem } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 // import DateTimePicker from '@react-native-community/datetimepicker';
@@ -16,6 +16,12 @@ const SelectClass = ({ route, navigation }) => {
 
   const [classList] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
+  
+  const renderOption = (title) => (
+    <SelectItem title={title} />
+  );
+  const [selectedClassIndex, setSelectedClassIndex] = useState(new IndexPath(0));
+  const displayClassValue = classList[selectedClassIndex.row];
   const [sectionList] = useState([]);
   const [selectedSection, setSelectedSection] = useState();
   const [subjectList] = useState([]);
@@ -44,8 +50,7 @@ const SelectClass = ({ route, navigation }) => {
           aClass.key = classes.data[i].id;
           aClass.label = classes.data[i].standard;
           aClass.value = classes.data[i].standard;
-          classList.push(aClass);
-          console.log("class = ", aClass.label);
+          classList.push(classes.data[i].standard);
         }
         for (i = 0; i < sections.data.length; i++) {
           let aSection = {};
@@ -162,83 +167,52 @@ const SelectClass = ({ route, navigation }) => {
     navigation.setOptions({
       headerRight: () =>
         <TouchableOpacity onPress={() => showTakeAttendance()}>
-          <Icon name="arrow-circle-right" size={30} padding={10} color="black" />
+          {/* <Icon name="arrow-circle-right" size={30} padding={10} color="black" /> */}
         </TouchableOpacity>
     });
   });
 
   return (
-    <Container>
+    <Layout style={styles.container} level='1'>
       <Toast ref={(ref) => Toast.setRef(ref)} />
-      {isLoading ? <View style={styles.loading}>
+      {isLoading ? <Layout style={styles.loading}>
         <ActivityIndicator size='large' />
-      </View> : (
-          <Container>
-            <DatePicker
-              defaultDate={new Date(2018, 4, 4)}
-              minimumDate={new Date(2018, 1, 1)}
-              maximumDate={new Date(2018, 12, 31)}
-              locale={"en"}
-              timeZoneOffsetInMinutes={undefined}
-              modalTransparent={false}
-              animationType={"fade"}
-              androidMode={"default"}
-              placeHolderText="Select date"
-              textStyle={{ color: "green" }}
-              placeHolderTextStyle={{ color: "#d3d3d3" }}
-              onDateChange={this.setDate}
-              disabled={false}
-            />
-            <Picker
-              placeholder="Select Class"
-              mode="dialog"
-              iosHeader="Select Class"
-              iosIcon={<Icon name="arrow-dropdown-circle" style={{ color: "#007aff", fontSize: 25 }} />}
-              style={{ width: undefined }}
-              selectedValue={selectedClass}
-              onValueChange={(value)=>setSelectedClass(value)}
-            >
-              {_.map(classList, option => (
-                <Item label={classList.label} value={classList.key} key={option} />
-                
-              ))}
-
-            </Picker>
-            <Picker
-              placeholder="Select Section"
-              floatingPlaceholder
-              value={selectedSection}
-              onChange={item => setSelectedSection(item)}
-              rightIconSource={dropdown}
-              renderCustomModal={renderDialog}
-            >
-              {_.map(sectionList, option => (
-                <Picker.Item key={sectionList.value} value={option} disabled={option.disabled} />
-              ))}
-            </Picker>
-            <Picker
-              placeholder="Select Subject"
-              topBarProps={{ title: 'Please Select Subject' }}
-              floatingPlaceholder
-              value={selectedSubject}
-              onChange={item => setSelectedSubject(item)}
-              rightIconSource={dropdown}
-              renderCustomModal={renderDialog}
-            >
-              {_.map(subjectList, option => (
-                <Picker.Item key={subjectList.value} value={option} disabled={option.disabled} />
-              ))}
-            </Picker>
-
-          </Container>)}
-    </Container>
+      </Layout> : (
+          <ScrollView
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContentContainer}>
+            <View
+              style={styles.scrollContainer}
+              contentContainerStyle={styles.scrollContentContainer}>
+              <Text category='h6'>
+                Select date:
+              </Text>
+              <Datepicker
+                date={date}
+                onSelect={nextDate => setDate(nextDate)}
+              />
+              <Select
+                style={styles.select}
+                placeholder='Default'
+                value={displayClassValue}
+                selectedIndex={selectedClassIndex}
+                onSelect={index => setSelectedClassIndex(index)}>
+                {classList.map(renderOption)}
+              </Select>
+            </View>
+          </ScrollView >
+        )}
+    </Layout>
   );
-};
-
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%"
+  },
+  select: {
+    flex: 1,
+    margin: 2,
   },
   parallel: {
     flexDirection: 'row',
