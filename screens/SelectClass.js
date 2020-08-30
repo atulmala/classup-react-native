@@ -1,12 +1,10 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, Platform, ScrollView, Button, Picker, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { IndexPath, Datepicker, Layout, Text, Icon, Select, SelectItem } from '@ui-kitten/components';
+import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { IndexPath, Datepicker, Layout, Text, Select, Button, SelectItem } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-// import DateTimePicker from '@react-native-community/datetimepicker';
-import dropdown from '../assets/chevronDown.png';
 
 const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -16,16 +14,22 @@ const SelectClass = ({ route, navigation }) => {
 
   const [classList] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
-  
+  const [selectedClassIndex, setSelectedClassIndex] = useState(new IndexPath(0));
+  const displayClassValue = classList[selectedClassIndex.row];
+
+  const [sectionList] = useState([]);
+  const [selectedSection, setSelectedSection] = useState();
+  const [selectedSectionIndex, setSelectedSectionIndex] = useState(new IndexPath(0));
+  const displaySectionValue = sectionList[selectedSectionIndex.row];
+
+  const [subjectList] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState();
+  const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(new IndexPath(0));
+  const displaySubjectValue = subjectList[selectedSubjectIndex.row];
+
   const renderOption = (title) => (
     <SelectItem title={title} />
   );
-  const [selectedClassIndex, setSelectedClassIndex] = useState(new IndexPath(0));
-  const displayClassValue = classList[selectedClassIndex.row];
-  const [sectionList] = useState([]);
-  const [selectedSection, setSelectedSection] = useState();
-  const [subjectList] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState();
 
   const [isLoading, setLoading] = useState(true);
 
@@ -45,39 +49,24 @@ const SelectClass = ({ route, navigation }) => {
   useEffect(() => {
     axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
       axios.spread(function (classes, sections, subjects) {
+        classList.push("Select");
         for (var i = 0; i < classes.data.length; i++) {
-          let aClass = {};
-          aClass.key = classes.data[i].id;
-          aClass.label = classes.data[i].standard;
-          aClass.value = classes.data[i].standard;
           classList.push(classes.data[i].standard);
         }
+
+        sectionList.push("Select");
         for (i = 0; i < sections.data.length; i++) {
-          let aSection = {};
-          aSection.key = sections.data[i].id;
-          aSection.label = sections.data[i].section;
-          aSection.value = sections.data[i].section;
-          sectionList.push(aSection);
+          sectionList.push(sections.data[i].section);
         }
+
+        subjectList.push("Select");
         for (i = 0; i < subjects.data.length; i++) {
-          let aSubject = {};
-          aSubject.key = subjects.data[i].id;
-          aSubject.label = subjects.data[i].subject;
-          aSubject.value = subjects.data[i].subject;
-          if (subjects.data[i].subject === "Main") {
-            console.log("subject", subjects.data[i].subject);
-            aSubject.selected = true;
-          }
-          subjectList.push(aSubject);
+          subjectList.push(subjects.data[i].subject);
         }
         setLoading(false);
       })
     );
   }, []);
-
-  defaultSubject = {
-    defaultSubject: ['Main']
-  };
 
   let today = new Date();
   const [selectedDay, setSelectedDay] = useState(today.getDate());
@@ -101,24 +90,8 @@ const SelectClass = ({ route, navigation }) => {
     setDate(currentDate);
   };
 
-  const ddmmyy = (date) => {
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let year = date.getFullYear();
-
-    return day + "/" + month + "/" + year;
-  };
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTakeAttendance = () => {
-    if (selectedClass == "") {
+  const takeAttendance = () => {
+    if (selectedClassIndex.row === 0) {
       Toast.show({
         type: 'error',
         position: 'bottom',
@@ -127,8 +100,14 @@ const SelectClass = ({ route, navigation }) => {
       });
       return;
     }
+    else{
+      console.log("selectedClassIndex = ", selectedClassIndex.row);
+      const i = selectedClassIndex.row;
+      setSelectedClass(classList[i]);
+      console.log("selectedClass = ", selectedClass);
+    }
 
-    if (selectedSection == "") {
+    if (selectedSectionIndex.row === 0) {
       Toast.show({
         type: 'error',
         position: 'bottom',
@@ -137,8 +116,13 @@ const SelectClass = ({ route, navigation }) => {
       });
       return;
     }
+    else  {
+      const i = selectedSectionIndex.row;
+      setSelectedSection(sectionList[i]);
+      console.log("selectedSection = ", selectedSection);
+    }
 
-    if (selectedSubject == "") {
+    if (selectedSubjectIndex.row === 0) {
       Toast.show({
         type: 'error',
         position: 'bottom',
@@ -146,6 +130,11 @@ const SelectClass = ({ route, navigation }) => {
         text2: "Please Select a Subject",
       });
       return;
+    }
+    else  {
+      const i = selectedSubjectIndex.row;
+      setSelectedSubject(subjectList[i]);
+      console.log("selectedSubject = ", selectedSubject);
     }
 
     navigation.navigate('TakeAttendance', {
@@ -163,15 +152,6 @@ const SelectClass = ({ route, navigation }) => {
     });
   };
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () =>
-        <TouchableOpacity onPress={() => showTakeAttendance()}>
-          {/* <Icon name="arrow-circle-right" size={30} padding={10} color="black" /> */}
-        </TouchableOpacity>
-    });
-  });
-
   return (
     <Layout style={styles.container} level='1'>
       <Toast ref={(ref) => Toast.setRef(ref)} />
@@ -181,25 +161,65 @@ const SelectClass = ({ route, navigation }) => {
           <ScrollView
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContentContainer}>
-            <View
+            <Layout
               style={styles.scrollContainer}
               contentContainerStyle={styles.scrollContentContainer}>
-              <Text category='h6'>
+              <Text style={styles.text} category='s1' status='info'>
                 Select date:
               </Text>
               <Datepicker
+                style={styles.select}
                 date={date}
                 onSelect={nextDate => setDate(nextDate)}
               />
+              <Layout style={styles.verticalSpace} />
+              <Layout style={styles.parallel}>
+                <Layout style={styles.container}>
+                  <Text style={styles.text} category='s1' status='info'>
+                    Select Class:
+                  </Text>
+                  <Select
+                    style={styles.select}
+                    placeholder='Select Class'
+                    value={displayClassValue}
+                    selectedIndex={selectedClassIndex}
+                    onSelect={index => setSelectedClassIndex(index)}>
+                    {classList.map(renderOption)}
+                  </Select>
+                </Layout>
+                <Layout style={styles.container}>
+                  <Text style={styles.text} category='s1' status='info'>
+                    Select Section:
+                  </Text>
+                  <Select
+                    style={styles.select}
+                    placeholder='Default'
+                    value={displaySectionValue}
+                    selectedIndex={selectedSectionIndex}
+                    onSelect={index => setSelectedSectionIndex(index)}>
+                    {sectionList.map(renderOption)}
+                  </Select>
+                </Layout>
+              </Layout>
+              <Layout style={styles.verticalSpace} />
+              <Text style={styles.text} category='s1' status='info'>
+                Select Subject:
+              </Text>
               <Select
                 style={styles.select}
                 placeholder='Default'
-                value={displayClassValue}
-                selectedIndex={selectedClassIndex}
-                onSelect={index => setSelectedClassIndex(index)}>
-                {classList.map(renderOption)}
+                value={displaySubjectValue}
+                selectedIndex={selectedSubjectIndex}
+                onSelect={index => setSelectedSubjectIndex(index)}>
+                {subjectList.map(renderOption)}
               </Select>
-            </View>
+              <Layout style={styles.verticalSpace} />
+              <Layout style={styles.buttonContainer}>
+                <Button style={styles.button} appearance='outline' status='info' onPress={takeAttendance}>
+                  {"Take Attendance"}
+                </Button>
+              </Layout>
+            </Layout>
           </ScrollView >
         )}
     </Layout>
@@ -212,27 +232,24 @@ const styles = StyleSheet.create({
   },
   select: {
     flex: 1,
+    margin: 5,
+    borderRadius: 5,
+  },
+  buttonContainer:  {
+    flex: 1,
+    alignItems: "center"
+  },
+  button: {
     margin: 2,
+    width: "60%"
   },
   parallel: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     height: 100
   },
   verticalSpace: {
-    paddingVertical: 100,
-    marginTop: 100
-  },
-  scrollContainer1: {
-    flex: 1,
-    paddingHorizontal: 5,
-    width: "100%",
-
-  },
-  scrollContainer2: {
-    flex: 2,
-    paddingHorizontal: 5,
-    width: "100%",
+    marginTop: 20
   },
   scrollContentContainer: {
     paddingLeft: 10,
@@ -245,53 +262,10 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     width: "100%"
   },
-  dateButton: {
-    backgroundColor: '#BBDEFB',
-    width: '45%',
-    margin: 5,
-    padding: 10,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  nextButton: {
-    backgroundColor: '#BBDEFB',
-    width: '100%',
-    height: '60%',
-    margin: 10,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  font: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    textAlign: 'center'
-  },
-  inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 20
-  },
-  inputText: {
-    height: 50,
+  text: {
+    margin: 2,
     fontSize: 18,
-    color: "white"
   },
-  heading: {
-    color: "#1a237e",
-    fontSize: 18,
-    fontWeight: "bold",
-    fontStyle: "italic",
-    marginTop: 10,
-    marginBottom: 5
-  },
-
   loading: {
     position: 'absolute',
     left: 0,
