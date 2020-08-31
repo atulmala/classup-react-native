@@ -19,6 +19,7 @@ const Stack = createStackNavigator();
 const App = () => {
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
+      <IconRegistry icons={EvaIconsPack} />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
           headerStyle: {

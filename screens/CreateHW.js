@@ -1,65 +1,80 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import {
-  StyleSheet, Platform, ScrollView, Text, TextInput, KeyboardAvoidingView,
-  TouchableOpacity, ActivityIndicator
-} from 'react-native';
-
+import { StyleSheet, ScrollView, ActivityIndicator, Keyboard, Platform, TouchableWithoutFeedback } from 'react-native';
+import { IndexPath, Datepicker, Layout, Text, Select, Input, Button, SelectItem, Icon } from '@ui-kitten/components';
+import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import dropdown from '../assets/chevronDown.png';
-const plusIcon = require('../assets/attachmemt.jpg');
-import InputScrollView from 'react-native-input-scroll-view';
 
+const showEvent = Platform.select({
+  android: 'keyboardDidShow',
+  default: 'keyboardWillShow',
+});
 
+const hideEvent = Platform.select({
+  android: 'keyboardDidHide',
+  default: 'keyboardWillHide',
+});
 
-dialogHeader = props => {
-  const { title } = props;
-  return (
-    <Text margin-15 text60>
-      {title}
-    </Text>
-  );
+const calendarIcon = (props) => (
+  <Icon {...props} name='calendar' />
+);
+
+const attachmentIcon = (props) => (
+  <Icon {...props} name='attach-outline' />
+);
+
+const useInputState = (initialValue = '') => {
+  const [value, setValue] = React.useState(initialValue);
+  return { value, onChangeText: setValue };
 };
 
-renderDialog = modalProps => {
-  const { visible, toggleModal, children, } = modalProps;
-
-  return (
-    <Dialog
-      migrate
-      visible={visible}
-      onDismiss={() => toggleModal(false)}
-      width="90%"
-      borderRadius="10"
-      height="45%"
-      bottom
-      useSafeArea
-      containerStyle={{ backgroundColor: "oldlace" }}
-      renderPannableHeader={dialogHeader}
-      panDirection={PanningProvider.Directions.DOWN}
-      pannableHeaderProps={{ title: '' }}
-    >
-      <ScrollView>{children}</ScrollView>
-    </Dialog>
-  );
-};
-
-const CreateHW = ({ route, navigation }) => {
+const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
 
+  const multilineInputState = useInputState();
+
+  const [placement, setPlacement] = React.useState('bottom');
+
+  React.useEffect(() => {
+    const keyboardShowListener = Keyboard.addListener(showEvent, () => {
+      setPlacement('top');
+    });
+
+    const keyboardHideListener = Keyboard.addListener(hideEvent, () => {
+      setPlacement('bottom');
+    });
+
+    return () => {
+      keyboardShowListener.remove();
+      keyboardHideListener.remove();
+    };
+  });
+
+  const [date, setDate] = React.useState(new Date());
+
   const [classList] = useState([]);
-  const [selectedClass, setSelectedClass] = useState();
+  var selectedClass;
+  const [selectedClassIndex, setSelectedClassIndex] = useState(new IndexPath(0));
+  const displayClassValue = classList[selectedClassIndex.row];
+
   const [sectionList] = useState([]);
-  const [selectedSection, setSelectedSection] = useState();
+  var selectedSection;
+  const [selectedSectionIndex, setSelectedSectionIndex] = useState(new IndexPath(0));
+  const displaySectionValue = sectionList[selectedSectionIndex.row];
+
   const [subjectList] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState();
+  var selectedSubject;
+  const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(new IndexPath(0));
+  const displaySubjectValue = subjectList[selectedSubjectIndex.row];
+
+  const renderOption = (title) => (
+    <SelectItem title={title} />
+  );
 
   const [isLoading, setLoading] = useState(true);
 
@@ -79,41 +94,47 @@ const CreateHW = ({ route, navigation }) => {
   useEffect(() => {
     axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
       axios.spread(function (classes, sections, subjects) {
+        classList.push("Select");
         for (var i = 0; i < classes.data.length; i++) {
-          let aClass = {};
-          aClass.label = classes.data[i].standard;
-          aClass.value = classes.data[i].standard;
-          classList.push(aClass);
+          classList.push(classes.data[i].standard);
         }
+
+        sectionList.push("Select");
         for (i = 0; i < sections.data.length; i++) {
-          let aSection = {};
-          aSection.label = sections.data[i].section;
-          aSection.value = sections.data[i].section;
-          sectionList.push(aSection);
+          sectionList.push(sections.data[i].section);
         }
+
+        subjectList.push("Select");
         for (i = 0; i < subjects.data.length; i++) {
-          let aSubject = {};
-          aSubject.label = subjects.data[i].subject;
-          aSubject.value = subjects.data[i].subject;
-          if (subjects.data[i].subject === "Main") {
-            console.log("subject", subjects.data[i].subject);
-            aSubject.selected = true;
-          }
-          subjectList.push(aSubject);
+          subjectList.push(subjects.data[i].subject);
         }
         setLoading(false);
       })
     );
   }, []);
 
-  defaultSubject = {
-    defaultSubject: ['Main']
-  };
+  const pickDocument = () =>  {
+    try {
+      const res =  DocumentPicker.pick({
+        type: [DocumentPicker.types.pdf],
+      });
+      console.log(
+        res.uri,
+        res.type, // mime type
+        res.name,
+        res.size
+      );
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  }
 
-  const [value, onChangeText] = useState('');
-
-  const showTakeAttendance = () => {
-    if (selectedClass == "") {
+  const takeAttendance = () => {
+    if (selectedClassIndex.row === 0) {
       Toast.show({
         type: 'error',
         position: 'bottom',
@@ -122,8 +143,11 @@ const CreateHW = ({ route, navigation }) => {
       });
       return;
     }
+    else {
+      selectedClass = classList[selectedClassIndex.row];
+    }
 
-    if (selectedSection == "") {
+    if (selectedSectionIndex.row === 0) {
       Toast.show({
         type: 'error',
         position: 'bottom',
@@ -132,8 +156,11 @@ const CreateHW = ({ route, navigation }) => {
       });
       return;
     }
+    else {
+      selectedSection = sectionList[selectedSectionIndex.row];
+    }
 
-    if (selectedSubject == "") {
+    if (selectedSubjectIndex.row === 0) {
       Toast.show({
         type: 'error',
         position: 'bottom',
@@ -142,6 +169,14 @@ const CreateHW = ({ route, navigation }) => {
       });
       return;
     }
+    else {
+      selectedSubject = subjectList[selectedSubjectIndex.row];
+    }
+
+    const splitDate = date.toLocaleDateString().split("/");
+    const selectedDay = splitDate[1];
+    const selectedMonth = splitDate[0];
+    const selectedYear = splitDate[2];
 
     navigation.navigate('TakeAttendance', {
       serverIP: serverIP,
@@ -158,178 +193,132 @@ const CreateHW = ({ route, navigation }) => {
     });
   };
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () =>
-        <TouchableOpacity onPress={() => showTakeAttendance()}>
-          <Icon name="arrow-circle-right" size={30} padding={10} color="black" />
-        </TouchableOpacity>
-    });
-  });
-
-  var myScrollView;
-
   return (
-    <KeyboardAvoidingView
-    behavior={Platform.OS == "ios" ? "padding" : "height"}
-      style={styles.container}
-    
-    >
+    <Layout style={styles.container} level='1'>
       <Toast ref={(ref) => Toast.setRef(ref)} />
-      {isLoading ? <View style={styles.loading}>
+      {isLoading ? <Layout style={styles.loading}>
         <ActivityIndicator size='large' />
-      </View> : (
-          <ScrollView 
-          keyboardShouldPersistTaps="always"
-          ref={component => { myScrollView = component; }}
-          flex padding-20
-            style={styles.scrollContainer}
+      </Layout> : (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            style={styles.container}
             contentContainerStyle={styles.scrollContentContainer}>
-            <Picker
-              placeholder="Select Class"
-              value={selectedClass}
-              floatingPlaceholder
-              style={{ color: Colors.violet10 }}
-              onChange={item => setSelectedClass(item)}
-              rightIconSource={dropdown}
-              renderCustomModal={renderDialog}
-            >
-              {_.map(classList, option => (
-                <Picker.Item key={classList.value} value={option} disabled={option.disabled} />
-              ))}
-            </Picker>
-            <Picker
-              placeholder="Select Section"
-              floatingPlaceholder
-              style={{ color: Colors.purple10 }}
-              value={selectedSection}
-              onChange={item => setSelectedSection(item)}
-              rightIconSource={dropdown}
-              renderCustomModal={renderDialog}
-            >
-              {_.map(sectionList, option => (
-                <Picker.Item key={sectionList.value} value={option} disabled={option.disabled} />
-              ))}
-            </Picker>
-            <Picker
-              placeholder="Select Subject"
-              topBarProps={{ title: 'Please Select Subject' }}
-              floatingPlaceholder
-              style={{ color: Colors.green10 }}
-              value={selectedSubject}
-              onChange={item => setSelectedSubject(item)}
-              rightIconSource={dropdown}
-              renderCustomModal={renderDialog}
-            >
-              {_.map(subjectList, option => (
-                <Picker.Item key={subjectList.value} value={option} disabled={option.disabled} />
-              ))}
-            </Picker>
-            <View flex paddingTop-40>
-            <TextField
-              style={styles.TextField}
-              placeholder={'Home Work Description (Mandatory'}
-              multiline
-              scrollEnable={false}
-            />
-              <Button enableShadow label="Optional: Attach PDF Document" style={{ "marginTop": 20 }} />
-            </View>
-           
-          </ScrollView>
+            <Layout
+              style={styles.container}
+              contentContainerStyle={styles.scrollContentContainer}>
+              <Text style={styles.text} category='s1' status='info'>
+                Select Due date:
+              </Text>
+              <Datepicker
+                style={styles.select}
+                accessoryRight={calendarIcon}
+                date={date}
+                onSelect={nextDate => setDate(nextDate)}
+              />
+              <Layout style={styles.verticalSpace} />
+              <Layout style={styles.parallel}>
+                <Layout style={styles.container}>
+                  <Text style={styles.text} category='s1' status='info'>
+                    Select Class:
+                  </Text>
+                  <Select
+                    style={styles.select}
+                    value={displayClassValue}
+                    selectedIndex={selectedClassIndex}
+                    onSelect={index => setSelectedClassIndex(index)}>
+                    {classList.map(renderOption)}
+                  </Select>
+                </Layout>
+                <Layout style={styles.container}>
+                  <Text style={styles.text} category='s1' status='info'>
+                    Select Section:
+                  </Text>
+                  <Select
+                    style={styles.select}
+                    value={displaySectionValue}
+                    selectedIndex={selectedSectionIndex}
+                    onSelect={index => setSelectedSectionIndex(index)}>
+                    {sectionList.map(renderOption)}
+                  </Select>
+                </Layout>
+              </Layout>
+              <Layout style={styles.verticalSpace} />
+              <Text style={styles.text} category='s1' status='info'>
+                Select Subject:
+              </Text>
+              <Select
+                style={styles.select}
+                value={displaySubjectValue}
+                selectedIndex={selectedSubjectIndex}
+                onSelect={index => setSelectedSubjectIndex(index)}>
+                {subjectList.map(renderOption)}
+              </Select>
+              <Layout style={styles.verticalSpace} />
+              <Input
+                style={styles.hwDescription}
+                multiline={true}
+                placement={placement}
+                textStyle={{ minHeight: 64 }}
+                placeholder='Enter Home Work Description (Mandatory)'
+                {...multilineInputState}
+              />
+              <Layout style={styles.buttonContainer}>
+                <Button style={styles.button} appearance='outline' status='info' accessoryLeft={attachmentIcon} onPress={pickDocument}>
+                  {"Insert PDF Attachment (Optonal)"}
+                </Button>
+              </Layout>
+            </Layout>
+          </ScrollView >
+          </TouchableWithoutFeedback>
         )}
-    </KeyboardAvoidingView>
+    </Layout>
   );
-};
-
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexGrow: 1,
     width: "100%"
+  },
+  select: {
+    flex: 1,
+    margin: 5,
+    borderRadius: 5,
+  },
+  buttonContainer: {
+    flex: 1,
+    alignItems: "center"
+  },
+  button: {
+    margin: 2,
+    width: "80%"
   },
   parallel: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     height: 100
   },
-  ƒ: {
-    paddingVertical: 100,
-    marginTop: 100
-  },
-  scrollContainer1: {
-    flex: 1,
-    paddingHorizontal: 5,
-    width: "100%",
-
-  },
-  scrollContainer2: {
-    flex: 2,
-    paddingHorizontal: 5,
-    width: "100%",
+  verticalSpace: {
+    marginTop: 20
   },
   scrollContentContainer: {
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 40,
-    paddingBottom: 10,
+    paddingTop: 10
   },
   parallel: {
     flexDirection: 'row',
     alignItems: 'stretch',
     width: "100%"
   },
-  dateButton: {
-    backgroundColor: '#BBDEFB',
-    width: '45%',
-    margin: 5,
-    padding: 10,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
+  hwDescription:  {
+    marginLeft: 5,
+    marginRight: 5
   },
-  nextButton: {
-    backgroundColor: '#BBDEFB',
-    width: '100%',
-    height: '60%',
-    margin: 10,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  font: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    textAlign: 'center'
-  },
-  inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 20
-  },
-  inputText: {
-    height: 50,
+  text: {
+    margin: 2,
     fontSize: 18,
-    color: "white"
   },
-  hwDescription: {
-    height: 80,
-    borderColor: 'olive',
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 10,
-  },
-  heading: {
-    color: "#1a237e",
-    fontSize: 18,
-    fontWeight: "bold",
-    fontStyle: "italic",
-    marginBottom: 5
-  },
-
   loading: {
     position: 'absolute',
     left: 0,
@@ -342,4 +331,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateHW;
+export default SelectClass;

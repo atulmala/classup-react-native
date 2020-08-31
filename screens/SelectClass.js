@@ -1,10 +1,15 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { IndexPath, Datepicker, Layout, Text, Select, Button, SelectItem } from '@ui-kitten/components';
+import { StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { IndexPath, Datepicker, Layout, Text, Select, Button, SelectItem, Icon } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+
+const calendarIcon = (props) => (
+  <Icon {...props} name='calendar'/>
+);
 
 const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -12,18 +17,20 @@ const SelectClass = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
 
+  const [date, setDate] = React.useState(new Date());
+
   const [classList] = useState([]);
-  const [selectedClass, setSelectedClass] = useState("");
+  var selectedClass;
   const [selectedClassIndex, setSelectedClassIndex] = useState(new IndexPath(0));
   const displayClassValue = classList[selectedClassIndex.row];
 
   const [sectionList] = useState([]);
-  const [selectedSection, setSelectedSection] = useState();
+  var selectedSection;
   const [selectedSectionIndex, setSelectedSectionIndex] = useState(new IndexPath(0));
   const displaySectionValue = sectionList[selectedSectionIndex.row];
 
   const [subjectList] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState();
+  var selectedSubject;
   const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(new IndexPath(0));
   const displaySubjectValue = subjectList[selectedSubjectIndex.row];
 
@@ -68,27 +75,6 @@ const SelectClass = ({ route, navigation }) => {
     );
   }, []);
 
-  let today = new Date();
-  const [selectedDay, setSelectedDay] = useState(today.getDate());
-  const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
-  const [date, setDate] = useState(today);
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
-
-  const onChange = (event, selectedDate) => {
-    setSelectedMonth(selectedDate.getMonth() + 1);
-    console.log("selectedMonth = ", selectedMonth);
-    setSelectedDay(selectedDate.getDate());
-    console.log("SelectedDay = ", selectedDay);
-    setSelectedYear(selectedDate.getFullYear());
-    console.log("SelectedYear = ", selectedYear);
-    console.log(new Date(selectedDate));
-    const currentDate = selectedDate || date;
-    console.log("currentDate = ", currentDate);
-    setShow(false);
-    setDate(currentDate);
-  };
 
   const takeAttendance = () => {
     if (selectedClassIndex.row === 0) {
@@ -101,10 +87,7 @@ const SelectClass = ({ route, navigation }) => {
       return;
     }
     else{
-      console.log("selectedClassIndex = ", selectedClassIndex.row);
-      const i = selectedClassIndex.row;
-      setSelectedClass(classList[i]);
-      console.log("selectedClass = ", selectedClass);
+      selectedClass = classList[selectedClassIndex.row];
     }
 
     if (selectedSectionIndex.row === 0) {
@@ -117,9 +100,7 @@ const SelectClass = ({ route, navigation }) => {
       return;
     }
     else  {
-      const i = selectedSectionIndex.row;
-      setSelectedSection(sectionList[i]);
-      console.log("selectedSection = ", selectedSection);
+      selectedSection = sectionList[selectedSectionIndex.row];
     }
 
     if (selectedSubjectIndex.row === 0) {
@@ -132,10 +113,13 @@ const SelectClass = ({ route, navigation }) => {
       return;
     }
     else  {
-      const i = selectedSubjectIndex.row;
-      setSelectedSubject(subjectList[i]);
-      console.log("selectedSubject = ", selectedSubject);
+      selectedSubject = subjectList[selectedSubjectIndex.row];
     }
+    
+    const splitDate = date.toLocaleDateString().split("/");
+    const selectedDay = splitDate[1];
+    const selectedMonth = splitDate[0];
+    const selectedYear = splitDate[2];
 
     navigation.navigate('TakeAttendance', {
       serverIP: serverIP,
@@ -169,6 +153,7 @@ const SelectClass = ({ route, navigation }) => {
               </Text>
               <Datepicker
                 style={styles.select}
+                accessoryRight={calendarIcon}
                 date={date}
                 onSelect={nextDate => setDate(nextDate)}
               />
@@ -180,7 +165,6 @@ const SelectClass = ({ route, navigation }) => {
                   </Text>
                   <Select
                     style={styles.select}
-                    placeholder='Select Class'
                     value={displayClassValue}
                     selectedIndex={selectedClassIndex}
                     onSelect={index => setSelectedClassIndex(index)}>
@@ -193,7 +177,6 @@ const SelectClass = ({ route, navigation }) => {
                   </Text>
                   <Select
                     style={styles.select}
-                    placeholder='Default'
                     value={displaySectionValue}
                     selectedIndex={selectedSectionIndex}
                     onSelect={index => setSelectedSectionIndex(index)}>
@@ -207,7 +190,6 @@ const SelectClass = ({ route, navigation }) => {
               </Text>
               <Select
                 style={styles.select}
-                placeholder='Default'
                 value={displaySubjectValue}
                 selectedIndex={selectedSubjectIndex}
                 onSelect={index => setSelectedSubjectIndex(index)}>
@@ -249,13 +231,12 @@ const styles = StyleSheet.create({
     height: 100
   },
   verticalSpace: {
-    marginTop: 20
+    marginTop: 15
   },
   scrollContentContainer: {
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 40,
-    paddingBottom: 10,
+    paddingTop: 20,
   },
   parallel: {
     flexDirection: 'row',
