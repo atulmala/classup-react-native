@@ -1,8 +1,13 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, ActivityIndicator, Keyboard, Platform, TouchableWithoutFeedback } from 'react-native';
-import { IndexPath, Datepicker, Layout, Text, Select, Input, Button, SelectItem, Icon } from '@ui-kitten/components';
+import {
+  StyleSheet, ScrollView, View, ActivityIndicator, Keyboard, Image, Alert,
+  Platform, TouchableOpacity, TouchableWithoutFeedback
+} from 'react-native';
+import {
+  IndexPath, Layout, Text, Select, Input, Button, SelectItem, Icon
+} from '@ui-kitten/components';
 import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
@@ -17,18 +22,28 @@ const hideEvent = Platform.select({
   default: 'keyboardWillHide',
 });
 
-const calendarIcon = (props) => (
-  <Icon {...props} name='calendar' />
-);
-
 const attachmentIcon = (props) => (
   <Icon {...props} name='attach-outline' />
 );
 
-const useInputState = (initialValue = '') => {
-  const [value, setValue] = React.useState(initialValue);
-  return { value, onChangeText: setValue };
-};
+const Upload = ({ onPress }) => {
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      <TouchableOpacity onPress={onPress}>
+        <Image
+          source={require('../assets/upload3.png')}
+          style={{
+            width: 25,
+            height: 25,
+            borderRadius: 40 / 2,
+            marginLeft: 15,
+            marginRight: 10
+          }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+}
 
 const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -36,9 +51,16 @@ const SelectClass = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
 
-  const multilineInputState = useInputState();
-
   const [placement, setPlacement] = React.useState('bottom');
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <Upload onPress={uploadHW} />,
+      headerStyle: {
+        backgroundColor: 'darkslategrey',
+      },
+    });
+  });
 
   React.useEffect(() => {
     const keyboardShowListener = Keyboard.addListener(showEvent, () => {
@@ -55,7 +77,6 @@ const SelectClass = ({ route, navigation }) => {
     };
   });
 
-  const [date, setDate] = React.useState(new Date());
 
   const [classList] = useState([]);
   var selectedClass;
@@ -64,13 +85,18 @@ const SelectClass = ({ route, navigation }) => {
 
   const [sectionList] = useState([]);
   var selectedSection;
-  const [selectedSectionIndex, setSelectedSectionIndex] = useState(new IndexPath(0));
+  const [selectedSectionIndex, setSelectedSectionIndex] = useState(new IndexPath(0),);
   const displaySectionValue = sectionList[selectedSectionIndex.row];
 
   const [subjectList] = useState([]);
   var selectedSubject;
   const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(new IndexPath(0));
   const displaySubjectValue = subjectList[selectedSubjectIndex.row];
+
+  const [hwDescription, setHWDescription] = useState('');
+  const [attachmentPresent, setAttachmentPresent] = useState(false);
+  const [pdfName, setPdfName] = React.useState("None");
+  const [uri, setUri] = useState("");
 
   const renderOption = (title) => (
     <SelectItem title={title} />
@@ -113,9 +139,9 @@ const SelectClass = ({ route, navigation }) => {
     );
   }, []);
 
-  const pickDocument = () =>  {
+  const pickDocument = async () => {
     try {
-      const res =  DocumentPicker.pick({
+      const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.pdf],
       });
       console.log(
@@ -124,6 +150,9 @@ const SelectClass = ({ route, navigation }) => {
         res.name,
         res.size
       );
+      setAttachmentPresent(true);
+      setUri(res.uri);
+      setPdfName(res.name);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         // User cancelled the picker, exit any dialogs or menus and move on
@@ -133,7 +162,7 @@ const SelectClass = ({ route, navigation }) => {
     }
   }
 
-  const takeAttendance = () => {
+  const uploadHW = () => {
     if (selectedClassIndex.row === 0) {
       Toast.show({
         type: 'error',
@@ -173,24 +202,98 @@ const SelectClass = ({ route, navigation }) => {
       selectedSubject = subjectList[selectedSubjectIndex.row];
     }
 
-    const splitDate = date.toLocaleDateString().split("/");
-    const selectedDay = splitDate[1];
-    const selectedMonth = splitDate[0];
-    const selectedYear = splitDate[2];
+    if (hwDescription == "") {
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Error: HW Description not Entered',
+        text2: "Please enter HW Description",
+      });
+      return;
+    }
 
-    navigation.navigate('TakeAttendance', {
-      serverIP: serverIP,
-      schoolId: schoolId,
-      userID: userID,
-      userName: userName,
-      selectedDay: selectedDay,
-      selectedMonth: selectedMonth,
-      selectedYear: selectedYear,
-      selectedClass: selectedClass,
-      selectedSection: selectedSection,
-      selectedSubject: selectedSubject,
-      comingFrom: "SelectClass"
-    });
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to Upload this HW?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            {
+              isLoading && (
+                <View>
+                  <ActivityIndicator style={styles.loading} size='large' />
+                </View>
+              )
+            }
+
+            var d = new Date();
+            var fileIncluded = "false"
+            if (attachmentPresent) {
+              fileIncluded = "true"
+            }
+
+            let formData = new FormData();
+
+            formData.append("teacher", userID);
+            formData.append("school_id", schoolId);
+            formData.append("d", d.getDate());
+            formData.append("m", d.getMonth() + 1);
+            formData.append("y", d.getFullYear() + 1);
+            formData.append("the_class", selectedClass);
+            formData.append("section", selectedSection);
+            formData.append("subject", selectedSubject);
+            formData.append("all_sections", "No");
+            formData.append("notes", hwDescription);
+            formData.append("file_included", fileIncluded);
+            if (attachmentPresent) {
+              const split = uri.split('/');
+              const name = split.pop();
+              formData.append("file",
+                {
+                  uri: uri,
+                  type: 'application/pdf',
+                  name: name
+                });
+              formData.append("file_name", name);
+            }
+            try {
+              axios.post(serverIP.concat("/homework/create_hw/"), formData)
+                .then(function (response) {
+                  console.log(response);
+                  setLoading(false);
+                  Alert.alert(
+                    "HW Uploaded",
+                    "Home Work Uploaded to Server.",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+                          navigation.navigate('HWListTeacher', {
+                            serverIP: serverIP,
+                            schoolId: schoolId,
+                            userID: userID,
+                            userName: userName,
+                            comingFrom: "CreateHW"
+                          });
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                });
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
@@ -199,76 +302,73 @@ const SelectClass = ({ route, navigation }) => {
       {isLoading ? <Layout style={styles.loading}>
         <ActivityIndicator size='large' />
       </Layout> : (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.scrollContentContainer}>
-            <Layout
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ScrollView
               style={styles.container}
               contentContainerStyle={styles.scrollContentContainer}>
-              <Text style={styles.text} category='s1' status='info'>
-                Select Due date:
-              </Text>
-              <Datepicker
-                style={styles.select}
-                accessoryRight={calendarIcon}
-                date={date}
-                onSelect={nextDate => setDate(nextDate)}
-              />
-              <Layout style={styles.verticalSpace} />
-              <Layout style={styles.parallel}>
-                <Layout style={styles.container}>
-                  <Text style={styles.text} category='s1' status='info'>
-                    Select Class:
-                  </Text>
+              <Layout
+                style={styles.container}
+                contentContainerStyle={styles.scrollContentContainer}>
+                <Layout style={styles.verticalSpace} />
+                <Layout style={styles.parallel}>
                   <Select
                     style={styles.select}
+                    label={evaProps => <Text {...evaProps}>Select Class:</Text>}
                     value={displayClassValue}
                     selectedIndex={selectedClassIndex}
                     onSelect={index => setSelectedClassIndex(index)}>
                     {classList.map(renderOption)}
                   </Select>
-                </Layout>
-                <Layout style={styles.container}>
-                  <Text style={styles.text} category='s1' status='info'>
-                    Select Section:
-                  </Text>
                   <Select
                     style={styles.select}
+                    label={evaProps => <Text {...evaProps}>Select Section:</Text>}
                     value={displaySectionValue}
                     selectedIndex={selectedSectionIndex}
                     onSelect={index => setSelectedSectionIndex(index)}>
                     {sectionList.map(renderOption)}
                   </Select>
                 </Layout>
+                <Select
+                  style={styles.select}
+                  label={evaProps => <Text {...evaProps}>Select Subject:</Text>}
+                  value={displaySubjectValue}
+                  selectedIndex={selectedSubjectIndex}
+                  onSelect={index => setSelectedSubjectIndex(index)}>
+                  {subjectList.map(renderOption)}
+                </Select>
+                <Layout style={styles.verticalSpace} />
+                <Input
+                  style={styles.hwDescription}
+                  editable
+                  label={evaProps => <Text {...evaProps}>Enter Homework Description:</Text>}
+                  multiline={true}
+                  onChangeText={text => setHWDescription(text)}
+                  placement={placement}
+                  textStyle={{ minHeight: 64, textAlignVertical: 'top' }}
+                  caption="Mandatory"
+                />
+                <Layout style={styles.verticalSpace} />
+                <Layout style={styles.container}>
+                  <Input
+                    style={styles.hwDescription}
+                    size='small'
+                    width='90%'
+                    disabled
+                    placeholder={pdfName}
+                    label={evaProps => <Text {...evaProps}>PDF Attahed:</Text>}
+                  />
+                </Layout>
+                <Layout style={styles.parallel}>
+                  <Button
+                    style={styles.button}
+                    status='info'
+                    accessoryLeft={attachmentIcon}
+                    onPress={pickDocument}>
+                    {"Attach PDF Document (Optonal)"}
+                  </Button>
+                </Layout>
               </Layout>
-              <Layout style={styles.verticalSpace} />
-              <Text style={styles.text} category='s1' status='info'>
-                Select Subject:
-              </Text>
-              <Select
-                style={styles.select}
-                value={displaySubjectValue}
-                selectedIndex={selectedSubjectIndex}
-                onSelect={index => setSelectedSubjectIndex(index)}>
-                {subjectList.map(renderOption)}
-              </Select>
-              <Layout style={styles.verticalSpace} />
-              <Input
-                style={styles.hwDescription}
-                multiline={true}
-                placement={placement}
-                textStyle={{ minHeight: 64 }}
-                placeholder='Enter Home Work Description (Mandatory)'
-                {...multilineInputState}
-              />
-              <Layout style={styles.buttonContainer}>
-                <Button style={styles.button} appearance='outline' status='info' accessoryLeft={attachmentIcon} onPress={pickDocument}>
-                  {"Insert PDF Attachment (Optonal)"}
-                </Button>
-              </Layout>
-            </Layout>
-          </ScrollView >
+            </ScrollView >
           </TouchableWithoutFeedback>
         )}
     </Layout>
@@ -278,25 +378,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexGrow: 1,
-    width: "100%"
+    width: "100%",
+  },
+  evaProps: {
+    textShadowColor: "magenta"
   },
   select: {
     flex: 1,
     margin: 5,
     borderRadius: 5,
   },
-  buttonContainer: {
-    flex: 1,
-    alignItems: "center"
-  },
   button: {
     margin: 2,
-    width: "80%"
+    backgroundColor: "cornflowerblue",
+    width: "80%",
+    height: "60%",
   },
   parallel: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 100
+    justifyContent: 'center',
   },
   verticalSpace: {
     marginTop: 20
@@ -306,18 +406,13 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 10
   },
-  parallel: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    width: "100%"
-  },
-  hwDescription:  {
+  hwDescription: {
     marginLeft: 5,
-    marginRight: 5
-  },
-  text: {
-    margin: 2,
-    fontSize: 18,
+    marginRight: 5,
+    paddingTop: 0,
+    paddingBottom: 0,
+    textAlignVertical: 'top',
+    borderColor: "cyan"
   },
   loading: {
     position: 'absolute',

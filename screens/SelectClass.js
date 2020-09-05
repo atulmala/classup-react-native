@@ -7,6 +7,8 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
+var RNFS = require('react-native-fs');
+
 const calendarIcon = (props) => (
   <Icon {...props} name='calendar'/>
 );
@@ -245,7 +247,7 @@ const styles = StyleSheet.create({
   },
   text: {
     margin: 2,
-    fontSize: 18,
+    fontSize: 14,
   },
   loading: {
     position: 'absolute',

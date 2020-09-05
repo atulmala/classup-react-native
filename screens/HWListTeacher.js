@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Platform, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity,
-  FlatList, Switch, Image, Button, Alert
+  Platform, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity, FlatList, Image, Alert
 } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
-
 
 const HWListTeacher = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -15,6 +14,7 @@ const HWListTeacher = ({ route, navigation }) => {
   const [isLoading, setLoading] = useState(true);
 
   const [hwList] = useState([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     let url = serverIP.concat("/academics/retrieve_hw/", userID, "/");
@@ -22,23 +22,40 @@ const HWListTeacher = ({ route, navigation }) => {
       .get(url)
       .then(function (response) {
         // handle success
-        for (var i = 0; i < response.data.length; i++) {
-          let hw = {};
-          hw.id = response.data[i].id;
-          let long_date = response.data[i].due_date;
-          let yyyymmdd = long_date.slice(0, 10);
-          hw.the_class = response.data[i].the_class;
-          hw.section = response.data[i].section;
-          hw.subject = response.data[i].subject;
-
-          hw.date = yyyymmdd;
-
-          hw.description = response.data[i].notes;
-          hw.location = response.data[i].location;
-
-          hwList.push(hw);
+        if (response.data.length == 0) {
+          let dummyHW = {
+            id: '-1000',
+            date: 'xxxx/xx/xx',
+            the_class: 'X',
+            section: 'X',
+            subject: 'X',
+            location: 'X',
+            description: 'No HW Created. Please click the Plus Button above to create'
+          };
+          hwList.push(dummyHW);
         }
-        console.log("hwList = ", hwList);
+        else {
+          hwList.length = 0;
+          for (var i = 0; i < response.data.length; i++) {
+            console.log("hw with this id is fresh entry hence will be added");
+            let hw = {};
+            hw.id = response.data[i].id;
+            let long_date = response.data[i].due_date;
+            let yyyymmdd = long_date.slice(0, 10);
+            hw.the_class = response.data[i].the_class;
+            hw.section = response.data[i].section;
+            hw.subject = response.data[i].subject;
+
+            hw.date = yyyymmdd;
+
+            hw.description = response.data[i].notes;
+            hw.location = response.data[i].location;
+
+            hwList.push(hw);
+          }
+          hwList.reverse();
+          console.log("hwList = ", hwList);
+        }
         setLoading(false);
       })
       .catch(function (error) {
@@ -46,9 +63,9 @@ const HWListTeacher = ({ route, navigation }) => {
         console.log(error);
         self.waiting = false;
       });
-  }, []);
+  }, [isFocused]);
 
-  const BigPlus = ({onPress}) => {
+  const BigPlus = ({ onPress }) => {
     return (
       <View style={{ flexDirection: 'row' }}>
         <TouchableOpacity onPress={onPress}>
@@ -83,13 +100,18 @@ const HWListTeacher = ({ route, navigation }) => {
               <Text style={styles.innerText}> {title.the_class}-{title.section}</Text>
             </Text>
           </View>
-          <Image
-            style={styles.tinyLogo}
-            source={require('../assets/attachmemt.jpg')}
-          /><Image
-            style={styles.tinyLogo}
-            source={require('../assets/delete_icon.jpeg')}
-          />
+          <TouchableOpacity >
+            <Image
+              style={styles.tinyLogo}
+              source={require('../assets/attachmemt.jpg')}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => deleteHW(index)}>
+            <Image
+              style={styles.tinyLogo}
+              source={require('../assets/delete_icon.jpeg')}
+            />
+          </TouchableOpacity>
         </View>
         <View style={styles.containerRow}>
           <View style={styles.container_text}>
@@ -142,9 +164,81 @@ const HWListTeacher = ({ route, navigation }) => {
     });
   };
 
+  const deleteHW = (index) => {
+    console.log("index = ", index);
+    console.log("hwList = ", hwList);
+    if (index < 0) {
+      Alert.alert(
+        "Dummy Placeholder HW",
+        "This is a dummy HW. Will be automatically deleted when you have creted real HW!",
+        [
+          {
+            text: "OK", onPress: () => {
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+    else {
+      Alert.alert(
+        "Please Confirm ",
+        "Are You sure you want to Delete this HW?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          {
+            text: "OK", onPress: () => {
+              setLoading(true);
+              {
+                isLoading && (
+                  <View>
+                    <ActivityIndicator style={styles.loading} size='large' />
+                  </View>
+                )
+              }
+
+              try {
+                axios.delete(serverIP.concat("/academics/delete_hw/", index, "/"))
+                  .then(function (response) {
+                    console.log(response);
+                    setLoading(false);
+                    Alert.alert(
+                      "HW Deleted",
+                      "Home Deleted.",
+                      [
+                        {
+                          text: "OK", onPress: () => {
+                            navigation.navigate('HWListTeacher', {
+                              serverIP: serverIP,
+                              schoolId: schoolId,
+                              userID: userID,
+                              userName: userName,
+                              comingFrom: "CreateHW"
+                            });
+                          }
+                        }
+                      ],
+                      { cancelable: false }
+                    );
+                  });
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+  }
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <BigPlus onPress={createHW}/>,
+      headerRight: () => <BigPlus onPress={createHW} />,
       headerStyle: {
         backgroundColor: 'darkslategrey',
       },
