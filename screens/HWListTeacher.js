@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Platform, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity, FlatList, Image, Alert
+  Platform, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity, FlatList, Image, Alert, Linking
 } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
@@ -100,12 +100,6 @@ const HWListTeacher = ({ route, navigation }) => {
               <Text style={styles.innerText}> {title.the_class}-{title.section}</Text>
             </Text>
           </View>
-          <TouchableOpacity >
-            <Image
-              style={styles.tinyLogo}
-              source={require('../assets/attachmemt.jpg')}
-            />
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => deleteHW(index)}>
             <Image
               style={styles.tinyLogo}
@@ -129,6 +123,15 @@ const HWListTeacher = ({ route, navigation }) => {
             </Text>
           </View>
         </View>
+        {title.location != null &&
+          <View style={styles.containerRow}>
+            <View style={styles.container_text}>
+              <Text style={styles.baseText} onPress={() => openURL(title)}>
+                Attachment:
+              <Text style={styles.hyperlink}>Tap here to view</Text>
+              </Text>
+            </View>
+          </View>}
         <View style={styles.containerRow}>
           <TouchableOpacity style={styles.FacebookStyle} activeOpacity={0.8}>
             <Image
@@ -154,6 +157,10 @@ const HWListTeacher = ({ route, navigation }) => {
     )
   };
 
+  const openURL = (title) => {
+    Linking.openURL(title.location)
+  }
+
   const createHW = () => {
     navigation.navigate('CreateHW', {
       serverIP: serverIP,
@@ -170,7 +177,7 @@ const HWListTeacher = ({ route, navigation }) => {
     if (index < 0) {
       Alert.alert(
         "Dummy Placeholder HW",
-        "This is a dummy HW. Will be automatically deleted when you have creted real HW!",
+        "This is a dummy HW. Will be automatically deleted when you have created real HW!",
         [
           {
             text: "OK", onPress: () => {
@@ -227,6 +234,16 @@ const HWListTeacher = ({ route, navigation }) => {
                   });
               } catch (error) {
                 console.error(error);
+              }
+              var position = 0;
+              for (var hw of hwList) {
+                if (hw.id == index) {
+                  hwList.splice(position, 1)
+                  break
+                }
+                else {
+                  position++;
+                }
               }
             }
           }
@@ -337,6 +354,18 @@ const styles = StyleSheet.create({
     margin: 4
   },
   innerTextDescription: {
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    color: 'indigo',
+    margin: 4
+  },
+  hyperlink: {
     ...Platform.select({
       ios: {
         fontSize: 14,
