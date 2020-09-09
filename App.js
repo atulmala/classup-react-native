@@ -13,6 +13,7 @@ import SelectClass from './screens/SelectClass';
 import TakeAttendance from './screens/TakeAttendance';
 import HWListTeacher from './screens/HWListTeacher';
 import CreateHW from './screens/CreateHW';
+import HWSubmissions from './screens/HWSubmissions';
 
 const Stack = createStackNavigator();
 
@@ -60,6 +61,9 @@ const App = () => {
           }} />
           <Stack.Screen name="CreateHW" component={CreateHW} options={{
             title: 'Create HomeWork',
+          }} />
+          <Stack.Screen name="HWSubmissions" component={HWSubmissions} options={{
+            title: 'HW Submissions',
           }} />
 
         </Stack.Navigator>
