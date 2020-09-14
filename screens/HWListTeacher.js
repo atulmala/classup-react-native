@@ -133,7 +133,7 @@ const HWListTeacher = ({ route, navigation }) => {
             </View>
           </View>}
         <View style={styles.containerRow}>
-          <TouchableOpacity style={styles.FacebookStyle} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.FacebookStyle} activeOpacity={0.8} onPress={() => showSubmissins(index)}>
             <Image
               source={require('../assets/lens.png')}
               style={styles.ImageIconStyle}
@@ -168,6 +168,18 @@ const HWListTeacher = ({ route, navigation }) => {
       userID: userID,
       userName: userName,
       comingFrom: "teacherMenu"
+    });
+  };
+
+  const showSubmissins = (index) => {
+    console.log("index = ", index);
+    navigation.navigate('HWSubmissions', {
+      serverIP: serverIP,
+      schoolId: schoolId,
+      userID: userID,
+      userName: userName,
+      hwId: index,
+      comingFrom: "hwListTeacher"
     });
   };
 
