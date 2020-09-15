@@ -22,8 +22,6 @@ const HWSubmissions = ({ route, navigation }) => {
     axios
       .get(url)
       .then(function (response) {
-        // handle success
-        
         for (var i = 0; i < response.data.length; i++) {
           let submission = {};
           submission.student_id = response.data[i].student_id;
@@ -32,7 +30,8 @@ const HWSubmissions = ({ route, navigation }) => {
           submission.evaluated = response.data[i].evaluated;
           submissionList.push(submission);
         }
-        
+        console.log("submissionList = ", submissionList);
+
         setLoading(false);
       })
       .catch(function (error) {
@@ -46,56 +45,21 @@ const HWSubmissions = ({ route, navigation }) => {
     return (
       <View style={styles.containerLine}>
         <View style={styles.containerRow}>
-          <View style={styles.container_text}>
-            <Text style={styles.baseText}>{title.student}</Text>
+          <View style={styles.container_title}>
+            <Text style={styles.title}>{title.student}</Text>
           </View>
-          <View style={styles.container_text}>
-            <Text style={styles.baseText}>
-              Class:
-              <Text style={styles.innerText}> {title.the_class}-{title.section}</Text>
-            </Text>
-          </View>
-          <TouchableOpacity onPress={() => deleteHW(index)}>
-            <Image
-              style={styles.tinyLogo}
-              source={require('../assets/delete_icon.jpeg')}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.containerRow}>
-          <View style={styles.container_text}>
-            <Text style={styles.baseText}>
-              Subect:
-              <Text style={styles.innerText}> {title.subject}</Text>
-            </Text>
-          </View>
-        </View>
-        <View style={styles.containerRow}>
-          <View style={styles.container_text}>
-            <Text style={styles.baseText}>
-              Description:
-              <Text style={styles.innerTextDescription}> {title.description}</Text>
-            </Text>
-          </View>
-        </View>
-        {title.location != null &&
-          <View style={styles.containerRow}>
+          {title.submitted == "not submitted" &&
             <View style={styles.container_text}>
-              <Text style={styles.baseText} onPress={() => openURL(title)}>
-                Attachment:
-              <Text style={styles.hyperlink}>Tap here to view</Text>
-              </Text>
-            </View>
-          </View>}
-        <View style={styles.containerRow}>
-          <TouchableOpacity style={styles.FacebookStyle} activeOpacity={0.8}>
-            <Image
-              source={require('../assets/lens.png')}
-              style={styles.ImageIconStyle}
-            />
-            <View style={styles.SeparatorLine} />
-            <Text style={styles.TextStyle}> View Submissions </Text>
-          </TouchableOpacity>
+              <Text style={styles.notSubmitted}> {title.submitted}</Text>
+            </View>}
+          {title.submitted == "submitted" &&
+            <View style={styles.container_text}>
+              <Text style={styles.submitted}> {title.submitted}</Text>
+            </View>}
+          {title.submitted == "evaluated" &&
+            <View style={styles.container_text}>
+              <Text style={styles.evaluated}> {title.submitted}</Text>
+            </View>}
         </View>
       </View>
     )
@@ -112,118 +76,13 @@ const HWSubmissions = ({ route, navigation }) => {
     )
   };
 
-  const openURL = (title) => {
-    Linking.openURL(title.location)
-  }
-
-  const createHW = () => {
-    navigation.navigate('CreateHW', {
-      serverIP: serverIP,
-      schoolId: schoolId,
-      userID: userID,
-      userName: userName,
-      comingFrom: "teacherMenu"
-    });
-  };
-
-  const deleteHW = (index) => {
-    console.log("index = ", index);
-    console.log("hwList = ", hwList);
-    if (index < 0) {
-      Alert.alert(
-        "Dummy Placeholder HW",
-        "This is a dummy HW. Will be automatically deleted when you have created real HW!",
-        [
-          {
-            text: "OK", onPress: () => {
-            }
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-    else {
-      Alert.alert(
-        "Please Confirm ",
-        "Are You sure you want to Delete this HW?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel"
-          },
-          {
-            text: "OK", onPress: () => {
-              setLoading(true);
-              {
-                isLoading && (
-                  <View>
-                    <ActivityIndicator style={styles.loading} size='large' />
-                  </View>
-                )
-              }
-
-              try {
-                axios.delete(serverIP.concat("/academics/delete_hw/", index, "/"))
-                  .then(function (response) {
-                    console.log(response);
-                    setLoading(false);
-                    Alert.alert(
-                      "HW Deleted",
-                      "Home Deleted.",
-                      [
-                        {
-                          text: "OK", onPress: () => {
-                            navigation.navigate('HWListTeacher', {
-                              serverIP: serverIP,
-                              schoolId: schoolId,
-                              userID: userID,
-                              userName: userName,
-                              comingFrom: "CreateHW"
-                            });
-                          }
-                        }
-                      ],
-                      { cancelable: false }
-                    );
-                  });
-              } catch (error) {
-                console.error(error);
-              }
-              var position = 0;
-              for (var hw of hwList) {
-                if (hw.id == index) {
-                  hwList.splice(position, 1)
-                  break
-                }
-                else {
-                  position++;
-                }
-              }
-            }
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-  }
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <BigPlus onPress={createHW} />,
-      headerStyle: {
-        backgroundColor: 'darkslategrey',
-      },
-    });
-  });
-
   return (
     <View style={styles.container}>
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
           <CustomListview
-            itemList={hwList}
+            itemList={submissionList}
           />)}
     </View>
   )
@@ -234,17 +93,16 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column'
   },
-  parallel: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    height: 25,
-    backgroundColor: '#ffe4e1'
-  },
   containerRow: {
     flex: 1,
     flexDirection: 'row',
-
-    backgroundColor: 'azure',
+    paddingLeft: 2,
+    marginLeft: 4,
+    marginRight: 4,
+    marginTop: 4,
+    marginBottom: 2,
+    borderRadius: 10,
+    elevation: 6,
   },
   containerLine: {
     flex: 1,
@@ -256,90 +114,40 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 2,
     borderRadius: 10,
-    backgroundColor: 'azure',
+    backgroundColor: 'lavender',
     elevation: 6,
   },
-  tinyLogo: {
-    margin: 8,
-    width: 24,
-    height: 24,
+  container_title: {
+    flex: 6,
+    flexDirection: 'column',
+    marginRight: 2,
+    justifyContent: 'center',
   },
   container_text: {
-    flex: 3,
+    flex: 4,
     flexDirection: 'column',
-    marginLeft: 8,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    marginRight: 2,
   },
-  attendanceSwitch: {
-    ...Platform.select({
-      ios: {
-        flex: 0
-      },
-      android: {
-        flex: 1
-      }
-    }),
-    marginRight: 6,
-    marginLeft: 6
+  title: {
+    fontSize: 16,
+    color: '#000',
+    fontFamily: 'Verdana'
   },
-  baseText: {
-    ...Platform.select({
-      ios: {
-        fontSize: 14,
-      },
-      android: {
-        fontSize: 16,
-      }
-    }),
-
-    fontWeight: 'bold',
-    color: '#708090',
-    margin: 4
+  notSubmitted: {
+    fontSize: 16,
+    color: 'darkorange',
+    fontFamily: 'Verdana'
   },
-  innerText: {
-    ...Platform.select({
-      ios: {
-        fontSize: 14,
-      },
-      android: {
-        fontSize: 16,
-      }
-    }),
-    color: '#4b0082',
-    margin: 4
-  },
-  innerTextDescription: {
-    ...Platform.select({
-      ios: {
-        fontSize: 14,
-      },
-      android: {
-        fontSize: 16,
-      }
-    }),
-    color: 'indigo',
-    margin: 4
-  },
-  hyperlink: {
-    ...Platform.select({
-      ios: {
-        fontSize: 14,
-      },
-      android: {
-        fontSize: 16,
-      }
-    }),
+  submitted: {
+    fontSize: 16,
     color: 'dodgerblue',
-    margin: 4
+    fontFamily: 'Verdana'
   },
-  btn1: {
-    backgroundColor: '#FFCDD2',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
+  evaluated: {
+    fontSize: 16,
+    color: 'lawngreen',
+    fontFamily: 'Verdana'
   },
   loading: {
     position: 'absolute',
@@ -351,34 +159,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#F5FCFF88'
   },
-  FacebookStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'cornflowerblue',
-    borderWidth: 0.5,
-    borderColor: '#fff',
-    borderRadius: 10,
-    margin: 5,
-  },
-  TextStyle: {
-    color: 'white',
-    fontSize: 18,
-    marginBottom: 4,
-    marginRight: 4,
-  },
-  ImageIconStyle: {
-    padding: 10,
-    margin: 5,
-    height: 25,
-    width: 25,
-    resizeMode: 'stretch',
-  },
-  SeparatorLine: {
-    backgroundColor: '#fff',
-    width: 0,
-    height: 40,
-  }
-
 });
 
 export default HWSubmissions;
