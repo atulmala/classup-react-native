@@ -5,14 +5,17 @@ import Colors from '../Constants/colors';
 
 const ParentMenu = ({ route, navigation }) => {
   console.log('inside ParentMenu');
+  
   const testPress = () => {
     Alert.alert('was pressed');
     console.log('was pressed');
   };
 
   const { url } = route.params;
+  const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
+  const { userID } = route.params;
   const { feeDefaultStatus } = route.params;
   const { welcomeMessage } = route.params;
 
@@ -48,6 +51,16 @@ const ParentMenu = ({ route, navigation }) => {
   };
   showToast();
 
+  const _gotoSelectSubject = () => {
+    navigation.navigate('SelectSubject', {
+      serverIP: serverIP,
+      schoolId: schoolId,
+      userID: userID,
+      userName: userName,
+      comingFrom: ""
+    });
+  };
+
 return (
   <View style={styles.container}>
     {
@@ -65,7 +78,7 @@ return (
     </View>
 
     <View style={styles.parallel}>
-      <TouchableOpacity style={styles.btn3} onPress={testPress}>
+      <TouchableOpacity style={styles.btn3} onPress={_gotoSelectSubject}>
         <Text style={styles.font}>Homework</Text>
       </TouchableOpacity>
 

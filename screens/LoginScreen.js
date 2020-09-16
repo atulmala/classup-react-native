@@ -108,6 +108,8 @@ const LoginScreen = ({ navigation }) => {
           OneSignal.addEventListener('opened', onOpened);
           OneSignal.addEventListener('ids', onIds);
 
+          let welcomeMessage = json.welcome_message;
+
           // check whether the user account is active or not
           if (json.user_status != "active") {
             Toast.show({
@@ -174,17 +176,15 @@ const LoginScreen = ({ navigation }) => {
               let feeDefaultStatus = json.fee_defaulter;
               console.log('feeDefaultStatus = ', feeDefaultStatus);
               if (feeDefaultStatus == "yes") {
-                let welcomeMessage = json.welcome_message;
                 let stopAccess = json.stop_access;
                 if (stopAccess == "false") {
-                  navigation.navigate('ParentMenu', {
+                  navigation.navigate('SelectWard', {
                     serverIP: serverIP,
                     schoolId: json.school_id,
                     userID: loginID,
                     userName: json.user_name,
                     feeDefaultStatus: feeDefaultStatus,
                     welcomeMessage: welcomeMessage,
-
                   });
                 }
                 else {
@@ -199,6 +199,7 @@ const LoginScreen = ({ navigation }) => {
               else {
                 navigation.navigate('ParentMenu', {
                   serverIP: serverIP,
+                  schoolId: json.school_id,
                   userName: json.user_name,
                   feeDefaultStatus: feeDefaultStatus,
                   welcomeMessage: welcomeMessage
