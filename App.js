@@ -70,7 +70,7 @@ const App = () => {
           <Stack.Screen name="SelectSubject" component={SelectSubject} options={{
             title: 'Select Subject',
           }} />
-          <Stack.Screen name="SelectWard" component={SelectSubject} options={{
+          <Stack.Screen name="SelectWard" component={SelectWard} options={{
             title: 'Select Ward',
           }} />
         </Stack.Navigator>
