@@ -16,6 +16,7 @@ import CreateHW from './screens/CreateHW';
 import HWSubmissions from './screens/HWSubmissions';
 import SelectSubject from './screens/SelectSubject';
 import SelectWard from './screens/SelectWard';
+import HWListStudent from './screens/HWListStudent';
 
 const Stack = createStackNavigator();
 
@@ -72,6 +73,9 @@ const App = () => {
           }} />
           <Stack.Screen name="SelectWard" component={SelectWard} options={{
             title: 'Select Ward',
+          }} />
+          <Stack.Screen name="HWListStudent" component={HWListStudent} options={{
+            title: 'HW List',
           }} />
         </Stack.Navigator>
       </NavigationContainer>

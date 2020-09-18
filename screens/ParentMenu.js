@@ -13,9 +13,10 @@ const ParentMenu = ({ route, navigation }) => {
 
   const { url } = route.params;
   const { serverIP } = route.params;
-  const { schoolId } = route.params;
+  const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
+  const { wardID } = route.params;
   const { feeDefaultStatus } = route.params;
   const { welcomeMessage } = route.params;
 
@@ -52,12 +53,14 @@ const ParentMenu = ({ route, navigation }) => {
   showToast();
 
   const _gotoSelectSubject = () => {
+    console.log("schoolID = ", schoolID);
     navigation.navigate('SelectSubject', {
       serverIP: serverIP,
-      schoolId: schoolId,
+      schoolID: schoolID,
       userID: userID,
+      wardID: wardID,
       userName: userName,
-      comingFrom: ""
+      comingFrom: "ParentMenu"
     });
   };
 
