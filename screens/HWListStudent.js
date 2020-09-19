@@ -117,7 +117,13 @@ const HWListStudent = ({ route, navigation }) => {
             </View>
           </View>}
         <View style={styles.containerRow}>
-          <Button style={styles.button} appearance='outline' status='primary' accessoryLeft={uploadIcon}>
+          <Button
+            style={styles.button}
+            appearance='outline'
+            status='primary'
+            accessoryLeft={uploadIcon}
+            onPress={() => showInstructions(index)}
+          >
             Submit HW
           </Button>
 
@@ -142,6 +148,16 @@ const HWListStudent = ({ route, navigation }) => {
 
   const openURL = (title) => {
     Linking.openURL(title.location)
+  }
+
+  const showInstructions = (index) => {
+    console.log("inside showInstructions")
+    navigation.navigate('HWInstructions', {
+      serverIP: serverIP,
+      userID: userID,
+      studentID: studentID,
+      hwID: index,
+    });
   }
 
   return (
@@ -186,7 +202,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     justifyContent: 'center',
   },
-  
+
   baseText: {
     ...Platform.select({
       ios: {
@@ -243,7 +259,7 @@ const styles = StyleSheet.create({
     width: '45%',
     fontSize: 10
   },
-  
+
   loading: {
     position: 'absolute',
     left: 0,
@@ -254,14 +270,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#F5FCFF88'
   },
-  
+
   TextStyle: {
     color: 'white',
     fontSize: 18,
     marginBottom: 4,
     marginRight: 4,
   },
-  
+
   SeparatorLine: {
     backgroundColor: '#fff',
     width: 0,

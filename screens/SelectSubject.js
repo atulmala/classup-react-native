@@ -14,8 +14,6 @@ const SelectSubject = ({ route, navigation }) => {
   const { userID } = route.params;
   const { wardID } = route.params;
   const { comingFrom } = route.params;
-  const { feeDefaultStatus } = route.params;
-  const { welcomeMessage } = route.params;
 
   var [subjectList] = useState([]);
 
@@ -47,12 +45,10 @@ const SelectSubject = ({ route, navigation }) => {
       if (subject.id == index) {
         navigation.navigate('HWListStudent', {
           serverIP: serverIP,
-          schoolID: schoolID,
           userID: userID,
           studentID: wardID,
           subject: subject.subjectName,
-          feeDefaultStatus: feeDefaultStatus,
-          welcomeMessage: welcomeMessage
+          comingFrom: comingFrom
         });
       }
     }

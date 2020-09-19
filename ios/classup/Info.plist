@@ -59,5 +59,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+  <key>NSCameraUsageDescription</key> 
+    <string>ClassUp requests to use your camera for Home Work Functionality</string> 
+    <!-- Required with iOS 11 and higher: include this only if you are planning to use the camera roll --> 
+    <key>NSPhotoLibraryAddUsageDescription</key> 
+    <string>ClassUp requests to access your photo library for Communication functionality</string>
+    <!-- Include this only if you are planning to use the camera roll --> 
+    <key>NSPhotoLibraryUsageDescription</key> 
+    <string>ClassUp requests to access your photo library for Communication functionality</string>
 </dict>
 </plist>

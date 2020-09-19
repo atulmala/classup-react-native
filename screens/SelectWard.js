@@ -3,7 +3,6 @@ import { StyleSheet, View, ActivityIndicator, FlatList, Image, TouchableWithoutF
 import { Button, Text, Icon, List, ListItem } from '@ui-kitten/components';
 import axios from 'axios';
 
-
 const SelectWard = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { userName } = route.params;
