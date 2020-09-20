@@ -66,7 +66,7 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     setLoading(true);
-    // let server_ip = 'https://wwww.classupclient.com';
+    // let serverIP = 'https://wwww.classupclient.com';
     let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
     let url = serverIP.concat('/auth/login1/');
     fetch(url, {

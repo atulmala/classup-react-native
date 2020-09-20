@@ -1,7 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Image, Alert } from 'react-native';
 import { Text } from '@ui-kitten/components';
-import { RNCamera } from 'react-native-camera';
 
 
 const HWInstructions = ({ route, navigation }) => {
@@ -12,17 +11,15 @@ const HWInstructions = ({ route, navigation }) => {
   const { studentID } = route.params;
   const { hwID } = route.params;
 
-  const [takingPic, isTakingPic] = useState(false);
-
-  const CameraIcon = ({ onPress }) => {
+  const RightArrow = ({ onPress }) => {
     return (
       <View style={{ flexDirection: 'row' }}>
         <TouchableOpacity onPress={onPress}>
           <Image
-            source={require('../assets/camera.png')}
+            source={require('../assets/right_arrow.png')}
             style={{
-              width: 35,
-              height: 35,
+              width: 40,
+              height: 40,
               borderRadius: 40 / 2,
               marginLeft: 15,
               marginRight: 10
@@ -33,51 +30,34 @@ const HWInstructions = ({ route, navigation }) => {
     );
   }
 
-  const myCamera = useRef();
-  const Camera = () => {
-    return (
-      <RNCamera
-        ref={myCamera}
-        captureAudio={false}
-        style={{ flex: 1 }}
-        type={RNCamera.Constants.Type.back}
-        androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'We need your permission to use your camera',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel'
-        }}>
-      </RNCamera >
+  startCamera = async () => {
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to start HW Upload process?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            navigation.navigate('TakeHWPic', {
+              serverIP: serverIP,
+              userID: userID,
+              studentID: studentID,
+              hwID: hwID
+            });
+          }
+        }
+      ],
+      { cancelable: false }
     );
-  };
-
-  takePicture = async () => {
-    if (myCamera && !takingPic) {
-      console.log("camera = ", myCamera);
-      let options = {
-        quality: 0.85,
-        fixOrientation: true,
-        forceUpOrientation: true,
-      };
-
-      isTakingPic(true);
-
-      try { 
-        const data = await myCamera.current.takePictureAsync(options);
-        Alert.alert('Success', JSON.stringify(data));
-      } catch (err) {
-        Alert.alert('Error', 'Failed to take picture: ' + (err.message || err));
-        return;
-      } finally {
-        isTakingPic(false);
-      }
-
-    }
   };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <CameraIcon onPress={takePicture} />,
+      headerRight: () => <RightArrow onPress={startCamera} />,
       headerStyle: {
         backgroundColor: 'darkslategrey',
       },
@@ -86,18 +66,6 @@ const HWInstructions = ({ route, navigation }) => {
   
   return (
     <React.Fragment>
-      <RNCamera
-        ref={myCamera}
-        captureAudio={false}
-        style={{ flex: 1 }}
-        type={RNCamera.Constants.Type.back}
-        androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'We need your permission to use your camera',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel'
-        }}>
-      </RNCamera >
       <View style={styles.row}>
         <Text style={styles.text} category='P1' status='warning'>1. Most Important:</Text>
         <Text style={styles.text} category='s2'>Keep the Resoultion of Camera Low</Text>
@@ -127,7 +95,7 @@ const HWInstructions = ({ route, navigation }) => {
         <Text style={styles.text} category='s2'>8. Click Finish when pics of all the HW pages are taken</Text>
       </View>
       <View style={styles.row}>
-        <Text style={styles.text} category='s2'>9. Click on the Camera Icon Top Right to start upload HW</Text>
+        <Text style={styles.text} category='s2'>9. Click on the Right Arrow Icon Top Right to start upload HW</Text>
       </View>
     </React.Fragment>
   )

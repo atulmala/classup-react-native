@@ -2,11 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
 
-const data = new Array(8).fill({
-  title: 'Item',
-  description: 'Description for Item',
-});
-
 const SelectSubject = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
@@ -94,8 +89,6 @@ const SelectSubject = ({ route, navigation }) => {
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {

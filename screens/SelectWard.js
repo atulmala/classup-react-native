@@ -29,7 +29,6 @@ const SelectWard = ({ route, navigation }) => {
           ward.classSec = response.data[i].current_class + " - " + response.data[i].current_section;
           wardList.push(ward);
         }
-        console.log("wardList = ", wardList);
         setLoading(false);
       })
       .catch(function (error) {
@@ -38,11 +37,9 @@ const SelectWard = ({ route, navigation }) => {
   });
 
   const showParentMenu = (index) => {
-    console.log("index = ", index);
     for (var ward of wardList)  {
       console.log("id = ", ward.id);
       if (ward.id == index) {
-        console.log("schoolId = ", ward.school);
         navigation.navigate('ParentMenu', {
           serverIP: serverIP,
           schoolID: ward.schoolID,
@@ -99,7 +96,6 @@ const SelectWard = ({ route, navigation }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
