@@ -3,7 +3,7 @@ import {
   StyleSheet, View, TouchableOpacity, Image, Alert,
   ActivityIndicator, ImageBackground
 } from 'react-native';
-import { Button, Layout } from '@ui-kitten/components';
+import { Text, Button, Layout } from '@ui-kitten/components';
 
 
 const PreviewHW = ({ route, navigation }) => {
@@ -63,7 +63,10 @@ const styles = StyleSheet.create({
   parallel: {
     flexDirection: 'row',
     marginTop: 5,
-    justifyContent: 'center'
+    justifyContent: 'center',
+  },
+  text: {
+    margin: 2,
   },
   button: {
     margin: 2,

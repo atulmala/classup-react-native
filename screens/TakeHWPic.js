@@ -1,8 +1,8 @@
+import { setStatusBarTranslucent } from 'expo-status-bar';
 import React, { useRef, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
-
+import { Spinner } from '@ui-kitten/components';
 import { RNCamera } from 'react-native-camera';
-
 
 const TakeHWPic = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -13,7 +13,7 @@ const TakeHWPic = ({ route, navigation }) => {
   const { hwID } = route.params;
 
   const [takingPic, isTakingPic] = useState(false);
-  const [uri, SetUri] = useState("");
+  const [data, setData] = useState(null);
   const [loading, setLoading] = React.useState(false);
 
   const CameraIcon = ({ onPress }) => {
@@ -35,41 +35,60 @@ const TakeHWPic = ({ route, navigation }) => {
     );
   }
 
+  const myCamera = useRef();
+  const renderCamera = () => (
+    <RNCamera
+      ref={myCamera}
+      captureAudio={false}
+      style={{ flex: 1 }}
+      type={RNCamera.Constants.Type.back}
+      androidCameraPermissionOptions={{
+        title: 'Permission to use camera',
+        message: 'We need your permission to use your camera',
+        buttonPositive: 'Ok',
+        buttonNegative: 'Cancel'
+      }}>
+    </RNCamera >
+  )
+
+  const renderLoading = () => (
+    <View style={styles.loading}>
+      <Spinner />
+    </View>
+  )
+
   takePicture = async () => {
-    if (myCamera && !takingPic) {
+    if (myCamera.current && !takingPic) {
       let options = {
         quality: 0.5,
-        fixOrientation: true,
-        forceUpOrientation: true,
         skipProcessing: true,
         orientation: "portrait",
+        base64: false
       };
 
       isTakingPic(true);
 
-      try { 
+      try {
         setLoading(false);
-        const data = await myCamera.current.takePictureAsync(options);
-        setLoading(false);
-        SetUri(data.uri);
-        if (uri == "")  {
-          Alert.alert("Some error in taking picture. Pl take again");
-          setLoading(false);
-        }
+        setData(await myCamera.current.takePictureAsync(options));
       } catch (err) {
         Alert.alert('Error', 'Failed to take picture: ' + (err.message || err));
         return;
       } finally {
         isTakingPic(false);
         setLoading(false);
-        if (uri != "")  {
+        console.log("data = ", data);
+        if (data != null) {
           navigation.navigate('PreviewHW', {
             serverIP: serverIP,
             userID: userID,
             studentID: studentID,
             hwID: hwID,
-            uri: uri
+            uri: data.uri
           });
+        }
+        else  {
+          Alert.alert('Error', 'Failed to take picture: Please try again');
         }
       }
     }
@@ -83,27 +102,9 @@ const TakeHWPic = ({ route, navigation }) => {
       },
     });
   });
-  
-  const myCamera = useRef();
-  return (
-    <React.Fragment>
-      {loading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
-      </View> : (
-      <RNCamera
-        ref={myCamera}
-        captureAudio={false}
-        style={{ flex: 1 }}
-        type={RNCamera.Constants.Type.back}
-        androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'We need your permission to use your camera',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel'
-        }}>
-      </RNCamera >)}
-    </React.Fragment>
-  )
+
+  return loading ? renderLoading() : renderCamera();
+
 }
 
 const styles = StyleSheet.create({
@@ -120,14 +121,9 @@ const styles = StyleSheet.create({
     margin: 2,
   },
   loading: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#F5FCFF88'
+    alignItems: 'center',
   },
 });
 

@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpaci
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
 import * as Device from 'expo-device';
+import axios from 'axios';
 import OneSignal from 'react-native-onesignal';
 
 var player_id;
@@ -38,8 +39,6 @@ const LoginScreen = ({ navigation }) => {
   const [loginID, setLoginID] = useState("");
   const [password, setPassword] = useState("");
   var toastMessage = "";
-
-
   const _onPressLogin = () => {
     if (loginID == "") {
       toastMessage = "Please enter Login ID";
@@ -66,16 +65,13 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     setLoading(true);
-    // let serverIP = 'https://wwww.classupclient.com';
-    let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    let serverIP = 'https://www.classupclient.com';
+    // let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
     let url = serverIP.concat('/auth/login1/');
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+    axios({
+      method: "POST",
+      url: url,
+      data: {
         'user': loginID,
         'password': password,
         'device_type': Device.brand,
@@ -83,10 +79,11 @@ const LoginScreen = ({ navigation }) => {
         'os': Device.osName,
         'size': 'standard',
         'resolution': 'standard'
-      })
-    })
-      .then((response) => response.json())
-      .then((json) => {
+      }
+    }).then(
+      result => {
+        const json = result.data;
+
         setLoading(false);
         console.log(json);
         if (json.login == "successful") {
@@ -216,10 +213,18 @@ const LoginScreen = ({ navigation }) => {
             text2: 'Either Login id or Password in Incorrect',
           });
         }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+
+      },
+      error => {
+        setLoading(false);
+        console.log(error);
+        Toast.show({
+          type: 'error',
+          text1: 'Server Error',
+          text2: 'Some issues at Server End. Please try again after some time.',
+        });
+      }
+    );
   };
 
   return (
