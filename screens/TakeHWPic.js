@@ -1,7 +1,6 @@
-import { setStatusBarTranslucent } from 'expo-status-bar';
 import React, { useRef, useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
-import { Spinner } from '@ui-kitten/components';
+import { StyleSheet, View, TouchableOpacity, Image, Alert } from 'react-native';
+import { Spinner, Text } from '@ui-kitten/components';
 import { RNCamera } from 'react-native-camera';
 
 const TakeHWPic = ({ route, navigation }) => {
@@ -11,6 +10,7 @@ const TakeHWPic = ({ route, navigation }) => {
   const { userID } = route.params;
   const { studentID } = route.params;
   const { hwID } = route.params;
+
 
   const [takingPic, isTakingPic] = useState(false);
   const [data, setData] = useState(null);
@@ -51,17 +51,13 @@ const TakeHWPic = ({ route, navigation }) => {
     </RNCamera >
   )
 
-  const renderLoading = () => (
-    <View style={styles.loading}>
-      <Spinner />
-    </View>
-  )
-
   takePicture = async () => {
     if (myCamera.current && !takingPic) {
       let options = {
-        quality: 0.5,
+        quality: 0.2,
         skipProcessing: true,
+        fixOrientation: true,
+        forceUpOrientation: true,
         orientation: "portrait",
         base64: false
       };
@@ -69,7 +65,7 @@ const TakeHWPic = ({ route, navigation }) => {
       isTakingPic(true);
 
       try {
-        setLoading(false);
+        setLoading(true);
         setData(await myCamera.current.takePictureAsync(options));
       } catch (err) {
         Alert.alert('Error', 'Failed to take picture: ' + (err.message || err));
@@ -77,7 +73,6 @@ const TakeHWPic = ({ route, navigation }) => {
       } finally {
         isTakingPic(false);
         setLoading(false);
-        console.log("data = ", data);
         if (data != null) {
           navigation.navigate('PreviewHW', {
             serverIP: serverIP,
@@ -87,35 +82,45 @@ const TakeHWPic = ({ route, navigation }) => {
             uri: data.uri
           });
         }
-        else  {
+        else {
           Alert.alert('Error', 'Failed to take picture: Please try again');
         }
       }
     }
   };
+  const Header = () => {
+    return (
+      <View style={styles.parallel}>
+        {loading ? <View style={styles.parallel}>
+        <Text style={styles.text} status='info'>Please wait...</Text>
+          <View style={styles.loading}>
+            <Spinner />
+          </View>
+          <CameraIcon onPress={takePicture} />
+        </View> :
+          <CameraIcon onPress={takePicture} />}
+      </View>
+    )
+  }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <CameraIcon onPress={takePicture} />,
+      headerRight: () => <Header />,
       headerStyle: {
         backgroundColor: 'darkslategrey',
       },
     });
   });
 
-  return loading ? renderLoading() : renderCamera();
+  return renderCamera();
 
 }
 
 const styles = StyleSheet.create({
-  row: {
+  parallel: {
     flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    marginLeft: 4,
-    marginRight: 4,
-    marginTop: 10,
-    marginBottom: 2,
+    marginTop: 5,
+    justifyContent: 'center',
   },
   text: {
     margin: 2,

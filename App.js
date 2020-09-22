@@ -39,7 +39,6 @@ const App = () => {
           headerRightContainerStyle: {
             marginRight: 5
           },
-
         }}>
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{
             headerShown: false,
@@ -88,6 +87,7 @@ const App = () => {
           }} />
           <Stack.Screen name="PreviewHW" component={PreviewHW} options={{
             title: ' ',
+            headerLeft: null,
           }} />
         </Stack.Navigator>
       </NavigationContainer>

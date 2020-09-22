@@ -46,7 +46,8 @@ const HWInstructions = ({ route, navigation }) => {
               serverIP: serverIP,
               userID: userID,
               studentID: studentID,
-              hwID: hwID
+              hwID: hwID,
+              comingFrom: "HWInstructions"
             });
           }
         }
