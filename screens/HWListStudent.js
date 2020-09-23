@@ -151,13 +151,66 @@ const HWListStudent = ({ route, navigation }) => {
   }
 
   const showInstructions = (index) => {
-    console.log("inside showInstructions")
-    navigation.navigate('HWInstructions', {
-      serverIP: serverIP,
-      userID: userID,
-      studentID: studentID,
-      hwID: index,
-    });
+    let hwID = index;
+    let url = serverIP.concat("/homework/whether_submitted/", hwID, "/", studentID, "/");
+    axios
+      .get(url)
+      .then(function (response) {
+        const message = response.data.message
+        if (response.data.submission_status == "submitted") {
+          if (response.data.evaluations_status == "evaluated") {
+            Alert.alert(
+              "Already Evaluated ",
+              message,
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => { return },
+                  style: "cancel"
+                }
+              ]
+            );
+          }
+          else {
+            Alert.alert(
+              "Already Submitted ",
+              message,
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel"
+                },
+                {
+                  text: "OK", onPress: () => {
+                    navigation.navigate('HWInstructions', {
+                      serverIP: serverIP,
+                      userID: userID,
+                      studentID: studentID,
+                      hwID: index,
+                    });
+                  }
+                }
+              ],
+              { cancelable: false }
+            );
+          }
+        }
+        else {
+          navigation.navigate('HWInstructions', {
+            serverIP: serverIP,
+            userID: userID,
+            studentID: studentID,
+            hwID: index,
+          });
+        }
+
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        self.waiting = false;
+      });
   }
 
   return (

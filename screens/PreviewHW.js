@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  StyleSheet, View, Alert0
+  StyleSheet, View, Alert
 } from 'react-native';
-import { Button, Spinner } from '@ui-kitten/components';
+import { Text, Button, Spinner } from '@ui-kitten/components';
 import ImageViewer from 'react-native-image-zoom-viewer';
 var RNFS = require('react-native-fs');
 import axios from 'axios';
@@ -16,31 +16,35 @@ const PreviewHW = ({ route, navigation }) => {
   const { hwID } = route.params;
   const { uri } = route.params;
 
+  const [loading, setLoading] = React.useState(false);
 
-  console.log("uri inside PreviewHW = ", uri);
   const images = [{
-    url: uri,
-
-
-    // You can pass props to <Image />.
+    url: uri ,
     props: {
-      // headers: ...
     }
-
   }];
 
   const Header = () => {
     return (
       <View style={styles.parallel}>
-        <Button style={styles.button} appearance='ghost' size='large' status='warning' onPress={retake}>
-          Retake
+        {loading ? <View style={styles.parallel}>
+          <Text style={styles.text} status='info'>Please wait...</Text>
+          <View style={styles.loading}>
+            <Spinner />
+          </View>
+          <CameraIcon onPress={takePicture} />
+        </View> :
+          <View style={styles.parallel}>
+            <Button style={styles.button} appearance='ghost' size='large' status='warning' onPress={retake}>
+              Retake
           </Button>
-        <Button style={styles.button} appearance='ghost' size='large' status='info' onPress={next}>
-          Next
+            <Button style={styles.button} appearance='ghost' size='large' status='info' onPress={next}>
+              Next
           </Button>
-        <Button style={styles.button} appearance='ghost' size='large' status='success'>
-          Done
+            <Button style={styles.button} appearance='ghost' size='large' status='success'>
+              Done
           </Button>
+          </View>}
       </View>
     )
   }
@@ -54,15 +58,15 @@ const PreviewHW = ({ route, navigation }) => {
   }
 
   const retake = () => {
-    const filePath = uri.split('///').pop()  // removes leading file:///
-
+    const filePath = uri.split('///').pop()
     RNFS.exists(filePath)
       .then((res) => {
         if (res) {
           RNFS.unlink(filePath)
             .then(() => console.log('FILE DELETED'))
         }
-      })
+      });
+
     navigation.navigate('TakeHWPic', {
       serverIP: serverIP,
       userID: userID,
@@ -71,46 +75,58 @@ const PreviewHW = ({ route, navigation }) => {
     });
   }
 
-  const next = () => {
-    let formData = new FormData();
-    formData.append("hw_id", hwID);
-    formData.append("student_id", studentID);
-    const split = uri.split('/');
-    const name = split.pop();
-    formData.append("file",
-      {
-        uri: uri,
-        type: 'image/jpeg',
-        name: name
-      });
-
+  const uploadHW = async () => {
     try {
-      axios.post(serverIP.concat("/homework/submit_hw_student/"), formData)
+      let formData = new FormData();
+      formData.append("hw_id", hwID);
+      formData.append("student_id", studentID);
+      const split = uri.split('/');
+      const name = split.pop();
+      formData.append("file",
+        {
+          uri: uri,
+          type: 'image/jpeg',
+          name: name
+        });
+      await axios.post(serverIP.concat("/homework/submit_hw_student/"), formData)
         .then(function (response) {
           console.log(response);
-          Alert.alert(
-            "HW Uploaded",
-            "Home Work Uploaded to Server.",
-            [
-              {
-                text: "OK", onPress: () => {
-                  navigation.navigate('TakeHWPic', {
-                    serverIP: serverIP,
-                    userID: userID,
-                    studentID: studentID,
-                    hwID: hwID,
-                  });
-                }
+          setLoading(true);
+          const filePath = uri.split('///').pop()
+          RNFS.exists(filePath)
+            .then((res) => {
+              if (res) {
+                RNFS.unlink(filePath)
+                  .then(() => console.log('FILE DELETED'))
               }
-            ],
-            { cancelable: false }
-          );
+            });
+
         });
     } catch (error) {
       console.error(error);
     }
   }
 
+  const next = () => {
+    uploadHW();
+    Alert.alert(
+      "Next Page",
+      "Please open the next page of your HW and focus camera.",
+      [
+        {
+          text: "OK", onPress: () => {
+            navigation.navigate('TakeHWPic', {
+              serverIP: serverIP,
+              userID: userID,
+              studentID: studentID,
+              hwID: hwID,
+            });
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -123,7 +139,12 @@ const PreviewHW = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <ImageViewer imageUrls={images} backgroundColor={'transparent'} loadingRender={renderSpinner} />
+      <ImageViewer
+        key={(new Date()).getTime()}
+        imageUrls={images}
+        backgroundColor={'transparent'}
+        loadingRender={renderSpinner}
+      />
     </View>
   )
 }

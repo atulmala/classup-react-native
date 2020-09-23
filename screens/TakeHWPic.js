@@ -11,9 +11,8 @@ const TakeHWPic = ({ route, navigation }) => {
   const { studentID } = route.params;
   const { hwID } = route.params;
 
-
   const [takingPic, isTakingPic] = useState(false);
-  const [data, setData] = useState(null);
+  // const [data, setData] = useState(null);
   const [loading, setLoading] = React.useState(false);
 
   const CameraIcon = ({ onPress }) => {
@@ -63,10 +62,11 @@ const TakeHWPic = ({ route, navigation }) => {
       };
 
       isTakingPic(true);
-
+      var data = null;
       try {
         setLoading(true);
-        setData(await myCamera.current.takePictureAsync(options));
+        // setData(await myCamera.current.takePictureAsync(options));
+        data = await myCamera.current.takePictureAsync(options);
       } catch (err) {
         Alert.alert('Error', 'Failed to take picture: ' + (err.message || err));
         return;
@@ -111,9 +111,7 @@ const TakeHWPic = ({ route, navigation }) => {
       },
     });
   });
-
   return renderCamera();
-
 }
 
 const styles = StyleSheet.create({
