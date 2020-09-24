@@ -13,8 +13,6 @@ const HWListStudent = ({ route, navigation }) => {
   const { userID } = route.params;
   const { studentID } = route.params;
   const { subject } = route.params;
-  const { feeDefaultStatus } = route.params;
-  const { welcomeMessage } = route.params;
 
   const [isLoading, setLoading] = useState(true);
 
@@ -61,7 +59,6 @@ const HWListStudent = ({ route, navigation }) => {
 
             hwList.push(hw);
           }
-          hwList.reverse();
           console.log("hwList = ", hwList);
         }
         setLoading(false);
@@ -158,7 +155,7 @@ const HWListStudent = ({ route, navigation }) => {
       .then(function (response) {
         const message = response.data.message
         if (response.data.submission_status == "submitted") {
-          if (response.data.evaluations_status == "evaluated") {
+          if (response.data.evaluation_status == "evaluated") {
             Alert.alert(
               "Already Evaluated ",
               message,
@@ -183,12 +180,23 @@ const HWListStudent = ({ route, navigation }) => {
                 },
                 {
                   text: "OK", onPress: () => {
-                    navigation.navigate('HWInstructions', {
-                      serverIP: serverIP,
-                      userID: userID,
-                      studentID: studentID,
-                      hwID: index,
-                    });
+                    let url = serverIP.concat("/homework/delete_submission/", hwID, "/", studentID, "/");
+                    axios
+                      .delete(url)
+                      .then(function (response) {
+                        navigation.navigate('HWInstructions', {
+                          serverIP: serverIP,
+                          userID: userID,
+                          studentID: studentID,
+                          subject: subject,
+                          hwID: index,
+                        });
+                      })
+                      .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                        self.waiting = false;
+                      });
                   }
                 }
               ],

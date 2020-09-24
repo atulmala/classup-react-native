@@ -7,7 +7,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 var RNFS = require('react-native-fs');
 import axios from 'axios';
 
-const PreviewHW = ({ route, navigation }) => {
+const CheckHW = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
@@ -224,4 +224,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PreviewHW;
+export default CheckHW;

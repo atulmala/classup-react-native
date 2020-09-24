@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Platform, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity, FlatList, Image, Alert, Linking
+  StyleSheet, Text, View, ActivityIndicator, FlatList, Linking
 } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
@@ -44,7 +44,7 @@ const HWSubmissions = ({ route, navigation }) => {
   const CustomRow = ({ title, index }) => {
     return (
       <View style={styles.containerLine}>
-        <View style={styles.containerRow}>
+        <View style={styles.parallel}>
           <View style={styles.container_title}>
             <Text style={styles.title}>{title.student}</Text>
           </View>
@@ -93,6 +93,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column'
   },
+  parallel: {
+    flexDirection: 'row',
+    marginTop: 5,
+    justifyContent: 'center',
+  },
   containerRow: {
     flex: 1,
     flexDirection: 'row',
@@ -119,18 +124,19 @@ const styles = StyleSheet.create({
   },
   container_title: {
     flex: 6,
-    flexDirection: 'column',
+    marginLeft: 8,
     marginRight: 2,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   container_text: {
     flex: 4,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     marginRight: 2,
+    fontSize: 14,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#000',
     fontFamily: 'Verdana'
   },

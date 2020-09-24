@@ -9,6 +9,7 @@ const TakeHWPic = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
   const { studentID } = route.params;
+  const { subject } = route.params;
   const { hwID } = route.params;
 
   const [takingPic, isTakingPic] = useState(false);
@@ -53,7 +54,7 @@ const TakeHWPic = ({ route, navigation }) => {
   takePicture = async () => {
     if (myCamera.current && !takingPic) {
       let options = {
-        quality: 0.2,
+        quality: 0.12,
         skipProcessing: true,
         fixOrientation: true,
         forceUpOrientation: true,
@@ -79,6 +80,7 @@ const TakeHWPic = ({ route, navigation }) => {
             userID: userID,
             studentID: studentID,
             hwID: hwID,
+            subject: subject, 
             uri: data.uri
           });
         }

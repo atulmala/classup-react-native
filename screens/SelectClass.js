@@ -3,11 +3,8 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { IndexPath, Datepicker, Layout, Text, Select, Button, SelectItem, Icon } from '@ui-kitten/components';
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-
-var RNFS = require('react-native-fs');
 
 const calendarIcon = (props) => (
   <Icon {...props} name='calendar'/>
@@ -88,7 +85,7 @@ const SelectClass = ({ route, navigation }) => {
       });
       return;
     }
-    else{
+    else  {
       selectedClass = classList[selectedClassIndex.row];
     }
 

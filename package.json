@@ -36,6 +36,7 @@
     "react-native-input-scroll-view": "^1.11.0",
     "react-native-loading-spinner-overlay": "^1.1.0",
     "react-native-onesignal": "^3.9.0",
+    "react-native-photo-editor": "^1.0.8",
     "react-native-reanimated": "^1.10.1",
     "react-native-safe-area-context": "^3.1.1",
     "react-native-screens": "^2.9.0",

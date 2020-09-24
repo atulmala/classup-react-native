@@ -3,7 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, IconRegistry, Layout, Text } from '@ui-kitten/components';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import LoginScreen from './screens/LoginScreen';
 import TeacherMenu from './screens/TeacherMenu';
@@ -20,6 +20,7 @@ import HWListStudent from './screens/HWListStudent';
 import HWInstructions from './screens/HWInstructions';
 import TakeHWPic from './screens/TakeHWPic';
 import PreviewHW from './screens/PreviewHW';
+import CheckHW from './screens/CheckHW';
 
 const Stack = createStackNavigator();
 
@@ -39,6 +40,7 @@ const App = () => {
           headerRightContainerStyle: {
             marginRight: 5
           },
+          headerBackTitleVisible: false,
         }}>
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{
             headerShown: false,
@@ -89,11 +91,14 @@ const App = () => {
             title: ' ',
             headerLeft: null,
           }} />
+          <Stack.Screen name="CheckHW" component={CheckHW} options={{
+            title: ' ',
+            headerLeft: null,
+          }} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>
   );
 }
-
 export default App;
 export { Stack };

@@ -10,6 +10,7 @@ const HWInstructions = ({ route, navigation }) => {
   const { userID } = route.params;
   const { studentID } = route.params;
   const { hwID } = route.params;
+  const { subject } = route.params;
 
   const RightArrow = ({ onPress }) => {
     return (
@@ -46,6 +47,7 @@ const HWInstructions = ({ route, navigation }) => {
               serverIP: serverIP,
               userID: userID,
               studentID: studentID,
+              subject: subject,
               hwID: hwID,
               comingFrom: "HWInstructions"
             });
