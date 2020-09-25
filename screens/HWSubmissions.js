@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, View, ActivityIndicator, FlatList, Linking
+  StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableWithoutFeedback
 } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 
 const HWSubmissions = ({ route, navigation }) => {
@@ -13,9 +12,7 @@ const HWSubmissions = ({ route, navigation }) => {
   const { hwId } = route.params;
 
   const [isLoading, setLoading] = useState(true);
-
   const [submissionList] = useState([]);
-  const isFocused = useIsFocused();
 
   useEffect(() => {
     let url = serverIP.concat("/homework/get_submission_status/", hwId, "/");
@@ -24,13 +21,13 @@ const HWSubmissions = ({ route, navigation }) => {
       .then(function (response) {
         for (var i = 0; i < response.data.length; i++) {
           let submission = {};
-          submission.student_id = response.data[i].student_id;
+          submission.index = i;
+          submission.studentId = response.data[i].student_id;
           submission.student = response.data[i].student;
           submission.submitted = response.data[i].submitted;
           submission.evaluated = response.data[i].evaluated;
           submissionList.push(submission);
         }
-        console.log("submissionList = ", submissionList);
 
         setLoading(false);
       })
@@ -39,29 +36,44 @@ const HWSubmissions = ({ route, navigation }) => {
         console.log(error);
         self.waiting = false;
       });
-  }, [isFocused]);
+  });
+
+  const checkHW = (index) =>  {
+    let studentID = submissionList[index].studentId;
+    navigation.navigate('CheckHW', {
+      serverIP: serverIP,
+      schoolId: schoolId,
+      userName: userName,
+      userID: userID,
+      studentID: studentID,
+      hwID: hwId,
+      fetchPage: 0
+    });
+  };
 
   const CustomRow = ({ title, index }) => {
     return (
-      <View style={styles.containerLine}>
-        <View style={styles.parallel}>
-          <View style={styles.container_title}>
-            <Text style={styles.title}>{title.student}</Text>
+      <TouchableWithoutFeedback onPress={() => checkHW(index)}>
+        <View style={styles.containerLine}>
+          <View style={styles.parallel}>
+            <View style={styles.container_title}>
+              <Text style={styles.title}>{title.student}</Text>
+            </View>
+            {title.submitted == "not submitted" &&
+              <View style={styles.container_text}>
+                <Text style={styles.notSubmitted}> {title.submitted}</Text>
+              </View>}
+            {title.submitted == "submitted" &&
+              <View style={styles.container_text}>
+                <Text style={styles.submitted}> {title.submitted}</Text>
+              </View>}
+            {title.submitted == "evaluated" &&
+              <View style={styles.container_text}>
+                <Text style={styles.evaluated}> {title.submitted}</Text>
+              </View>}
           </View>
-          {title.submitted == "not submitted" &&
-            <View style={styles.container_text}>
-              <Text style={styles.notSubmitted}> {title.submitted}</Text>
-            </View>}
-          {title.submitted == "submitted" &&
-            <View style={styles.container_text}>
-              <Text style={styles.submitted}> {title.submitted}</Text>
-            </View>}
-          {title.submitted == "evaluated" &&
-            <View style={styles.container_text}>
-              <Text style={styles.evaluated}> {title.submitted}</Text>
-            </View>}
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     )
   };
 
@@ -70,7 +82,7 @@ const HWSubmissions = ({ route, navigation }) => {
       <View style={styles.container}>
         <FlatList
           data={itemList}
-          renderItem={({ item }) => <CustomRow title={item} index={item.id} />}
+          renderItem={({ item }) => <CustomRow title={item} index={item.index} />}
         />
       </View>
     )
@@ -78,7 +90,8 @@ const HWSubmissions = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? <View style={styles.loading}>
+      {isLoading ? 
+      <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
           <CustomListview

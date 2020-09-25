@@ -93,7 +93,6 @@ const App = () => {
           }} />
           <Stack.Screen name="CheckHW" component={CheckHW} options={{
             title: ' ',
-            headerLeft: null,
           }} />
         </Stack.Navigator>
       </NavigationContainer>
