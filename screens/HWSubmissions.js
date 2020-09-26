@@ -3,6 +3,7 @@ import {
   StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableWithoutFeedback
 } from 'react-native';
 import axios from 'axios';
+import { sub } from 'react-native-reanimated';
 
 const HWSubmissions = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -28,7 +29,6 @@ const HWSubmissions = ({ route, navigation }) => {
           submission.evaluated = response.data[i].evaluated;
           submissionList.push(submission);
         }
-
         setLoading(false);
       })
       .catch(function (error) {
@@ -38,22 +38,23 @@ const HWSubmissions = ({ route, navigation }) => {
       });
   });
 
-  const checkHW = (index) =>  {
+  const showHWPages = (index) => {
     let studentID = submissionList[index].studentId;
-    navigation.navigate('CheckHW', {
-      serverIP: serverIP,
-      schoolId: schoolId,
-      userName: userName,
-      userID: userID,
-      studentID: studentID,
-      hwID: hwId,
-      fetchPage: 0
-    });
+    if (submissionList[index].submitted != "not submitted") {
+      navigation.navigate('HWPagesList', {
+        serverIP: serverIP,
+        schoolId: schoolId,
+        userName: userName,
+        userID: userID,
+        studentID: studentID,
+        hwID: hwId,
+      });
+    }
   };
 
   const CustomRow = ({ title, index }) => {
     return (
-      <TouchableWithoutFeedback onPress={() => checkHW(index)}>
+      <TouchableWithoutFeedback onPress={() => showHWPages(index)}>
         <View style={styles.containerLine}>
           <View style={styles.parallel}>
             <View style={styles.container_title}>
@@ -90,10 +91,10 @@ const HWSubmissions = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? 
-      <View style={styles.loading}>
-        <ActivityIndicator size='large' />
-      </View> : (
+      {isLoading ?
+        <View style={styles.loading}>
+          <ActivityIndicator size='large' />
+        </View> : (
           <CustomListview
             itemList={submissionList}
           />)}

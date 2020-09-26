@@ -34,7 +34,7 @@ const SelectWard = ({ route, navigation }) => {
       .catch(function (error) {
         console.log(error);
       });
-  });
+  }, []);
 
   const showParentMenu = (index) => {
     for (var ward of wardList)  {

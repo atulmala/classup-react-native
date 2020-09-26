@@ -4,28 +4,29 @@ import { Divider, List, ListItem } from '@ui-kitten/components';
 import { HeaderBackButton } from '@react-navigation/stack';
 import axios from 'axios';
 
-const SelectSubject = ({ route, navigation }) => {
+const HWPagesList = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
-  const { wardID } = route.params;
-  const { comingFrom } = route.params;
+  const { studentID } = route.params;
+  const { hwID } = route.params;
 
-  var [subjectList] = useState([]);
+  var [hwPages] = useState([]);
 
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    let url = serverIP.concat("/academics/subject_list/", schoolID, "/");
+    let url = serverIP.concat("/homework/get_hw_pages/", hwID, "/", studentID, "/");
     axios
       .get(url)
       .then(function (response) {
         for (var i = 0; i < response.data.length; i++) {
-          let subject = {};
-          subject.id = response.data[i].id;
-          subject.subjectName = response.data[i].subject_name;
-          subjectList.push(subject);
+          hwPage = {};
+          hwPage.key = "Page # " + (i + 1);
+          hwPage.uri = response.data[i].location;
+          hwPage.title = "Page # " + (i + 1);
+          hwPages.push(hwPage);
         }
         setLoading(false);
       })
@@ -35,34 +36,53 @@ const SelectSubject = ({ route, navigation }) => {
       });
   }, []);
 
-  const showHW = (index) => {
-    navigation.navigate('HWListStudent', {
-      serverIP: serverIP,
-      userID: userID,
-      studentID: wardID,
-      subject: subjectList[index].subjectName,
-      comingFrom: comingFrom
-    });
+  const HeaderTitle = () => {
+    return (
+      <View style={styles.headerTitle}>
+        <Text style={styles.title} status='success' >Please Click on a page to open</Text>
+      </View>
+    );
+  };
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerStyle: {
+        backgroundColor: 'sienna',
+      },
+    });
+  });
+
+  const checkHW = (index) => {
+    navigation.navigate('CheckHW', {
+      serverIP: serverIP,
+      schoolID: schoolID,
+      userName: userName,
+      userID: userID,
+      studentID: studentID,
+      hwID: hwID,
+      uri: hwPages[index].uri,
+      sequence: index + 1
+    });
+    
   };
 
   const renderItem = ({ item, index }) => (
-    <ListItem style={styles.title} title={item.subjectName} onPress={() => showHW(index)} />
+    <ListItem title={item.title} onPress={() => checkHW(index)}/>
   );
-
 
   return (
     <View style={styles.container}>
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
-          <List
-            style={styles.title}
-            data={subjectList}
-            keyExtractor={(item) => item.subjectName}
-            ItemSeparatorComponent={Divider}
-            renderItem={renderItem}
-          />)}
+    <List
+      style={styles.container}
+      data={hwPages}
+      keyExtractor={(item) => item.title}
+      ItemSeparatorComponent={Divider}
+      renderItem={renderItem}
+    />)}
     </View>
   );
 };
@@ -93,10 +113,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: '#000',
+    color: 'white',
     fontFamily: 'Verdana'
   },
-
+  
 
   loading: {
     position: 'absolute',
@@ -110,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectSubject;
+export default HWPagesList;

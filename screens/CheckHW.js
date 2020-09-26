@@ -11,97 +11,93 @@ import axios from 'axios';
 
 const CheckHW = ({ route, navigation }) => {
   const { serverIP } = route.params;
-  const { schoolId } = route.params;
+  const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
   const { studentID } = route.params;
   const { hwID } = route.params;
-  const { fetchPage } = route.params;
+  const { uri } = route.params;
+  const { sequence } = route.params;
 
   const [isLoading, setLoading] = useState(true);
-  var uri = "https://classup2.s3.amazonaws.com/media/prod/homework/0e91ad75-3dd5-458f-a043-543f140007ca.jpg";
-  const hwPages = useState([]);
-
-  const images = [{
-    url: uri,
-    props: {
-    }
-  }];
 
   useEffect(() => {
-    let url = serverIP.concat("/homework/get_hw_pages/", hwID, "/", studentID, "/");
-    axios
-      .get(url)
-      .then(function (response) {
-        for (var i = 0; i < response.data.length; i++) {
-          hwPages.push(response.data[i].location);
-        }
-        console.log("hwPages = ", hwPages);
-        RNFetchBlob
-          .config({
-            // add this option that makes response data to be stored as a file,
-            // this is much more performant.
-            fileCache: true,
-          })
-          .fetch('GET', hwPages[fetchPage + 2], {
-            //some headers ..
-          })
-          .then((res) => {
-            // the temp file path
-            console.log('The file saved to ', res.path());
-            PhotoEditor.Edit({
-              path: res.path(),
-              hiddenControls: ['save', 'share', 'sticker'],
-              colors: ['#ff0000', '#008000'],
-              onDone: (result) => {
-                // Note: the path of file saved after editing is different than the file opened. 
-                console.log('on done', res.path);
-                console.log('on done result', result); // use this path to preview the saved image or overwrite the original image.
-                // eg: result --> /storage/emulated/0/Pictures/PhotoEditorSDK/IMG_20200813_130958.jpg 
-              },
-              onCancel: () => {
-                console.log('on cancel');
-              },
-            });
-          });
-
-        setLoading(false);
+    RNFetchBlob
+      .config({
+        fileCache: true,
       })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
+      .fetch('GET', uri + "?" + (new Date()).getTime(), {
+      })
+      .then((res) => {
+        // the temp file path
+        console.log('The file saved to ', res.path());
+        setLoading(false);
+        PhotoEditor.Edit({
+          path: res.path(),
+          hiddenControls: ['save', 'share', 'sticker'],
+          colors: ['#ff0000', '#008000'],
+
+          onDone: (result) => {
+            setLoading(true);
+            const split = uri.split('/');
+            const fileName = split.pop();
+            let url = serverIP.concat("/homework/check_hw_teacher/");
+            RNFetchBlob.fetch('POST', url, {
+              'Content-Type': 'multipart/form-data',
+            }, [
+              // append field data from file path
+              {
+                name: "file",
+                filename: fileName,
+                data: RNFetchBlob.wrap(res.path())
+              },
+
+              { name: 'hw_id', data: hwID },
+              { name: 'student_id', data: studentID },
+              { name: 'teacher', data: userID },
+              { name: 'sequence', data: sequence },
+
+            ]).then((resp) => {
+              navigation.navigate('HWPagesList', {
+                serverIP: serverIP,
+                schoolID: schoolID,
+                userName: userName,
+                userID: userID,
+                studentID: studentID,
+                hwID: hwID,
+              });
+            }).catch((err) => {
+              // ...
+            });
+            
+            
+          },
+
+          onCancel: () => {
+            setLoading(true);
+            navigation.navigate('HWPagesList', {
+              serverIP: serverIP,
+              schoolID: schoolID,
+              userName: userName,
+              userID: userID,
+              studentID: studentID,
+              hwID: hwID,
+            });
+          },
+        });
       });
-  });
 
-  const done = () => {
-    console.log("onDone");
-  };
-
-  const cancel = () => {
-    console.log("onCancel");
-  };
+  }, []);
 
   const HeaderTitle = () => {
     return (
-      <View style={styles.headerTitle}>
-        <Text style={styles.text} status='success' category='h6'>HW Check</Text>
-      </View>
-    );
-  };
-  const HeaderRight = () => {
-    return (
       <View style={styles.parallel}>
-        <View style={styles.headerMenu}>
-          <Button style={styles.button} appearance='ghost' size='small' status='warning' >
-            Retake
-            </Button>
-          <Button style={styles.button} appearance='ghost' size='small' status='info' >
-            Next
-            </Button>
-          <Button style={styles.button} appearance='ghost' size='small' status='success' >
-            Done
-            </Button>
-        </View>
+        {isLoading ? <View style={styles.parallel}>
+          <View style={styles.loading}>
+            <Spinner />
+          </View>
+        </View> :
+          <View style={styles.headerMenu} />}
       </View>
     )
   }
@@ -109,8 +105,6 @@ const CheckHW = ({ route, navigation }) => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () => <HeaderTitle />,
-      headerTitleAlign: 'left',
-      headerRight: () => <HeaderRight />,
       headerStyle: {
         backgroundColor: 'sienna',
       },
@@ -166,7 +160,6 @@ const styles = StyleSheet.create({
     margin: 2,
   },
   loading: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

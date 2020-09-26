@@ -59,7 +59,6 @@ const HWListStudent = ({ route, navigation }) => {
 
             hwList.push(hw);
           }
-          console.log("hwList = ", hwList);
         }
         setLoading(false);
       })
