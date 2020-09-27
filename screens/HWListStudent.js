@@ -69,7 +69,6 @@ const HWListStudent = ({ route, navigation }) => {
       });
   }, [isFocused]);
 
-
   const CustomRow = ({ title, index }) => {
     return (
       <View style={styles.containerLine}>
@@ -123,7 +122,12 @@ const HWListStudent = ({ route, navigation }) => {
             Submit HW
           </Button>
 
-          <Button style={styles.button} appearance='outline' status='success' accessoryLeft={checkIcon}>
+          <Button 
+          style={styles.button} 
+          appearance='outline' 
+          status='success' 
+          accessoryLeft={checkIcon}
+          onPress={() => viewCheckedHW(index)}>
             See Check HW
           </Button>
         </View>
@@ -144,6 +148,28 @@ const HWListStudent = ({ route, navigation }) => {
 
   const openURL = (title) => {
     Linking.openURL(title.location)
+  }
+
+  const viewCheckedHW = (index) =>  {
+    let hwPages = [];
+    let hwID = index;
+    let url = serverIP.concat("/homework/get_hw_pages/", hwID, "/", studentID, "/");
+    axios
+      .get(url)
+      .then(function (response) {
+        for (var i = 0; i < response.data.length; i++) {
+          hwPage = {};
+          hwPage.key = "Page # " + (i + 1);
+          hwPage.uri = response.data[i].location;
+          hwPage.title = "Page # " + (i + 1);
+          hwPages.push(hwPage);
+        }
+        setLoading(false);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
   }
 
   const showInstructions = (index) => {

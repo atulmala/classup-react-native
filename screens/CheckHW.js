@@ -52,10 +52,10 @@ const CheckHW = ({ route, navigation }) => {
                 data: RNFetchBlob.wrap(res.path())
               },
 
-              { name: 'hw_id', data: hwID },
-              { name: 'student_id', data: studentID },
-              { name: 'teacher', data: userID },
-              { name: 'sequence', data: sequence },
+              { name: 'hw_id', data: String(hwID) },
+              { name: 'student_id', data: String(studentID) },
+              { name: 'teacher', data: String(userID) },
+              { name: 'sequence', data: String(sequence) },
 
             ]).then((resp) => {
               navigation.navigate('HWPagesList', {
@@ -69,8 +69,6 @@ const CheckHW = ({ route, navigation }) => {
             }).catch((err) => {
               // ...
             });
-            
-            
           },
 
           onCancel: () => {
