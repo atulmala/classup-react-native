@@ -45,7 +45,6 @@ const CheckHW = ({ route, navigation }) => {
             RNFetchBlob.fetch('POST', url, {
               'Content-Type': 'multipart/form-data',
             }, [
-              // append field data from file path
               {
                 name: "file",
                 filename: fileName,
@@ -58,7 +57,7 @@ const CheckHW = ({ route, navigation }) => {
               { name: 'sequence', data: String(sequence) },
 
             ]).then((resp) => {
-              navigation.navigate('HWPagesList', {
+              navigation.replace('HWPagesList', {
                 serverIP: serverIP,
                 schoolID: schoolID,
                 userName: userName,
@@ -84,7 +83,6 @@ const CheckHW = ({ route, navigation }) => {
           },
         });
       });
-
   }, []);
 
   const HeaderTitle = () => {

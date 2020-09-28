@@ -22,6 +22,7 @@ import TakeHWPic from './screens/TakeHWPic';
 import PreviewHW from './screens/PreviewHW';
 import CheckHW from './screens/CheckHW';
 import HWPagesList from './screens/ HWPagesList';
+import ViewCheckedHW from './screens/ViewCheckedHW';
 
 const Stack = createStackNavigator();
 
@@ -96,6 +97,9 @@ const App = () => {
             title: ' ',
           }} />
           <Stack.Screen name="HWPagesList" component={HWPagesList} options={{
+          }} />
+          <Stack.Screen name="ViewCheckedHW" component={ViewCheckedHW} options={{
+
           }} />
         </Stack.Navigator>
       </NavigationContainer>

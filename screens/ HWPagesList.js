@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableWithoutFeedback } from 'react-native';
-import { Divider, List, ListItem } from '@ui-kitten/components';
-import { HeaderBackButton } from '@react-navigation/stack';
+import { StyleSheet, View, ActivityIndicator, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { Text, Divider, List, ListItem } from '@ui-kitten/components';
 import axios from 'axios';
 
 const HWPagesList = ({ route, navigation }) => {
@@ -24,6 +24,7 @@ const HWPagesList = ({ route, navigation }) => {
         for (var i = 0; i < response.data.length; i++) {
           hwPage = {};
           hwPage.key = "Page # " + (i + 1);
+          hwPage.whetherChecked = response.data[i].whether_checked;
           hwPage.uri = response.data[i].location;
           hwPage.title = "Page # " + (i + 1);
           hwPages.push(hwPage);
@@ -54,7 +55,7 @@ const HWPagesList = ({ route, navigation }) => {
   });
 
   const checkHW = (index) => {
-    navigation.navigate('CheckHW', {
+    navigation.replace('CheckHW', {
       serverIP: serverIP,
       schoolID: schoolID,
       userName: userName,
@@ -64,11 +65,28 @@ const HWPagesList = ({ route, navigation }) => {
       uri: hwPages[index].uri,
       sequence: index + 1
     });
-    
+
   };
 
+  const checkedStatus = () => (
+    <Text style={styles.text} status='success'>Checked</Text>
+  );
+
+  const unCheckedStatus = () => (
+    <Text style={styles.text} status='warning'>Not Checked</Text>
+  );
+
   const renderItem = ({ item, index }) => (
-    <ListItem title={item.title} onPress={() => checkHW(index)}/>
+    item.whetherChecked ?
+      <ListItem
+        title={item.title}
+        accessoryRight={checkedStatus}
+        onPress={() => checkHW(index)} />
+      :
+      <ListItem
+        title={item.title}
+        accessoryRight={unCheckedStatus}
+        onPress={() => checkHW(index)} />
   );
 
   return (
@@ -76,13 +94,13 @@ const HWPagesList = ({ route, navigation }) => {
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
-    <List
-      style={styles.container}
-      data={hwPages}
-      keyExtractor={(item) => item.title}
-      ItemSeparatorComponent={Divider}
-      renderItem={renderItem}
-    />)}
+          <List
+            style={styles.container}
+            data={hwPages}
+            keyExtractor={(item) => item.title}
+            ItemSeparatorComponent={Divider}
+            renderItem={renderItem}
+          />)}
     </View>
   );
 };
@@ -111,12 +129,15 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     justifyContent: 'center',
   },
+  text: {
+    margin: 4,
+  },
   title: {
     fontSize: 16,
     color: 'white',
     fontFamily: 'Verdana'
   },
-  
+
 
   loading: {
     position: 'absolute',

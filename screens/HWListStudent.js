@@ -159,12 +159,19 @@ const HWListStudent = ({ route, navigation }) => {
       .then(function (response) {
         for (var i = 0; i < response.data.length; i++) {
           hwPage = {};
-          hwPage.key = "Page # " + (i + 1);
-          hwPage.uri = response.data[i].location;
-          hwPage.title = "Page # " + (i + 1);
+          hwPage.url = response.data[i].location;
+          hwPage.props = {};
           hwPages.push(hwPage);
         }
         setLoading(false);
+        navigation.navigate('ViewCheckedHW', {
+          serverIP: serverIP,
+          userID: userID,
+          studentID: studentID,
+          hwID: index,
+          images: hwPages
+        });
+
       })
       .catch(function (error) {
         // handle error
