@@ -178,7 +178,7 @@ const HWListTeacher = ({ route, navigation }) => {
       schoolId: schoolId,
       userID: userID,
       userName: userName,
-      hwId: index,
+      hwID: index,
       comingFrom: "hwListTeacher"
     });
   };

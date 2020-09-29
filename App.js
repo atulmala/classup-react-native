@@ -97,6 +97,7 @@ const App = () => {
             title: ' ',
           }} />
           <Stack.Screen name="HWPagesList" component={HWPagesList} options={{
+            headerLeft: null,
           }} />
           <Stack.Screen name="ViewCheckedHW" component={ViewCheckedHW} options={{
 

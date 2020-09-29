@@ -3,20 +3,19 @@ import {
   StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableWithoutFeedback
 } from 'react-native';
 import axios from 'axios';
-import { sub } from 'react-native-reanimated';
 
 const HWSubmissions = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolId } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
-  const { hwId } = route.params;
+  const { hwID } = route.params;
 
   const [isLoading, setLoading] = useState(true);
   const [submissionList] = useState([]);
 
   useEffect(() => {
-    let url = serverIP.concat("/homework/get_submission_status/", hwId, "/");
+    let url = serverIP.concat("/homework/get_submission_status/", hwID, "/");
     axios
       .get(url)
       .then(function (response) {
@@ -36,18 +35,18 @@ const HWSubmissions = ({ route, navigation }) => {
         console.log(error);
         self.waiting = false;
       });
-  });
+  }, []);
 
   const showHWPages = (index) => {
     let studentID = submissionList[index].studentId;
     if (submissionList[index].submitted != "not submitted") {
-      navigation.navigate('HWPagesList', {
+      navigation.replace('HWPagesList', {
         serverIP: serverIP,
         schoolId: schoolId,
         userName: userName,
         userID: userID,
         studentID: studentID,
-        hwID: hwId,
+        hwID: hwID,
       });
     }
   };
@@ -64,13 +63,13 @@ const HWSubmissions = ({ route, navigation }) => {
               <View style={styles.container_text}>
                 <Text style={styles.notSubmitted}> {title.submitted}</Text>
               </View>}
-            {title.submitted == "submitted" &&
+            {title.submitted == "submitted" && title.evaluated != "evaluated" &&
               <View style={styles.container_text}>
                 <Text style={styles.submitted}> {title.submitted}</Text>
               </View>}
-            {title.submitted == "evaluated" &&
+            {title.submitted == "submitted" && title.evaluated == "evaluated" &&
               <View style={styles.container_text}>
-                <Text style={styles.evaluated}> {title.submitted}</Text>
+                <Text style={styles.evaluated}> {title.evaluated}</Text>
               </View>}
           </View>
         </View>
@@ -166,7 +165,7 @@ const styles = StyleSheet.create({
   },
   evaluated: {
     fontSize: 16,
-    color: 'lawngreen',
+    color: 'green',
     fontFamily: 'Verdana'
   },
   loading: {

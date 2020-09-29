@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { StyleSheet, View, ActivityIndicator, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { Text, Divider, List, ListItem } from '@ui-kitten/components';
+import { Text, Divider, List, ListItem, Button } from '@ui-kitten/components';
 import axios from 'axios';
 
 const HWPagesList = ({ route, navigation }) => {
@@ -40,19 +40,77 @@ const HWPagesList = ({ route, navigation }) => {
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
-        <Text style={styles.title} status='success' >Please Click on a page to open</Text>
+        <Text style={styles.title} status='success' >HW Pages</Text>
       </View>
     );
   };
 
+  const HeaderRight = () => {
+    return (
+      <View style={styles.headerMenu}>
+        <Button style={styles.button} appearance='ghost' size='large' status='success' onPress={done}>
+          Done
+        </Button>
+      </View>
+    )
+  }
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () => <HeaderTitle />,
+      headerRight: () => <HeaderRight />,
       headerStyle: {
         backgroundColor: 'sienna',
       },
     });
   });
+
+  var allPagesChecked = true;
+  const done = () => {
+    for (hwPage of hwPages) {
+      if (!hwPage.whetherChecked) {
+        allPagesChecked = false;
+        break;
+      }
+    }
+    if (!allPagesChecked) {
+      Alert.alert(
+        "All Pages of HW not checked",
+        "Are You sure you want to finish? You can always check again later",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          {
+            text: "OK", onPress: () => {
+              navigation.replace('HWSubmissions', {
+                serverIP: serverIP,
+                schoolID: schoolID,
+                userID: userID,
+                userName: userName,
+                hwID: hwID,
+                comingFrom: "hwChecking"
+              });
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+    else  {
+      navigation.replace('HWSubmissions', {
+        serverIP: serverIP,
+        schoolID: schoolID,
+        userID: userID,
+        userName: userName,
+        hwID: hwID,
+        comingFrom: "hwChecking"
+      });
+    }
+
+  }
 
   const checkHW = (index) => {
     navigation.replace('CheckHW', {
