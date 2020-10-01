@@ -23,6 +23,9 @@ import PreviewHW from './screens/PreviewHW';
 import CheckHW from './screens/CheckHW';
 import HWPagesList from './screens/ HWPagesList';
 import ViewCheckedHW from './screens/ViewCheckedHW';
+import TestExams from './screens/TestExams';
+import SelectExam from './screens/SelectExam';
+import ScheduleTest from './screens/ScheduleTest';
 
 const Stack = createStackNavigator();
 
@@ -100,7 +103,15 @@ const App = () => {
             headerLeft: null,
           }} />
           <Stack.Screen name="ViewCheckedHW" component={ViewCheckedHW} options={{
-
+          }} />
+          <Stack.Screen name="TestExams" component={TestExams} options={{
+            title: 'Tests & Exams'
+          }} />
+          <Stack.Screen name="SelectExam" component={SelectExam} options={{
+            title: 'Please Select an Exam'
+          }} />
+          <Stack.Screen name="ScheduleTest" component={ScheduleTest} options={{
+            title: 'Schedule Test'
           }} />
         </Stack.Navigator>
       </NavigationContainer>

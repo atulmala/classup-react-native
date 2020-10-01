@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { IndexPath, Datepicker, Layout, Text, Select, Button, SelectItem, Icon } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
@@ -10,12 +10,26 @@ const calendarIcon = (props) => (
   <Icon {...props} name='calendar'/>
 );
 
-const SelectClass = ({ route, navigation }) => {
+const useDatepickerState = (initialDate = null) => {
+  const [date, setDate] = React.useState(initialDate);
+  return { date, onSelect: setDate };
+};
+
+const ScheduleTest = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
+  const { exam } = route.params;
 
+  const startDate = exam.startDate.split("-");
+  const endDate = exam.endDate.split("-");
+  const min = new Date(startDate[0], startDate[1] - 1, startDate[2]);
+  console.log("min = ", min);
+  
+  const max = new Date(endDate[0], endDate[1] - 1, endDate[2]);
+  console.log("max = ", max);
+  const minMaxPickerState = useDatepickerState(min);
   const [date, setDate] = React.useState(new Date());
 
   const [classList] = useState([]);
@@ -74,8 +88,25 @@ const SelectClass = ({ route, navigation }) => {
     );
   }, []);
 
+  const HeaderTitle = () => {
+    return (
+      <View style={styles.headerTitle}>
+        <Text style={styles.text} status='warning' category='h6'>Schedule Test for {exam.title}</Text>
+      </View>
+    );
+  };
 
-  const takeAttendance = () => {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerTitleAlign: 'center',
+      headerStyle: {
+        backgroundColor: 'rebeccapurple',
+      },
+    });
+  });
+
+  const scheduleTest = () => {
     if (selectedClassIndex.row === 0) {
       Toast.show({
         type: 'error',
@@ -153,8 +184,11 @@ const SelectClass = ({ route, navigation }) => {
               <Datepicker
                 style={styles.select}
                 accessoryRight={calendarIcon}
-                date={date}
-                onSelect={nextDate => setDate(nextDate)}
+                date={min}
+                min={min}
+                max={max}
+                {...minMaxPickerState}
+                
               />
               <Layout style={styles.verticalSpace} />
               <Layout style={styles.parallel}>
@@ -196,7 +230,7 @@ const SelectClass = ({ route, navigation }) => {
               </Select>
               <Layout style={styles.verticalSpace} />
               <Layout style={styles.buttonContainer}>
-                <Button style={styles.button} appearance='outline' status='info' onPress={takeAttendance}>
+                <Button style={styles.button} appearance='outline' status='info' onPress={scheduleTest}>
                   {"Take Attendance"}
                 </Button>
               </Layout>
@@ -258,4 +292,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SelectClass;
+export default ScheduleTest;

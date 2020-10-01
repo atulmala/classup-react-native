@@ -5,25 +5,34 @@ import { Layout, Text } from '@ui-kitten/components';
 
 const TeacherMenu = ({ route, navigation }) => {
   const { serverIP } = route.params;
-  const { schoolId } = route.params;
+  const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
 
   const _gotoSelectClass = () => {
     navigation.navigate('SelectClass', {
       serverIP: serverIP,
-      schoolId: schoolId,
+      schoolID: schoolID,
       userID: userID,
       userName: userName,
       comingFrom: "teacherMenu"
+    });
+  };
 
+  const _gotoTestExams = () => {
+    navigation.navigate('TestExams', {
+      serverIP: serverIP,
+      schoolID: schoolID,
+      userID: userID,
+      userName: userName,
+      comingFrom: "teacherMenu"
     });
   };
 
   const _gotoShowHW = () => {
     navigation.navigate('HWListTeacher', {
       serverIP: serverIP,
-      schoolId: schoolId,
+      schoolID: schoolID,
       userID: userID,
       userName: userName,
       comingFrom: "teacherMenu"
@@ -35,7 +44,7 @@ const TeacherMenu = ({ route, navigation }) => {
       headerRight: () =>
         <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('LoginScreen', {
           serverIP: serverIP,
-          schoolId: schoolId,
+          schoolID: schoolID,
           userID: userID,
           userName: userName,
 
@@ -56,69 +65,79 @@ const TeacherMenu = ({ route, navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn2}>
-        <Image
+          <Image
             source={require('../assets/attendance_summary.png')}
             style={styles.ImageIconStyle}
           />
-          <Text body>Attendance Summaries</Text>
+          <Text body style={styles.text}>Attendance Summaries</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn3} >
-        <Image
+          <Image
             source={require('../assets/school_bus.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text body>Bus Attendance</Text>
+          <Text body style={styles.text}>Bus Attendance</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn4}>
-        <Image
+          <Image
             source={require('../assets/communication_center.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text body>Communication Center</Text>
+          <Text body style={styles.text}>Communications</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn5} onPress={_gotoShowHW}>
-        <Image
+          <Image
             source={require('../assets/homework.png')}
             style={styles.ImageIconStyle}
           />
-          <Text body>Homework List</Text>
+          <Text body style={styles.text}>Homework</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn6}>
-        <Image
+          <Image
             source={require('../assets/online_class.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text>Online Classes</Text>
+          <Text style={styles.text}>Online Classes</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn7} >
-        <Image
+        <TouchableOpacity style={styles.btn7} onPress={_gotoTestExams}>
+          <Image
             source={require('../assets/exam_management.png')}
             style={styles.ImageIconStyle}
           />
-          <Text body>Test/Exam Management</Text>
+          <Text body style={styles.text}>Test/Exam Management</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn8}>
-        <Image
+          <Image
             source={require('../assets/set_my_subjects.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text body>Set My Subjects</Text>
+          <Text body style={styles.text}>Set My Subjects</Text>
         </TouchableOpacity>
       </View>
     </View>
   )
+}
+
+let button = {
+  justifyContent: 'space-between',
+  width: '45%',
+  margin: 5,
+  padding: 20,
+  borderRadius: 15,
+  justifyContent: 'center',
+  alignItems: 'center',
 }
 
 const styles = StyleSheet.create({
@@ -128,7 +147,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: "100%"
   },
-
   parallel: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
@@ -136,89 +154,43 @@ const styles = StyleSheet.create({
   },
   text: {
     margin: 4,
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
+    color: 'midnightblue'
   },
   btn1: {
+    ...button,
     backgroundColor: '#FFCDD2',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-
   btn2: {
+    ...button,
     backgroundColor: '#F8BBD0',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-
   btn3: {
+    ...button,
     backgroundColor: '#CE93D8',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-
   btn4: {
+    ...button,
     backgroundColor: '#B39DDB',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-
   btn5: {
+    ...button,
     backgroundColor: '#BBDEFB',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-
   btn6: {
+    ...button,
     backgroundColor: '#90CAF9',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-
   },
-
   btn7: {
+    ...button,
     backgroundColor: '#81D4FA',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-
   },
-
   btn8: {
+    ...button,
     backgroundColor: '#80DEEA',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-
   font: {
     fontWeight: 'bold',
     fontSize: 16,
@@ -238,18 +210,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'indigo',
   },
-  FacebookStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'cornflowerblue',
-    borderWidth: 0.5,
-    borderColor: '#fff',
-    borderRadius: 10,
-    margin: 5,
-  },
   TextStyle: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 4,
     marginRight: 4,
   },

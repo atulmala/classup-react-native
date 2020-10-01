@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import {
-  StyleSheet, ScrollView, View, ActivityIndicator, Keyboard, Image, Alert,
+  StyleSheet, ScrollView, View, ActivityIndicator, Keyboard, KeyboardAvoidingView, Image, Alert,
   Platform, TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
 import {
@@ -62,22 +62,6 @@ const SelectClass = ({ route, navigation }) => {
     });
   });
 
-  React.useEffect(() => {
-    const keyboardShowListener = Keyboard.addListener(showEvent, () => {
-      setPlacement('top');
-    });
-
-    const keyboardHideListener = Keyboard.addListener(hideEvent, () => {
-      setPlacement('bottom');
-    });
-
-    return () => {
-      keyboardShowListener.remove();
-      keyboardHideListener.remove();
-    };
-  });
-
-
   const [classList] = useState([]);
   var selectedClass;
   const [selectedClassIndex, setSelectedClassIndex] = useState(new IndexPath(0));
@@ -118,6 +102,15 @@ const SelectClass = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    const keyboardShowListener = Keyboard.addListener(showEvent, () => {
+      setPlacement('top');
+    });
+
+    const keyboardHideListener = Keyboard.addListener(hideEvent, () => {
+      setPlacement('bottom');
+    });
+
+    
     axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
       axios.spread(function (classes, sections, subjects) {
         classList.push("Select");
@@ -137,6 +130,11 @@ const SelectClass = ({ route, navigation }) => {
         setLoading(false);
       })
     );
+
+    return () => {
+      keyboardShowListener.remove();
+      keyboardHideListener.remove();
+    };
   }, []);
 
   const pickDocument = async () => {
@@ -297,6 +295,10 @@ const SelectClass = ({ route, navigation }) => {
   };
 
   return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
     <Layout style={styles.container} level='1'>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <Layout style={styles.loading}>
@@ -370,8 +372,10 @@ const SelectClass = ({ route, navigation }) => {
               </Layout>
             </ScrollView >
           </TouchableWithoutFeedback>
+          
         )}
     </Layout>
+    </KeyboardAvoidingView>
   );
 }
 const styles = StyleSheet.create({
@@ -399,7 +403,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   verticalSpace: {
-    marginTop: 20
+    marginTop: 10
   },
   scrollContentContainer: {
     paddingLeft: 10,

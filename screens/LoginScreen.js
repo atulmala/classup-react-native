@@ -9,12 +9,6 @@ import OneSignal from 'react-native-onesignal';
 
 var player_id;
 
-function componentWillUnmount() {
-  OneSignal.removeEventListener('received', this.onReceived);
-  OneSignal.removeEventListener('opened', this.onOpened);
-  OneSignal.removeEventListener('ids', this.onIds);
-}
-
 function onReceived(notification) {
   console.log("Notification received: ", notification);
 }
@@ -65,8 +59,8 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     setLoading(true);
-    // let serverIP = 'https://www.classupclient.com';
-    let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    let serverIP = 'https://www.classupclient.com';
+    // let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
     let url = serverIP.concat('/auth/login1/');
     axios({
       method: "POST",
@@ -152,7 +146,7 @@ const LoginScreen = ({ navigation }) => {
                 if (json.school_admin == "true") {
                   navigation.navigate('AdminMenu', {
                     serverIP: serverIP,
-                    schoolId: json.school_id,
+                    schoolID: json.school_id,
                     userID: loginID,
                     userName: json.user_name
                   });
@@ -161,7 +155,7 @@ const LoginScreen = ({ navigation }) => {
                   // teacher user
                   navigation.navigate('TeacherMenu', {
                     serverIP: serverIP,
-                    schoolId: json.school_id,
+                    schoolID: json.school_id,
                     userID: loginID,
                     userName: json.user_name
                   });
@@ -177,7 +171,7 @@ const LoginScreen = ({ navigation }) => {
                 if (stopAccess == "false") {
                   navigation.navigate('SelectWard', {
                     serverIP: serverIP,
-                    schoolId: json.school_id,
+                    schoolID: json.school_id,
                     userID: loginID,
                     userName: json.user_name,
                     feeDefaultStatus: feeDefaultStatus,
@@ -196,7 +190,7 @@ const LoginScreen = ({ navigation }) => {
               else {
                 navigation.navigate('SelectWard', {
                   serverIP: serverIP,
-                  schoolId: json.school_id,
+                  schoolID: json.school_id,
                   userID: loginID,
                   userName: json.user_name,
                   feeDefaultStatus: feeDefaultStatus,
