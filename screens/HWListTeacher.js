@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const HWListTeacher = ({ route, navigation }) => {
   const { serverIP } = route.params;
-  const { schoolId } = route.params;
+  const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
 
@@ -164,7 +164,7 @@ const HWListTeacher = ({ route, navigation }) => {
   const createHW = () => {
     navigation.navigate('CreateHW', {
       serverIP: serverIP,
-      schoolId: schoolId,
+      schoolID: schoolID,
       userID: userID,
       userName: userName,
       comingFrom: "teacherMenu"
@@ -175,7 +175,7 @@ const HWListTeacher = ({ route, navigation }) => {
     console.log("index = ", index);
     navigation.navigate('HWSubmissions', {
       serverIP: serverIP,
-      schoolId: schoolId,
+      schoolID: schoolID,
       userID: userID,
       userName: userName,
       hwID: index,
@@ -233,7 +233,7 @@ const HWListTeacher = ({ route, navigation }) => {
                           text: "OK", onPress: () => {
                             navigation.navigate('HWListTeacher', {
                               serverIP: serverIP,
-                              schoolId: schoolId,
+                              schoolID: schoolID,
                               userID: userID,
                               userName: userName,
                               comingFrom: "CreateHW"

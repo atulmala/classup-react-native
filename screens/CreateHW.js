@@ -47,7 +47,7 @@ const Upload = ({ onPress }) => {
 
 const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
-  const { schoolId } = route.params;
+  const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
 
@@ -90,11 +90,11 @@ const SelectClass = ({ route, navigation }) => {
 
   // retrieve the list of classes, sections, and subjects for this school
   const getClassList = () => {
-    return axios.get(serverIP.concat("/academics/class_list/", schoolId, "/"));
+    return axios.get(serverIP.concat("/academics/class_list/", schoolID, "/"));
   };
 
   const getSectionList = () => {
-    return axios.get(serverIP.concat("/academics/section_list/", schoolId, "/"));
+    return axios.get(serverIP.concat("/academics/section_list/", schoolID, "/"));
   };
 
   const getSubjectList = () => {
@@ -110,7 +110,7 @@ const SelectClass = ({ route, navigation }) => {
       setPlacement('bottom');
     });
 
-    
+
     axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
       axios.spread(function (classes, sections, subjects) {
         classList.push("Select");
@@ -239,7 +239,7 @@ const SelectClass = ({ route, navigation }) => {
             let formData = new FormData();
 
             formData.append("teacher", userID);
-            formData.append("school_id", schoolId);
+            formData.append("school_id", schoolID);
             formData.append("d", d.getDate());
             formData.append("m", d.getMonth() + 1);
             formData.append("y", d.getFullYear() + 1);
@@ -273,7 +273,7 @@ const SelectClass = ({ route, navigation }) => {
                         text: "OK", onPress: () => {
                           navigation.navigate('HWListTeacher', {
                             serverIP: serverIP,
-                            schoolId: schoolId,
+                            schoolID: schoolID,
                             userID: userID,
                             userName: userName,
                             comingFrom: "CreateHW"
@@ -299,18 +299,13 @@ const SelectClass = ({ route, navigation }) => {
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={styles.container}
     >
-    <Layout style={styles.container} level='1'>
-      <Toast ref={(ref) => Toast.setRef(ref)} />
-      {isLoading ? <Layout style={styles.loading}>
-        <ActivityIndicator size='large' />
-      </Layout> : (
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView
-              style={styles.container}
-              contentContainerStyle={styles.scrollContentContainer}>
-              <Layout
-                style={styles.container}
-                contentContainerStyle={styles.scrollContentContainer}>
+      <Layout style={styles.container} level='1'>
+        <Toast ref={(ref) => Toast.setRef(ref)} />
+        {isLoading ? <Layout style={styles.loading}>
+          <ActivityIndicator size='large' />
+        </Layout> : (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <Layout style={styles.mainContainer}>
                 <Layout style={styles.verticalSpace} />
                 <Layout style={styles.parallel}>
                   <Select
@@ -330,25 +325,29 @@ const SelectClass = ({ route, navigation }) => {
                     {sectionList.map(renderOption)}
                   </Select>
                 </Layout>
-                <Select
-                  style={styles.select}
-                  label={evaProps => <Text {...evaProps}>Select Subject:</Text>}
-                  value={displaySubjectValue}
-                  selectedIndex={selectedSubjectIndex}
-                  onSelect={index => setSelectedSubjectIndex(index)}>
-                  {subjectList.map(renderOption)}
-                </Select>
+                <Layout style={styles.parallel}>
+                  <Select
+                    style={styles.select}
+                    label={evaProps => <Text {...evaProps}>Select Subject:</Text>}
+                    value={displaySubjectValue}
+                    selectedIndex={selectedSubjectIndex}
+                    onSelect={index => setSelectedSubjectIndex(index)}>
+                    {subjectList.map(renderOption)}
+                  </Select>
+                </Layout>
                 <Layout style={styles.verticalSpace} />
-                <Input
-                  style={styles.hwDescription}
-                  editable
-                  label={evaProps => <Text {...evaProps}>Enter Homework Description:</Text>}
-                  multiline={true}
-                  onChangeText={text => setHWDescription(text)}
-                  placement={placement}
-                  textStyle={{ minHeight: 64, textAlignVertical: 'top' }}
-                  caption="Mandatory"
-                />
+                <Layout>
+                  <Input
+                    style={styles.hwDescription}
+                    editable
+                    label={evaProps => <Text {...evaProps}>Enter Homework Description:</Text>}
+                    multiline={true}
+                    onChangeText={text => setHWDescription(text)}
+                    placement={placement}
+                    textStyle={{ minHeight: 64, textAlignVertical: 'top' }}
+                    caption="Mandatory"
+                  />
+                </Layout>
                 <Layout style={styles.verticalSpace} />
                 <Layout style={styles.container}>
                   <Input
@@ -370,11 +369,9 @@ const SelectClass = ({ route, navigation }) => {
                   </Button>
                 </Layout>
               </Layout>
-            </ScrollView >
-          </TouchableWithoutFeedback>
-          
-        )}
-    </Layout>
+            </TouchableWithoutFeedback>
+          )}
+      </Layout>
     </KeyboardAvoidingView>
   );
 }
@@ -383,6 +380,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     width: "100%",
+    
   },
   evaProps: {
     textShadowColor: "magenta"
@@ -405,7 +403,7 @@ const styles = StyleSheet.create({
   verticalSpace: {
     marginTop: 10
   },
-  scrollContentContainer: {
+  mainContainer: {
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 10

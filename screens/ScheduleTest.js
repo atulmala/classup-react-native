@@ -1,18 +1,33 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { IndexPath, Datepicker, Layout, Text, Select, Button, SelectItem, Icon } from '@ui-kitten/components';
+
+import {
+  ScrollView, View, StyleSheet, ActivityIndicator, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView,
+} from 'react-native';
+
+import { useHeaderHeight } from '@react-navigation/stack';
+
+import {
+  IndexPath, Datepicker, Layout, Text, Select, CheckBox,
+  Input, Button, SelectItem, Icon
+} from '@ui-kitten/components';
+
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
 const calendarIcon = (props) => (
-  <Icon {...props} name='calendar'/>
+  <Icon {...props} name='calendar' />
 );
 
 const useDatepickerState = (initialDate = null) => {
   const [date, setDate] = React.useState(initialDate);
   return { date, onSelect: setDate };
+};
+
+const useCheckboxState = (initialCheck = false) => {
+  const [checked, setChecked] = React.useState(initialCheck);
+  return { checked, onChange: setChecked };
 };
 
 const ScheduleTest = ({ route, navigation }) => {
@@ -22,15 +37,14 @@ const ScheduleTest = ({ route, navigation }) => {
   const { userID } = route.params;
   const { exam } = route.params;
 
+  const primaryCheckboxState = useCheckboxState();
+
   const startDate = exam.startDate.split("-");
   const endDate = exam.endDate.split("-");
   const min = new Date(startDate[0], startDate[1] - 1, startDate[2]);
-  console.log("min = ", min);
-  
+
   const max = new Date(endDate[0], endDate[1] - 1, endDate[2]);
-  console.log("max = ", max);
   const minMaxPickerState = useDatepickerState(min);
-  const [date, setDate] = React.useState(new Date());
 
   const [classList] = useState([]);
   var selectedClass;
@@ -46,6 +60,9 @@ const ScheduleTest = ({ route, navigation }) => {
   var selectedSubject;
   const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(new IndexPath(0));
   const displaySubjectValue = subjectList[selectedSubjectIndex.row];
+
+  const [maxMarks, setMaxMarks] = useState("");
+  const [passingMarks, setPassingMarks] = useState("");
 
   const renderOption = (title) => (
     <SelectItem title={title} />
@@ -86,7 +103,7 @@ const ScheduleTest = ({ route, navigation }) => {
         setLoading(false);
       })
     );
-  }, []);
+  }, [schoolID]);
 
   const HeaderTitle = () => {
     return (
@@ -107,6 +124,11 @@ const ScheduleTest = ({ route, navigation }) => {
   });
 
   const scheduleTest = () => {
+    testDate = minMaxPickerState.date.toISOString().toString().substring(0, 10).split("-");
+    yy = testDate[0];
+    mm = testDate[1];
+    dd = testDate[2];
+    
     if (selectedClassIndex.row === 0) {
       Toast.show({
         type: 'error',
@@ -116,7 +138,7 @@ const ScheduleTest = ({ route, navigation }) => {
       });
       return;
     }
-    else  {
+    else {
       selectedClass = classList[selectedClassIndex.row];
     }
 
@@ -129,7 +151,7 @@ const ScheduleTest = ({ route, navigation }) => {
       });
       return;
     }
-    else  {
+    else {
       selectedSection = sectionList[selectedSectionIndex.row];
     }
 
@@ -142,14 +164,32 @@ const ScheduleTest = ({ route, navigation }) => {
       });
       return;
     }
-    else  {
+    else {
       selectedSubject = subjectList[selectedSubjectIndex.row];
     }
     
-    const splitDate = date.toLocaleDateString().split("/");
-    const selectedDay = splitDate[1];
-    const selectedMonth = splitDate[0];
-    const selectedYear = splitDate[2];
+    if (!primaryCheckboxState.checked) {
+      console.log("Grade based = ", primaryCheckboxState.checked)
+      if (maxMarks == "") {
+        Toast.show({
+          type: 'error',
+          position: 'bottom',
+          text1: 'Error: Max Marks Not Entered',
+          text2: "Please enter Max Marks",
+        });
+        return;
+      }
+      if (passingMarks == "") {
+        Toast.show({
+          type: 'error',
+          position: 'bottom',
+          text1: 'Error: Passing Marks Not Entered',
+          text2: "Please enter Passing Marks",
+        });
+        return;
+      }
+
+    }
 
     navigation.navigate('TakeAttendance', {
       serverIP: serverIP,
@@ -166,119 +206,148 @@ const ScheduleTest = ({ route, navigation }) => {
     });
   };
 
-  return (
+  return (<KeyboardAvoidingView
+    behavior={Platform.OS == "ios" ? "padding" : "height"} 
+    keyboardVerticalOffset = {useHeaderHeight()}
+    style={styles.container} >
     <Layout style={styles.container} level='1'>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <Layout style={styles.loading}>
         <ActivityIndicator size='large' />
       </Layout> : (
-          <ScrollView
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.scrollContentContainer}>
-            <Layout
-              style={styles.scrollContainer}
-              contentContainerStyle={styles.scrollContentContainer}>
-              <Text style={styles.text} category='s1' status='info'>
-                Select date:
-              </Text>
-              <Datepicker
-                style={styles.select}
-                accessoryRight={calendarIcon}
-                date={min}
-                min={min}
-                max={max}
-                {...minMaxPickerState}
-                
-              />
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ScrollView style={styles.mainContainer} >
+              <Layout style={styles.parallel}>
+                <Datepicker
+                  style={styles.select}
+                  label={evaProps => <Text {...evaProps}>Select Date:</Text>}
+                  accessoryRight={calendarIcon}
+                  min={min}
+                  max={max}
+                  onSelect={nextDate => useDatepickerState(nextDate)}
+                  {...minMaxPickerState}
+                />
+              </Layout>
+              <Layout style={styles.parallel}>
+                <Select
+                  style={styles.select}
+                  label={evaProps => <Text {...evaProps}>Select Class:</Text>}
+                  value={displayClassValue}
+                  selectedIndex={selectedClassIndex}
+                  onSelect={index => setSelectedClassIndex(index)}>
+                  {classList.map(renderOption)}
+                </Select>
+                <Select
+                  style={styles.select}
+                  label={evaProps => <Text {...evaProps}>Select Section:</Text>}
+                  value={displaySectionValue}
+                  selectedIndex={selectedSectionIndex}
+                  onSelect={index => setSelectedSectionIndex(index)}>
+                  {sectionList.map(renderOption)}
+                </Select>
+              </Layout>
+              <Layout style={styles.parallel}>
+                <Select
+                  style={styles.select}
+                  label={evaProps => <Text {...evaProps}>Select Subject:</Text>}
+                  value={displaySubjectValue}
+                  selectedIndex={selectedSubjectIndex}
+                  onSelect={index => setSelectedSubjectIndex(index)}>
+                  {subjectList.map(renderOption)}
+                </Select>
+              </Layout>
               <Layout style={styles.verticalSpace} />
               <Layout style={styles.parallel}>
-                <Layout style={styles.container}>
-                  <Text style={styles.text} category='s1' status='info'>
-                    Select Class:
-                  </Text>
-                  <Select
-                    style={styles.select}
-                    value={displayClassValue}
-                    selectedIndex={selectedClassIndex}
-                    onSelect={index => setSelectedClassIndex(index)}>
-                    {classList.map(renderOption)}
-                  </Select>
-                </Layout>
-                <Layout style={styles.container}>
-                  <Text style={styles.text} category='s1' status='info'>
-                    Select Section:
-                  </Text>
-                  <Select
-                    style={styles.select}
-                    value={displaySectionValue}
-                    selectedIndex={selectedSectionIndex}
-                    onSelect={index => setSelectedSectionIndex(index)}>
-                    {sectionList.map(renderOption)}
-                  </Select>
-                </Layout>
+                <CheckBox
+                  style={styles.checkbox}
+                  status='primary'
+                  {...primaryCheckboxState}>
+                    Grade Based
+                </CheckBox>
+                
+              </Layout>
+              <Layout style={styles.parallel}>
+                <Input
+                  style={styles.select}
+                  disabled={primaryCheckboxState.checked ? true : false}
+                  size='small'
+                  keyboardType="number-pad"
+                  label={evaProps => <Text {...evaProps}>Max Marks:</Text>}
+                  onChangeText={text => setMaxMarks(text)}
+                  caption={primaryCheckboxState.checked ? "" : "Mandatory"}
+                />
+                <Input
+                  style={styles.select}
+                  disabled={primaryCheckboxState.checked ? true : false}
+                  size='small'
+                  keyboardType="decimal-pad"
+                  label={evaProps => <Text {...evaProps}>Passing Marks:</Text>}
+                  onChangeText={text => setPassingMarks(text)}
+                  caption={primaryCheckboxState.checked ? "" : "Mandatory"}
+                />
               </Layout>
               <Layout style={styles.verticalSpace} />
-              <Text style={styles.text} category='s1' status='info'>
-                Select Subject:
-              </Text>
-              <Select
-                style={styles.select}
-                value={displaySubjectValue}
-                selectedIndex={selectedSubjectIndex}
-                onSelect={index => setSelectedSubjectIndex(index)}>
-                {subjectList.map(renderOption)}
-              </Select>
-              <Layout style={styles.verticalSpace} />
-              <Layout style={styles.buttonContainer}>
-                <Button style={styles.button} appearance='outline' status='info' onPress={scheduleTest}>
-                  {"Take Attendance"}
+              <View style={styles.parallel}>
+                <Button
+                  style={styles.button}
+                  size='small'
+                  status='info'
+                  onPress={scheduleTest}>
+                  Schedule Test
                 </Button>
-              </Layout>
-            </Layout>
-          </ScrollView >
+              </View>
+            </ScrollView >
+          </TouchableWithoutFeedback>
         )}
     </Layout>
+  </KeyboardAvoidingView>
+
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%"
+    flexGrow: 1,
+    width: "100%",
+
+  },
+  evaProps: {
+    textShadowColor: "magenta"
   },
   select: {
     flex: 1,
     margin: 5,
     borderRadius: 5,
   },
-  buttonContainer:  {
-    flex: 1,
-    alignItems: "center"
-  },
   button: {
     margin: 2,
-    width: "60%"
+    backgroundColor: "cornflowerblue",
+    width: "80%",
+    height: "60%",
+  },
+  checkbox: {
+    flex: 1,
+    margin: 4,
   },
   parallel: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 100
+    justifyContent: 'center',
   },
   verticalSpace: {
-    marginTop: 15
+    marginTop: 10
   },
-  scrollContentContainer: {
+  mainContainer: {
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 20,
+    paddingTop: 10
   },
-  parallel: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    width: "100%"
-  },
-  text: {
-    margin: 2,
-    fontSize: 14,
+  hwDescription: {
+    marginLeft: 5,
+    marginRight: 5,
+    paddingTop: 0,
+    paddingBottom: 0,
+    textAlignVertical: 'top',
+    borderColor: "cyan"
   },
   loading: {
     position: 'absolute',
