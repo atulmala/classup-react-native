@@ -4,15 +4,14 @@ import Toast from 'react-native-toast-message';
 import Colors from '../Constants/colors';
 
 const TestExams = ({ route, navigation }) => {
-  console.log('inside ParentMenu');
-
+  const [comingFrom, setComingFrom] = React.useState();
   const selectExam = () => {
     navigation.navigate('SelectExam', {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,
       userName: userName,
-      comingFrom: "teacherMenu"
+      comingFrom: comingFrom
     });
   };
 
@@ -21,14 +20,17 @@ const TestExams = ({ route, navigation }) => {
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
-  const { wardID } = route.params;
-  const { feeDefaultStatus } = route.params;
-  const { welcomeMessage } = route.params;
 
   return (
     <View style={styles.container}>
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn1} onPress={selectExam}>
+        <TouchableOpacity style={styles.btn1} onPress={
+          () => {
+            setComingFrom("scheduleTest");
+            console.log("comingFrom = ", comingFrom);
+            selectExam()
+          }
+        }>
           <Image
             source={require('../assets/schedule_test.png')}
             style={styles.ImageIconStyle}
@@ -39,7 +41,7 @@ const TestExams = ({ route, navigation }) => {
 
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn3} >
-        <Image
+          <Image
             source={require('../assets/marks_entry.png')}
             style={styles.ImageIconStyle}
           />
@@ -49,7 +51,7 @@ const TestExams = ({ route, navigation }) => {
 
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn5} >
-        <Image
+          <Image
             source={require('../assets/grades.png')}
             style={styles.ImageIconStyle}
           />

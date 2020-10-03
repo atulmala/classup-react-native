@@ -122,7 +122,7 @@ const SelectClass = ({ route, navigation }) => {
 
     navigation.navigate('TakeAttendance', {
       serverIP: serverIP,
-      schoolId: schoolId,
+      schoolID: schoolID,
       userID: userID,
       userName: userName,
       selectedDay: selectedDay,

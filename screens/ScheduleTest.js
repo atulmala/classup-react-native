@@ -3,7 +3,8 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 
 import {
-  ScrollView, View, StyleSheet, ActivityIndicator, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView,
+  ScrollView, View, StyleSheet, ActivityIndicator, TouchableWithoutFeedback, Alert,
+  Keyboard, KeyboardAvoidingView,
 } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/stack';
@@ -37,6 +38,8 @@ const ScheduleTest = ({ route, navigation }) => {
   const { userID } = route.params;
   const { exam } = route.params;
 
+  console.log("exam = ", exam);
+
   const primaryCheckboxState = useCheckboxState();
 
   const startDate = exam.startDate.split("-");
@@ -61,8 +64,8 @@ const ScheduleTest = ({ route, navigation }) => {
   const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(new IndexPath(0));
   const displaySubjectValue = subjectList[selectedSubjectIndex.row];
 
-  const [maxMarks, setMaxMarks] = useState("");
-  const [passingMarks, setPassingMarks] = useState("");
+  const [maxMarks, setMaxMarks] = useState('');
+  const [passingMarks, setPassingMarks] = useState('');
 
   const renderOption = (title) => (
     <SelectItem title={title} />
@@ -84,6 +87,10 @@ const ScheduleTest = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    if (exam.examType == "term") {
+      setMaxMarks(80);
+      setPassingMarks(33);
+    }
     axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
       axios.spread(function (classes, sections, subjects) {
         classList.push("Select");
@@ -124,11 +131,13 @@ const ScheduleTest = ({ route, navigation }) => {
   });
 
   const scheduleTest = () => {
-    testDate = minMaxPickerState.date.toISOString().toString().substring(0, 10).split("-");
-    yy = testDate[0];
-    mm = testDate[1];
-    dd = testDate[2];
-    
+    let testDate = minMaxPickerState.date.toISOString().toString().substring(0, 10).split("-");
+    let yy = testDate[0];
+    let mm = testDate[1];
+    let dd = testDate[2];
+
+    let gradeBased = 1;
+
     if (selectedClassIndex.row === 0) {
       Toast.show({
         type: 'error',
@@ -166,49 +175,97 @@ const ScheduleTest = ({ route, navigation }) => {
     }
     else {
       selectedSubject = subjectList[selectedSubjectIndex.row];
-    }
-    
-    if (!primaryCheckboxState.checked) {
-      console.log("Grade based = ", primaryCheckboxState.checked)
-      if (maxMarks == "") {
+      if (selectedSubject == "Main") {
         Toast.show({
           type: 'error',
           position: 'bottom',
-          text1: 'Error: Max Marks Not Entered',
-          text2: "Please enter Max Marks",
+          text1: 'Error: Subject Selected: Main',
+          text2: "Test cannot be scheduled for Main. Please Select another Subject",
         });
         return;
       }
-      if (passingMarks == "") {
-        Toast.show({
-          type: 'error',
-          position: 'bottom',
-          text1: 'Error: Passing Marks Not Entered',
-          text2: "Please enter Passing Marks",
-        });
-        return;
+    }
+    if (exam.examType != "term") {
+      if (!primaryCheckboxState.checked) {
+        console.log("Grade based = ", primaryCheckboxState.checked)
+        if (maxMarks == "") {
+          Toast.show({
+            type: 'error',
+            position: 'bottom',
+            text1: 'Error: Max Marks/Grade Based Not Entered',
+            text2: "Please enter Max Marks or check Grade Based",
+          });
+          return;
+        }
+        if (passingMarks == "") {
+          Toast.show({
+            type: 'error',
+            position: 'bottom',
+            text1: 'Error: Passing Marks Not Entered',
+            text2: "Please enter Passing Marks",
+          });
+          return;
+        }
       }
-
+      else {
+        gradeBased = 0;
+      }
     }
 
-    navigation.navigate('TakeAttendance', {
-      serverIP: serverIP,
-      schoolId: schoolId,
-      userID: userID,
-      userName: userName,
-      selectedDay: selectedDay,
-      selectedMonth: selectedMonth,
-      selectedYear: selectedYear,
-      selectedClass: selectedClass,
-      selectedSection: selectedSection,
-      selectedSubject: selectedSubject,
-      comingFrom: "SelectClass"
-    });
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to Schedule this Test?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            let url = serverIP.concat("/academics/create_test1/", schoolID, "/",
+              selectedClass, "/", selectedSection, "/", selectedSubject, "/",
+              userID, "/", dd, "/", mm, "/", yy, "/",
+              primaryCheckboxState.checked ? 0 : maxMarks, "/", primaryCheckboxState.checked ? 0 : passingMarks,
+              "/", gradeBased, "/no_comments/", exam.id, "/");
+            console.log("url = ", url);
+            axios
+              .post(url)
+              .then(function (response) {
+                setLoading(false);
+                Alert.alert(
+                  "Test Scheule Outcome",
+                  response.data.outcome,
+                  [
+                    {
+                      text: "OK", onPress: () => {
+                        navigation.navigate('TestExams', {
+                          serverIP: serverIP,
+                          schoolID: schoolID,
+                          userID: userID,
+                          userName: userName,
+                          comingFrom: "teacherMenu"
+                        });
+                      }
+                    }
+                  ],
+                  { cancelable: false }
+                );
+              })
+              .catch(function (error) {
+                // handle error
+                console.log(error);
+              });
+          }
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
   return (<KeyboardAvoidingView
-    behavior={Platform.OS == "ios" ? "padding" : "height"} 
-    keyboardVerticalOffset = {useHeaderHeight()}
+    behavior={Platform.OS == "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={useHeaderHeight()}
     style={styles.container} >
     <Layout style={styles.container} level='1'>
       <Toast ref={(ref) => Toast.setRef(ref)} />
@@ -257,40 +314,41 @@ const ScheduleTest = ({ route, navigation }) => {
                 </Select>
               </Layout>
               <Layout style={styles.verticalSpace} />
-              <Layout style={styles.parallel}>
-                <CheckBox
-                  style={styles.checkbox}
-                  status='primary'
-                  {...primaryCheckboxState}>
+              {exam.examType != "term" &&
+                <Layout style={styles.parallel}>
+                  <CheckBox
+                    style={styles.checkbox}
+                    status='primary'
+                    {...primaryCheckboxState}>
                     Grade Based
-                </CheckBox>
-                
-              </Layout>
-              <Layout style={styles.parallel}>
-                <Input
-                  style={styles.select}
-                  disabled={primaryCheckboxState.checked ? true : false}
-                  size='small'
-                  keyboardType="number-pad"
-                  label={evaProps => <Text {...evaProps}>Max Marks:</Text>}
-                  onChangeText={text => setMaxMarks(text)}
-                  caption={primaryCheckboxState.checked ? "" : "Mandatory"}
-                />
-                <Input
-                  style={styles.select}
-                  disabled={primaryCheckboxState.checked ? true : false}
-                  size='small'
-                  keyboardType="decimal-pad"
-                  label={evaProps => <Text {...evaProps}>Passing Marks:</Text>}
-                  onChangeText={text => setPassingMarks(text)}
-                  caption={primaryCheckboxState.checked ? "" : "Mandatory"}
-                />
-              </Layout>
+                  </CheckBox>
+                </Layout>}
+              {exam.examType != "term" &&
+                <Layout style={styles.parallel}>
+                  <Input
+                    style={styles.select}
+                    disabled={primaryCheckboxState.checked ? true : false}
+                    size='small'
+                    keyboardType="number-pad"
+                    label={evaProps => <Text {...evaProps}>Max Marks:</Text>}
+                    onChangeText={text => setMaxMarks(text)}
+                    caption={primaryCheckboxState.checked ? "" : "Mandatory"}
+                  />
+                  <Input
+                    style={styles.select}
+                    disabled={primaryCheckboxState.checked ? true : false}
+                    size='small'
+                    keyboardType="decimal-pad"
+                    label={evaProps => <Text {...evaProps}>Passing Marks:</Text>}
+                    onChangeText={text => setPassingMarks(text)}
+                    caption={primaryCheckboxState.checked ? "" : "Mandatory"}
+                  />
+                </Layout>}
               <Layout style={styles.verticalSpace} />
               <View style={styles.parallel}>
                 <Button
                   style={styles.button}
-                  size='small'
+                  size='medium'
                   status='info'
                   onPress={scheduleTest}>
                   Schedule Test
@@ -341,14 +399,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 10
   },
-  hwDescription: {
-    marginLeft: 5,
-    marginRight: 5,
-    paddingTop: 0,
-    paddingBottom: 0,
-    textAlignVertical: 'top',
-    borderColor: "cyan"
-  },
+  
   loading: {
     position: 'absolute',
     left: 0,

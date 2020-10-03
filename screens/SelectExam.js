@@ -8,7 +8,6 @@ const SelectExam = ({ route, navigation }) => {
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
-  const { wardID } = route.params;
   const { comingFrom } = route.params;
 
   const [examList] = useState([]);
@@ -18,7 +17,7 @@ const SelectExam = ({ route, navigation }) => {
 
   useEffect(() => {
     switch (comingFrom) {
-      case "teacherMenu":
+      case "scheduleTest":
         url = serverIP.concat("/academics/get_exam_list_teacher/", userID, "/");
         break;
     }
@@ -55,7 +54,7 @@ const SelectExam = ({ route, navigation }) => {
     exam.endDate = examList[index].endDate;
     exam.startClass = examList[index].startClass;
     exam.endClass = examList[index].endClass;
-    navigation.navigate('ScheduleTest', {
+    navigation.navigate('TestList', {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,

@@ -9,7 +9,7 @@ import { AttendanceContext, AttendanceContextProvider } from './AttendanceContex
 
 const TakeAttendance = ({ route, navigation }) => {
   const { serverIP } = route.params;
-  const { schoolId } = route.params;
+  const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
   const { selectedDay } = route.params;
@@ -31,11 +31,11 @@ const TakeAttendance = ({ route, navigation }) => {
   const [presentCount, setPresentCount] = useState(0);
 
   const getStudentList = () => {
-    return axios.get(serverIP.concat("/student/list/", schoolId, "/", selectedClass, "/", selectedSection, "/"));
+    return axios.get(serverIP.concat("/student/list/", schoolID, "/", selectedClass, "/", selectedSection, "/"));
   };
 
   const getAbsenteeList = () => {
-    return axios.get(serverIP.concat("/attendance/retrieve/", schoolId, "/", selectedClass, "/", selectedSection,
+    return axios.get(serverIP.concat("/attendance/retrieve/", schoolID, "/", selectedClass, "/", selectedSection,
       "/", selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/"));
   };
 

@@ -26,6 +26,7 @@ import ViewCheckedHW from './screens/ViewCheckedHW';
 import TestExams from './screens/TestExams';
 import SelectExam from './screens/SelectExam';
 import ScheduleTest from './screens/ScheduleTest';
+import TestList from './screens/TestList';
 
 const Stack = createStackNavigator();
 
@@ -112,6 +113,9 @@ const App = () => {
           }} />
           <Stack.Screen name="ScheduleTest" component={ScheduleTest} options={{
             title: 'Schedule Test'
+          }} />
+          <Stack.Screen name="TestList" component={TestList} options={{
+
           }} />
         </Stack.Navigator>
       </NavigationContainer>
