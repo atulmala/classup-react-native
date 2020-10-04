@@ -131,10 +131,10 @@ const ScheduleTest = ({ route, navigation }) => {
   });
 
   const scheduleTest = () => {
-    let testDate = minMaxPickerState.date.toISOString().toString().substring(0, 10).split("-");
-    let yy = testDate[0];
-    let mm = testDate[1];
-    let dd = testDate[2];
+    let testDate = minMaxPickerState.date.toLocaleDateString().split("/");
+    let yy = testDate[2];
+    let mm = testDate[0];
+    let dd = testDate[1];
 
     let gradeBased = 1;
 
@@ -228,7 +228,6 @@ const ScheduleTest = ({ route, navigation }) => {
               userID, "/", dd, "/", mm, "/", yy, "/",
               primaryCheckboxState.checked ? 0 : maxMarks, "/", primaryCheckboxState.checked ? 0 : passingMarks,
               "/", gradeBased, "/no_comments/", exam.id, "/");
-            console.log("url = ", url);
             axios
               .post(url)
               .then(function (response) {
@@ -239,11 +238,12 @@ const ScheduleTest = ({ route, navigation }) => {
                   [
                     {
                       text: "OK", onPress: () => {
-                        navigation.navigate('TestExams', {
+                        navigation.replace('TestList', {
                           serverIP: serverIP,
                           schoolID: schoolID,
                           userID: userID,
                           userName: userName,
+                          exam: exam,
                           comingFrom: "teacherMenu"
                         });
                       }

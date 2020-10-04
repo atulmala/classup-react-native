@@ -40,14 +40,15 @@ const HWListTeacher = ({ route, navigation }) => {
             console.log("hw with this id is fresh entry hence will be added");
             let hw = {};
             hw.id = response.data[i].id;
+            
             let long_date = response.data[i].due_date;
-            let yyyymmdd = long_date.slice(0, 10);
+            let yyyymmdd = long_date.slice(0, 10).split("-");
+            let ddmmyyyy = yyyymmdd[2] + "-" + yyyymmdd[1] + "-" + yyyymmdd[0];
+            hw.date = ddmmyyyy;
+
             hw.the_class = response.data[i].the_class;
             hw.section = response.data[i].section;
             hw.subject = response.data[i].subject;
-
-            hw.date = yyyymmdd;
-
             hw.description = response.data[i].notes;
             hw.location = response.data[i].location;
 
@@ -100,6 +101,12 @@ const HWListTeacher = ({ route, navigation }) => {
               <Text style={styles.innerText}> {title.the_class}-{title.section}</Text>
             </Text>
           </View>
+          <TouchableOpacity onPress={() => showSubmissins(index)}>
+            <Image
+              style={styles.tinyLogo}
+              source={require('../assets/submissions.png')}
+            />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => deleteHW(index)}>
             <Image
               style={styles.tinyLogo}
@@ -132,16 +139,7 @@ const HWListTeacher = ({ route, navigation }) => {
               </Text>
             </View>
           </View>}
-        <View style={styles.containerRow}>
-          <TouchableOpacity style={styles.FacebookStyle} activeOpacity={0.8} onPress={() => showSubmissins(index)}>
-            <Image
-              source={require('../assets/lens.png')}
-              style={styles.ImageIconStyle}
-            />
-            <View style={styles.SeparatorLine} />
-            <Text style={styles.TextStyle}> View Submissions </Text>
-          </TouchableOpacity>
-        </View>
+        
       </View>
     )
   };
@@ -388,15 +386,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#F5FCFF88'
   },
-  FacebookStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'cornflowerblue',
-    borderWidth: 0.5,
-    borderColor: '#fff',
-    borderRadius: 10,
-    margin: 5,
-  },
   TextStyle: {
     color: 'white',
     fontSize: 18,
@@ -410,11 +399,7 @@ const styles = StyleSheet.create({
     width: 25,
     resizeMode: 'stretch',
   },
-  SeparatorLine: {
-    backgroundColor: '#fff',
-    width: 0,
-    height: 40,
-  }
+  
 
 });
 

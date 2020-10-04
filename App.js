@@ -27,6 +27,7 @@ import TestExams from './screens/TestExams';
 import SelectExam from './screens/SelectExam';
 import ScheduleTest from './screens/ScheduleTest';
 import TestList from './screens/TestList';
+import MarksEntry from './screens/MarksEntry';
 
 const Stack = createStackNavigator();
 
@@ -114,9 +115,8 @@ const App = () => {
           <Stack.Screen name="ScheduleTest" component={ScheduleTest} options={{
             title: 'Schedule Test'
           }} />
-          <Stack.Screen name="TestList" component={TestList} options={{
-
-          }} />
+          <Stack.Screen name="TestList" component={TestList} />
+          <Stack.Screen name="MarksEntry" component={MarksEntry} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

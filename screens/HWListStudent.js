@@ -46,13 +46,16 @@ const HWListStudent = ({ route, navigation }) => {
             console.log("hw with this id is fresh entry hence will be added");
             let hw = {};
             hw.id = response.data[i].id;
+
             let long_date = response.data[i].due_date;
-            let yyyymmdd = long_date.slice(0, 10);
+            let yyyymmdd = long_date.slice(0, 10).split("-");
+            let ddmmyyyy = yyyymmdd[2] + "-" + yyyymmdd[1] + "-" + yyyymmdd[0];
+            hw.date = ddmmyyyy;
+            
             hw.the_class = response.data[i].the_class;
             hw.section = response.data[i].section;
             hw.subject = response.data[i].subject;
 
-            hw.date = yyyymmdd;
 
             hw.description = response.data[i].notes;
             hw.location = response.data[i].location;

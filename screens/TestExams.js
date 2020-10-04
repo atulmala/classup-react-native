@@ -4,8 +4,7 @@ import Toast from 'react-native-toast-message';
 import Colors from '../Constants/colors';
 
 const TestExams = ({ route, navigation }) => {
-  const [comingFrom, setComingFrom] = React.useState();
-  const selectExam = () => {
+  const selectExam = (comingFrom) => {
     navigation.navigate('SelectExam', {
       serverIP: serverIP,
       schoolID: schoolID,
@@ -15,7 +14,6 @@ const TestExams = ({ route, navigation }) => {
     });
   };
 
-  const { url } = route.params;
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
@@ -26,9 +24,7 @@ const TestExams = ({ route, navigation }) => {
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn1} onPress={
           () => {
-            setComingFrom("scheduleTest");
-            console.log("comingFrom = ", comingFrom);
-            selectExam()
+            selectExam("scheduleTest")
           }
         }>
           <Image

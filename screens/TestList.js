@@ -31,12 +31,15 @@ const TestList = ({ route, navigation }) => {
           let test = {};
           let res = pending.data[i];
           test.id = res.id;
-          test.date = res.date_conducted;
+          let yyyymmdd = res.date_conducted.split("-");
+          let ddmmyyyy = yyyymmdd[2] + "-" + yyyymmdd[1] + "-" + yyyymmdd[0];
+          test.date = ddmmyyyy;
           test.subject = res.subject;
+          test.theClass = res.the_class;
           test.class = res.the_class + "-" + res.section;
           test.maxMarks = res.max_marks;
           test.passingMarks = res.passing_marks;
-          test.gradeBased = res.grade_based == "true" ? "Grade Based" : "Marks Based";
+          test.gradeBased = res.grade_based ? "Grade Based" : "Marks Based";
           test.status = "Pending";
           test.type = res.test_type;
           testList.push(test);
@@ -46,12 +49,15 @@ const TestList = ({ route, navigation }) => {
           let test = {};
           let res = completed.data[j];
           test.id = res.id;
-          test.date = res.date_conducted;
+          let yyyymmdd = res.date_conducted.split("-");
+          let ddmmyyyy = yyyymmdd[2] + "-" + yyyymmdd[1] + "-" + yyyymmdd[0];
+          test.date = ddmmyyyy;
           test.subject = res.subject;
+          test.theClass = res.the_class;
           test.class = res.the_class + "-" + res.section;
           test.maxMarks = res.max_marks;
           test.passingMarks = res.passing_marks;
-          test.gradeBased = res.grade_based == "true" ? "Grade Based" : "Marks Based";
+          test.gradeBased = res.grade_based  ? "Grade Based" : "Marks Based";
           test.status = "Completed";
           test.type = res.test_type;
           testList.push(test);
@@ -61,10 +67,10 @@ const TestList = ({ route, navigation }) => {
     );
   }, [schoolID]);
 
-  const BigPlus = ({ onPress }) => {
+  const BigPlus = () => {
     return (
       <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={scheduleTest}>
           <Image
             source={require('../assets/big_plus.png')}
             style={{
@@ -84,18 +90,19 @@ const TestList = ({ route, navigation }) => {
     return (
       <View style={styles.containerLine}>
         <View style={styles.containerRow}>
-          <View style={styles.container_text}>
+          <View style={styles.container_text1}>
             <Text style={styles.baseText}>
               Date:
               <Text style={styles.innerText}> {title.date}</Text>
             </Text>
           </View>
-          <TouchableOpacity onPress={() => deleteTest(index)}>
-            <Image
-              style={styles.tinyLogo}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => deleteTest(index)}>
+          <View style={styles.container_text}>
+            <Text style={styles.baseText}>
+              Class:
+              <Text style={styles.innerText}> {title.class}</Text>
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => marksEntry(index)}>
             <Image
               style={styles.tinyLogo}
               source={require('../assets/pen.png')}
@@ -109,7 +116,6 @@ const TestList = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.containerRow}>
-
           <View style={styles.container_text}>
             <Text style={styles.baseText}>
               Subject:
@@ -118,18 +124,16 @@ const TestList = ({ route, navigation }) => {
           </View>
           <View style={styles.container_text}>
             <Text style={styles.baseText}>
-              Class:
-              <Text style={styles.innerText}> {title.class}</Text>
+              Type:
+              {title.gradeBased == "Marks Based" && 
+              <Text style={styles.marksBased}> {title.gradeBased}</Text>}
+              {title.gradeBased == "Grade Based" && 
+              <Text style={styles.gradeBased}> {title.gradeBased}</Text>}
             </Text>
           </View>
+
         </View>
         <View style={styles.containerRow}>
-          <View style={styles.container_text}>
-            <Text style={styles.baseText}>
-              Type:
-              <Text style={styles.innerTextDescription}> {title.gradeBased}</Text>
-            </Text>
-          </View>
           <View style={styles.container_text}>
             <Text style={styles.baseText}>
               Status:
@@ -155,109 +159,98 @@ const TestList = ({ route, navigation }) => {
     )
   };
 
-  const createTest = () => {
-    navigation.navigate('CreateHW', {
+  const scheduleTest = () => {
+    navigation.navigate('ScheduleTest', {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,
       userName: userName,
+      exam: exam,
       comingFrom: "teacherMenu"
     });
   };
 
-  const showSubmissins = (index) => {
-    console.log("index = ", index);
-    navigation.navigate('HWSubmissions', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      userName: userName,
-      hwID: index,
-      comingFrom: "hwListTeacher"
-    });
-  };
+  const marksEntry = (index) =>   {
+    var higherClass = false;
+    for (test of testList)  {
+      if (test.id == index) {
+        let theClass = test.class;
+        let subject = test.subject;
+        if (test.theClass == 'XI' || test.theClass == 'XII')  {
+          higherClass = true;
+        }
+        navigation.navigate('MarksEntry', {
+          serverIP: serverIP,
+          schoolID: schoolID,
+          userID: userID,
+          userName: userName,
+          exam: exam,
+          testID: index,
+          theClass: theClass,
+          subject: subject,
+          higherClass: higherClass
+        });
+        break;
+      }
+    }
+    
+  }
 
   const deleteTest = (index) => {
-    console.log("index = ", index);
-    console.log("hwList = ", hwList);
-    if (index < 0) {
-      Alert.alert(
-        "Dummy Placeholder HW",
-        "This is a dummy HW. Will be automatically deleted when you have created real HW!",
-        [
-          {
-            text: "OK", onPress: () => {
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to Delete this Test? If you have entered any marks those will also be deleted!",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            {
+              isLoading && (
+                <View>
+                  <ActivityIndicator style={styles.loading} size='large' />
+                </View>
+              )
             }
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-    else {
-      Alert.alert(
-        "Please Confirm ",
-        "Are You sure you want to Delete this HW?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel"
-          },
-          {
-            text: "OK", onPress: () => {
-              setLoading(true);
-              {
-                isLoading && (
-                  <View>
-                    <ActivityIndicator style={styles.loading} size='large' />
-                  </View>
-                )
-              }
 
-              try {
-                axios.delete(serverIP.concat("/academics/delete_hw/", index, "/"))
-                  .then(function (response) {
-                    console.log(response);
-                    setLoading(false);
-                    Alert.alert(
-                      "HW Deleted",
-                      "Home Deleted.",
-                      [
-                        {
-                          text: "OK", onPress: () => {
-                            navigation.navigate('HWListTeacher', {
-                              serverIP: serverIP,
-                              schoolID: schoolID,
-                              userID: userID,
-                              userName: userName,
-                              comingFrom: "CreateHW"
-                            });
-                          }
+            try {
+              axios.delete(serverIP.concat("/academics/delete_test/", index, "/"))
+                .then(function (response) {
+                  console.log(response);
+                  setLoading(false);
+                  Alert.alert(
+                    "Test Deleted",
+                    "Test Deleted.",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+                          navigation.replace('TestList', {
+                            serverIP: serverIP,
+                            schoolID: schoolID,
+                            userID: userID,
+                            userName: userName,
+                            exam: exam,
+                          });
                         }
-                      ],
-                      { cancelable: false }
-                    );
-                  });
-              } catch (error) {
-                console.error(error);
-              }
-              var position = 0;
-              for (var hw of hwList) {
-                if (hw.id == index) {
-                  hwList.splice(position, 1)
-                  break
-                }
-                else {
-                  position++;
-                }
-              }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                });
+            } catch (error) {
+              console.error(error);
             }
           }
-        ],
-        { cancelable: false }
-      );
-    }
+        }
+      ],
+      { cancelable: false }
+    );
   }
+
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
@@ -265,11 +258,12 @@ const TestList = ({ route, navigation }) => {
       </View>
     );
   };
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () => <HeaderTitle />,
       headerTitleAlign: 'center',
-      headerRight: () => <BigPlus onPress={createTest} />,
+      headerRight: () => <BigPlus onPress={scheduleTest} />,
       headerStyle: {
         backgroundColor: 'mediumslateblue',
       },
@@ -288,6 +282,8 @@ const TestList = ({ route, navigation }) => {
   )
 }
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -296,7 +292,7 @@ const styles = StyleSheet.create({
   containerRow: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'azure',
+    backgroundColor: 'honeydew',
   },
   containerLine: {
     flex: 1,
@@ -308,7 +304,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 2,
     borderRadius: 10,
-    backgroundColor: 'azure',
+    backgroundColor: 'honeydew',
     elevation: 6,
   },
   tinyLogo: {
@@ -322,6 +318,12 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     justifyContent: 'center',
   },
+  container_text1: {
+    flex: 5,
+    flexDirection: 'column',
+    marginLeft: 8,
+    justifyContent: 'center',
+  },
   headerText: {
     ...Platform.select({
       ios: {
@@ -331,7 +333,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
       }
     }),
-
     fontWeight: 'bold',
     color: 'white',
     margin: 4
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     color: '#4b0082',
     margin: 4
   },
-  innerTextDescription: {
+  marksBased: {
     ...Platform.select({
       ios: {
         fontSize: 14,
@@ -372,7 +373,19 @@ const styles = StyleSheet.create({
         fontSize: 16,
       }
     }),
-    color: 'indigo',
+    color: 'saddlebrown',
+    margin: 4
+  },
+  gradeBased: {
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    color: 'cornflowerblue',
     margin: 4
   },
   pending: {
@@ -408,13 +421,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F5FCFF88'
-  },
-
-  TextStyle: {
-    color: 'white',
-    fontSize: 18,
-    marginBottom: 4,
-    marginRight: 4,
   },
 });
 

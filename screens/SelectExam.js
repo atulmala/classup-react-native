@@ -11,38 +11,36 @@ const SelectExam = ({ route, navigation }) => {
   const { comingFrom } = route.params;
 
   const [examList] = useState([]);
-  var url = "";
 
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     switch (comingFrom) {
       case "scheduleTest":
-        url = serverIP.concat("/academics/get_exam_list_teacher/", userID, "/");
+        let url = serverIP.concat("/academics/get_exam_list_teacher/", userID, "/");
+        axios
+          .get(url)
+          .then(function (response) {
+            for (var i = 0; i < response.data.length; i++) {
+              let exam = {};
+              exam.id = response.data[i].id;
+              exam.title = response.data[i].title;
+              exam.examType = response.data[i].exam_type;
+              exam.startDate = response.data[i].start_date;
+              exam.endDate = response.data[i].end_date;
+              exam.startClass = response.data[i].start_class;
+              exam.endClass = response.data[i].end_class;
+
+              examList.push(exam);
+            }
+            setLoading(false);
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
         break;
     }
-
-    axios
-      .get(url)
-      .then(function (response) {
-        for (var i = 0; i < response.data.length; i++) {
-          let exam = {};
-          exam.id = response.data[i].id;
-          exam.title = response.data[i].title;
-          exam.examType = response.data[i].exam_type;
-          exam.startDate = response.data[i].start_date;
-          exam.endDate = response.data[i].end_date;
-          exam.startClass = response.data[i].start_class;
-          exam.endClass = response.data[i].end_class;
-
-          examList.push(exam);
-        }
-        setLoading(false);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
   }, []);
 
   const scheduleTest = (index) => {
