@@ -176,6 +176,8 @@ const TestList = ({ route, navigation }) => {
       if (test.id == index) {
         let theClass = test.class;
         let subject = test.subject;
+        let type = test.type;
+        let gradeBased = test.gradeBased == "Grade Based" ? true : false;
         if (test.theClass == 'XI' || test.theClass == 'XII')  {
           higherClass = true;
         }
@@ -188,6 +190,8 @@ const TestList = ({ route, navigation }) => {
           testID: index,
           theClass: theClass,
           subject: subject,
+          type: type,
+          gradeBased: gradeBased,
           higherClass: higherClass
         });
         break;

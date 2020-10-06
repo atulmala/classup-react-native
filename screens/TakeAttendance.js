@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
   Platform, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity,
-  FlatList, Switch, Image, Button, Alert
+  FlatList, Switch, Image, Alert
 } from 'react-native';
 import axios from 'axios';
 import { AttendanceContext, AttendanceContextProvider } from './AttendanceContext';
@@ -48,7 +48,6 @@ const TakeAttendance = ({ route, navigation }) => {
         total = students.data.length;
 
         setTotalStudents(total);
-        let absentCount = absentees.data.length;
         setPresentCount(total - absentees.data.length);
 
         for (i = 0; i < students.data.length; i++) {

@@ -38,8 +38,6 @@ const ScheduleTest = ({ route, navigation }) => {
   const { userID } = route.params;
   const { exam } = route.params;
 
-  console.log("exam = ", exam);
-
   const primaryCheckboxState = useCheckboxState();
 
   const startDate = exam.startDate.split("-");
