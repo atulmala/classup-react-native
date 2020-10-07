@@ -20,7 +20,7 @@ const TeacherMenu = ({ route, navigation }) => {
   };
 
   const _gotoTestExams = () => {
-    navigation.navigate('TestExams', {
+    navigation.navigate('SelectExam', {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,
@@ -31,6 +31,16 @@ const TeacherMenu = ({ route, navigation }) => {
 
   const _gotoShowHW = () => {
     navigation.navigate('HWListTeacher', {
+      serverIP: serverIP,
+      schoolID: schoolID,
+      userID: userID,
+      userName: userName,
+      comingFrom: "teacherMenu"
+    });
+  };
+
+  const _selectClassCoSchol = () => {
+    navigation.navigate('SelectClassCoSchol', {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,
@@ -108,14 +118,31 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text style={styles.text}>Online Classes</Text>
         </TouchableOpacity>
       </View>
-
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn7} onPress={_gotoTestExams}>
           <Image
-            source={require('../assets/exam_management.png')}
+            source={require('../assets/exam4.png')}
             style={styles.ImageIconStyle}
           />
           <Text body style={styles.text}>Test/Exam Management</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btn8} onPress={_selectClassCoSchol}>
+          <Image
+            source={require('../assets/grades.png')}
+            style={styles.ImageIconStyle2}
+          />
+          <Text body style={styles.text}>Co Scholastic Grades</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.parallel}>
+        <TouchableOpacity style={styles.btn5} >
+          <Image
+            source={require('../assets/password.jpg')}
+            style={styles.ImageIconStyle}
+          />
+          <Text body style={styles.text}>Change Password</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btn8}>
@@ -185,7 +212,7 @@ const styles = StyleSheet.create({
   },
   btn7: {
     ...button,
-    backgroundColor: '#81D4FA',
+    backgroundColor: 'burlywood',
   },
   btn8: {
     ...button,

@@ -28,6 +28,8 @@ import SelectExam from './screens/SelectExam';
 import ScheduleTest from './screens/ScheduleTest';
 import TestList from './screens/TestList';
 import MarksEntry from './screens/MarksEntry';
+import SelectClassCoSchol from './screens/SelectClassCoSchol';
+import CoScholastic from './screens/CoScholastic';
 
 const Stack = createStackNavigator();
 
@@ -117,6 +119,8 @@ const App = () => {
           }} />
           <Stack.Screen name="TestList" component={TestList} />
           <Stack.Screen name="MarksEntry" component={MarksEntry} />
+          <Stack.Screen name="SelectClassCoSchol" component={SelectClassCoSchol} />
+          <Stack.Screen name="CoScholastic" component={CoScholastic} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

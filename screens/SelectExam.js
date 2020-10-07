@@ -16,7 +16,7 @@ const SelectExam = ({ route, navigation }) => {
 
   useEffect(() => {
     switch (comingFrom) {
-      case "scheduleTest":
+      case "teacherMenu":
         let url = serverIP.concat("/academics/get_exam_list_teacher/", userID, "/");
         axios
           .get(url)

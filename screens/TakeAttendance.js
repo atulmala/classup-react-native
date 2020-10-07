@@ -6,7 +6,6 @@ import {
 import axios from 'axios';
 import { AttendanceContext, AttendanceContextProvider } from './AttendanceContext';
 
-
 const TakeAttendance = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
