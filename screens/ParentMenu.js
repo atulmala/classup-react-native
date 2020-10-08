@@ -1,22 +1,21 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
-import Colors from '../Constants/colors';
 
 const ParentMenu = ({ route, navigation }) => {
   console.log('inside ParentMenu');
-  
+
   const testPress = () => {
     Alert.alert('was pressed');
     console.log('was pressed');
   };
 
-  const { url } = route.params;
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
   const { wardID } = route.params;
+  const { wardName } = route.params;
   const { feeDefaultStatus } = route.params;
   const { welcomeMessage } = route.params;
 
@@ -39,7 +38,7 @@ const ParentMenu = ({ route, navigation }) => {
         text1: 'Fee Status: Pending',
         text2: welcomeMessage,
       });
-      
+
     }
     else {
       console.log('Fee status good');
@@ -53,145 +52,155 @@ const ParentMenu = ({ route, navigation }) => {
   showToast();
 
   const _gotoSelectSubject = () => {
-    console.log("schoolID = ", schoolID);
     navigation.navigate('SelectSubject', {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,
       wardID: wardID,
+      wardName: wardName,
       userName: userName,
       comingFrom: "ParentMenu"
     });
   };
 
-return (
-  <View style={styles.container}>
-    {
-      showToast
-    }
-    <Text style={styles.StudentName}>Student Name</Text>
-    <View style={styles.parallel}>
-      <TouchableOpacity style={styles.btn1} onPress={testPress}>
-        <Text style={styles.font}>Month Wise Attendance</Text>
-      </TouchableOpacity>
+  const _gotoOnlineTestToday = () =>  {
+    navigation.navigate('OnlineTestToday', {
+      serverIP: serverIP,
+      schoolID: schoolID,
+      userID: userID,
+      studentID: wardID,
+      wardName: wardName,
+      userName: userName,
+      comingFrom: "ParentMenu"
+    });
+  };
 
-      <TouchableOpacity style={styles.btn2}>
-        <Text style={styles.font}>Time Table</Text>
-      </TouchableOpacity>
-    </View>
+  const HeaderTitle = () => {
+    return (
+      <View style={styles.headerTitle}>
+        <Text style={styles.headerText}>Parent/Student Menu</Text>
+        <Text style={styles.headerLine}>Student: {wardName}</Text>
+      </View>
+    );
+  };
 
-    <View style={styles.parallel}>
-      <TouchableOpacity style={styles.btn3} onPress={_gotoSelectSubject}>
-        <Text style={styles.font}>Homework</Text>
-      </TouchableOpacity>
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerTitleAlign: 'left',
+      headerStyle: {
+        backgroundColor: 'darkkhaki',
+      },
+    });
+  });
 
-      <TouchableOpacity style={styles.btn4}>
-        <Text style={styles.font}>Test & Exams</Text>
-      </TouchableOpacity>
-    </View>
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.parallel}>
+        <TouchableOpacity style={[button, {backgroundColor: 'chocolate'}]} onPress={testPress}>
+          <Text style={styles.font}>Month Wise Attendance</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[button, {backgroundColor: 'midnightblue'}]} onPress={testPress}>
+          <Text style={styles.font}>Time Table</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.parallel}>
+        <TouchableOpacity style={[button, {backgroundColor: 'darkolivegreen'}]} onPress={_gotoSelectSubject}>
+          <Text style={styles.font}>Home Work</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[button, {backgroundColor: 'dodgerblue'}]} onPress={testPress}>
+          <Text style={styles.font}>Online Classes</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.parallel}>
+        <TouchableOpacity style={[button, {backgroundColor: 'goldenrod'}]}>
+          <Text style={styles.font}>Upcoming Tests</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[button, {backgroundColor: 'brown'}]} onPress={_gotoOnlineTestToday}>
+          <Text style={styles.font}>Online Test</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.parallel}>
+        <TouchableOpacity style={[button, {backgroundColor: 'darkorchid'}]}>
+          <Text style={styles.font}>Exam Results</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[button, {backgroundColor: 'darkslategray'}]}>
+          <Text style={styles.font}>Communicate With School</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.parallel}>
+        <TouchableOpacity style={[button, {backgroundColor: 'indianred'}]}>
+          <Text style={styles.font}>Communication History</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[button, {backgroundColor: 'indigo'}]}>
+          <Text style={styles.font}>Image/Video From School</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.parallel}>
+        <TouchableOpacity style={[button, {backgroundColor: 'maroon'}]}>
+          <Text style={styles.font}>Upload Student Pic</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[button, {backgroundColor: 'olivedrab'}]}>
+          <Text style={styles.font}>Change Password</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  )
+}
 
-    <View style={styles.parallel}>
-      <TouchableOpacity style={styles.btn5} onPress={testPress}>
-        <Text style={styles.font}>Communication Center</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.btn6}>
-        <Text style={styles.font}>Change Password</Text>
-      </TouchableOpacity>
-    </View>
-
-  </View>
-)
+let button = {
+  justifyContent: 'space-between',
+  width: '46%',
+  height: '90%',
+  margin: 5,
+  padding: 20,
+  borderRadius: 15,
+  justifyContent: 'center',
+  alignItems: 'center',
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.LightBlue,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'linen',
     width: "100%"
   },
-
   parallel: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    height: 100
-  },
-
-  btn1: {
-    backgroundColor: '#EF7373',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
+    height: 100,
     justifyContent: 'center',
     alignItems: 'center'
   },
-
-  btn2: {
-    backgroundColor: '#FFAF49',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  btn3: {
-    backgroundColor: '#FDD835',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  btn4: {
-    backgroundColor: '#80CBC4',//4DD0E1
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  btn5: {
-    backgroundColor: '#4DD0E1',
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  btn6: {
-    backgroundColor: '#CE93D8',//4DB6AC
-    width: '45%',
-    margin: 5,
-    padding: 20,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-
-  },
-
   font: {
     fontWeight: 'bold',
-    fontSize: 16,
-    textAlign: 'center'
+    fontSize: 17,
+    textAlign: 'center',
+    color: 'cornsilk'
   },
-
-  StudentName: {
-    alignSelf: 'flex-start',
-    margin: 25,
+  headerText: {
+    ...Platform.select({
+      ios: {
+        fontSize: 16,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
     fontWeight: 'bold',
-    fontSize: 20
-  }
+    color: 'white',
+  },
+  headerLine: {
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 14,
+      }
+    }),
+    fontWeight: 'bold',
+    color: 'white',
+  },
 })
 
 export default ParentMenu

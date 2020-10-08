@@ -81,7 +81,7 @@ const CoScholastic = ({ route, navigation }) => {
       .then(function (response) {
         if (response.data.status == "success") {
           Alert.alert(
-            "Grades Successflly Saved",
+            "Grades Successfully Saved",
             "Grades Successfully Saved",
             [
               { text: "OK", onPress: () => console.log("OK Pressed") }

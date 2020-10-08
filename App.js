@@ -30,6 +30,9 @@ import TestList from './screens/TestList';
 import MarksEntry from './screens/MarksEntry';
 import SelectClassCoSchol from './screens/SelectClassCoSchol';
 import CoScholastic from './screens/CoScholastic';
+import OnlineTestToday from './screens/OnlineTestToday';
+import OnlineTestInstructions from './screens/OnlineTestInstructions';
+import OnlineTest from './screens/OnlineTest';
 
 const Stack = createStackNavigator();
 
@@ -59,9 +62,7 @@ const App = () => {
             title: 'Teacher Menu',
             headerLeft: null
           }} />
-          <Stack.Screen name="ParentMenu" component={ParentMenu} options={{
-            title: 'Parent Menu',
-          }} />
+          <Stack.Screen name="ParentMenu" component={ParentMenu} options={{}} />
           <Stack.Screen name="AdminMenu" component={AdminMenu}
             options={{
               title: 'Admin Menu',
@@ -121,6 +122,9 @@ const App = () => {
           <Stack.Screen name="MarksEntry" component={MarksEntry} />
           <Stack.Screen name="SelectClassCoSchol" component={SelectClassCoSchol} />
           <Stack.Screen name="CoScholastic" component={CoScholastic} />
+          <Stack.Screen name="OnlineTestToday" component={OnlineTestToday} />
+          <Stack.Screen name="OnlineTestInstructions" component={OnlineTestInstructions} />
+          <Stack.Screen name="OnlineTest" component={OnlineTest} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>
