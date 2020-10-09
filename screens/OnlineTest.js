@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
   Platform, StyleSheet, View, ActivityIndicator, Alert,
-  TouchableOpacity, KeyboardAvoidingView, FlatList
+  TouchableOpacity, KeyboardAvoidingView, FlatList, Text
 } from 'react-native';
 
-import { Radio, RadioGroup, Card, List, Text } from '@ui-kitten/components';
+import { Radio, Card,  } from '@ui-kitten/components';
 import { useHeaderHeight } from '@react-navigation/stack';
+import CountDown from 'react-native-countdown-component';
 
 import axios from 'axios';
 
@@ -21,6 +22,7 @@ const OnlineTest = ({ route, navigation }) => {
   const { subject } = route.params;
 
   const [isLoading, setLoading] = useState(true);
+  const [duration, setDuration] = useState(60 * 30 + 10);
 
   const [questionList] = useState([]);
   const [studentAnswers] = useState([]);
@@ -30,39 +32,78 @@ const OnlineTest = ({ route, navigation }) => {
     axios
       .get(url)
       .then(function (response) {
-        for (var i = 0; i < response.data.length; i++) {
-          let res = response.data[i];
-          let question = {};
-          let answer = {};
-          question.index = i;
-          question.id = res.id;
-          question.question = res.question;
-          question.option_a = res.option_a;
-          question.option_b = res.option_b;
-          question.option_c = res.option_c;
-          question.option_d = res.option_d;
+        if (response.data.length == 0) {
+          setLoading(false);
+          Alert.alert(
+            "Error in Download",
+            "Error occurred while downloading Questions. Please Exit ClassUp, then try again.",
+            [
+              { text: "OK", onPress: () => console.log("OK Pressed") }
+            ],
+            { cancelable: false }
+          );
+        }
+        else {
+          for (var i = 0; i < response.data.length; i++) {
+            let res = response.data[i];
 
-          answer.student_id = studentID;
-          answer.id = res.id;
-          answer.option_marked = "X";
+            let question = {};
+            question.index = i;
+            question.id = res.id;
+            question.question = res.question;
+            question.option_a = res.option_a;
+            question.option_b = res.option_b;
+            question.option_c = res.option_c;
+            question.option_d = res.option_d;
 
-          questionList.push(question);
-          studentAnswers.push(answer);
+            let answer = {};
+            answer.index = i;
+            answer.student_id = studentID;
+            answer.question_id = res.id;
+            answer.id = res.id;
+            answer.option_marked = "X";
+
+            questionList.push(question);
+            studentAnswers.push(answer);
+          }
         }
         setLoading(false);
-        console.log(questionList);
+        console.log(studentAnswers);
       })
       .catch(function (error) {
         // handle error
         console.log(error);
+        setLoading(false);
+          Alert.alert(
+            "Error in Download",
+            "Error occurred while downloading Questions. Please Exit ClassUp, then try again.",
+            [
+              { text: "OK", onPress: () => console.log("OK Pressed") }
+            ],
+            { cancelable: false }
+          );
       });
-
   }, [schoolID]);
 
   const HeaderTitle = () => {
     return (
-      <View style={styles.headerTitle}>
-        <Text style={styles.headerText}>Online Test</Text>
+      <View style={[styles.headerTitle, styles.parallel]}>
+        <View style={styles.headerTitle}>
+          <Text style={styles.headerText}>Time Left:  </Text>
+        </View>
+        <View style={styles.headerTitle}>
+          <CountDown
+            until={duration}
+            onFinish={timeOver}
+            onPress={() => alert('hello')}
+            size={12}
+            digitStyle={{ backgroundColor: '#FFF' }}
+            digitTxtStyle={{ color: '#1CC625' }}
+            timeLabelStyle={{ color: 'bisque', fontsSize: 18 }}
+            timeToShow={['M', 'S']}
+            timeLabels={{ m: 'MM', s: 'SS' }}
+          />
+        </View>
       </View>
     );
   };
@@ -74,11 +115,12 @@ const OnlineTest = ({ route, navigation }) => {
       headerStyle: {
         backgroundColor: 'darkslateblue',
       },
+      headerLeft: null,
       headerRight: () =>
         <View style={styles.parallel}>
           {!isLoading &&
-            <TouchableOpacity style={styles.nextButton} onPress={() => saveGrades()}>
-              <Text style={styles.nextText}>  Save  </Text>
+            <TouchableOpacity style={styles.nextButton} onPress={() => submit()}>
+              <Text style={styles.nextText}>  Submit  </Text>
             </TouchableOpacity>}
         </View>
     });
@@ -86,34 +128,222 @@ const OnlineTest = ({ route, navigation }) => {
 
   const renderItemHeader = (headerProps, info) => (
     <View {...headerProps}>
-      <Text category='h6'>
-      Q {info.index + 1}. {info.item.question} 
-      </Text>
+      <Text style={styles.qNo} category='h5' status='primary'>Q {info.index + 1} -  <Text style={styles.question} category='h6' status='info'>
+        {info.question}
+      </Text></Text>
     </View>
   );
 
-  const renderItemFooter = (footerProps) => (
-    <Text {...footerProps}>
-      By Wikipedia
-    </Text>
-  );
+  const CustomRow = ({ title }) => {
+    const [checked, setChecked] = useContext(AttendanceContext);
+    return (
+      <Card
+        style={styles.item}
+        status='basic'
+        header={headerProps => renderItemHeader(headerProps, title)}
+      >
+        <Radio
+          style={styles.item}
+          checked={studentAnswers[title.index].option_marked == 'A'}
+          onChange={() => {
+            studentAnswers[title.index].option_marked = 'A';
+            setChecked(Math.floor(Math.random() * 1001));
+            markOption(title, 'A');
+          }
+          }>
+          <Text category='S1' status='primary'>
+            {'A. '}
+          </Text>
+          {title.option_a}
+        </Radio>
+        <Radio
+          style={styles.item}
+          checked={studentAnswers[title.index].option_marked == 'B'}
+          onChange={() => {
+            studentAnswers[title.index].option_marked = 'B';
+            setChecked(Math.floor(Math.random() * 1001));
+            markOption(title, 'B');
+          }
+          }>
+          <Text category='S1' status='primary'>
+            {'B. '}
+          </Text>{
+            title.option_b}
+        </Radio>
+        <Radio
+          style={styles.item}
+          checked={studentAnswers[title.index].option_marked == 'C'}
+          onChange={() => {
+            studentAnswers[title.index].option_marked = 'C';
+            setChecked(Math.floor(Math.random() * 1001));
+            markOption(title, 'C');
+          }
+          }>
+          <Text category='S1' status='primary'>
+            {'C. '}
+          </Text>
+          {title.option_c}
+        </Radio>
+        <Radio
+          style={styles.item}
+          checked={studentAnswers[title.index].option_marked == 'D'}
+          onChange={() => {
+            studentAnswers[title.index].option_marked = 'D';
+            setChecked(Math.floor(Math.random() * 1001));
+            markOption(title, 'D');
+          }
+          }>
+          <Text category='S1' status='primary'>
+            {'D. '}
+          </Text>{title.option_d}</Radio>
+      </Card>)
+  };
 
-  const renderItem = (info) => (
-    <Card
-      style={styles.item}
-      status='basic'
-      header={headerProps => renderItemHeader(headerProps, info)}
-      footer={renderItemFooter}>
-       <RadioGroup
-        
-        >
-        <Radio>{info.item.option_a}</Radio>
-        <Radio>{info.item.option_b}</Radio>
-        <Radio>{info.item.option_c}</Radio>
-        <Radio>{info.item.option_d}</Radio>
-      </RadioGroup>
-    </Card>
-  );
+  const CustomListview = ({ itemList }) => {
+    return (
+      <View style={styles.container}>
+        <FlatList
+          data={itemList}
+          renderItem={({ item }) => <CustomRow
+            title={item}
+            index={item.index}
+          />}
+        />
+      </View>
+    )
+  };
+
+  const markOption = (info, option) => {
+    console.log("inside markOption");
+    let params = {};
+    params.student_id = studentID;
+    params.question_id = info.question_id;
+    params.answer_marked = option;
+
+    let url = serverIP.concat("/online_test/mark_answer/");
+    axios.post(url, {
+      params
+    })
+      .then(function (response) {
+
+      })
+      .catch(function (error) {
+        console.log("error = ", error);
+      });
+  }
+
+  const timeOver = () => {
+    Alert.alert(
+      "Time Over! ",
+      "Time Over. Now your answers will be submitted",
+      [
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            let params = {};
+            for (answer of studentAnswers) {
+              let params1 = {};
+              let question_id = answer.question_id;
+              params1.student_id = studentID;
+              params1.question_id = question_id;
+              params1.option_marked = answer.option_marked;
+
+              params.question_id = params1;
+            }
+            let url = serverIP.concat("/online_test/submit_answers/");
+            axios.post(url, {
+              params
+            })
+              .then(function (response) {
+                setLoading(false);
+                Alert.alert(
+                  "Answers Submitted",
+                  "Answers Submitted. Result will be communicated soon",
+                  [
+                    {
+                      text: "OK", onPress: () => {
+                        navigation.navigate('ParentMenu', {
+                          serverIP: serverIP,
+                          schoolID: schoolID,
+                          userID: userID,
+                          studentID: studentID,
+                        });
+                      }
+                    }
+                  ],
+                  { cancelable: false }
+                );
+              })
+              .catch(function (error) {
+                setLoading(false);
+                console.log("error = ", error);
+              });
+
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  const submit = () => {
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to Submit your answers? Your attempt will be counted.",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            let params = {};
+            for (answer of studentAnswers) {
+              let params1 = {};
+              let question_id = answer.question_id;
+              params1.student_id = studentID;
+              params1.question_id = question_id;
+              params1.option_marked = answer.option_marked;
+
+              params.question_id = params1;
+            }
+            let url = serverIP.concat("/online_test/submit_answers/");
+            axios.post(url, {
+              params
+            })
+              .then(function (response) {
+                setLoading(false);
+                Alert.alert(
+                  "Answers Submitted",
+                  "Answers Submitted. Result will be communicated soon",
+                  [
+                    {
+                      text: "OK", onPress: () => {
+                        navigation.navigate('ParentMenu', {
+                          serverIP: serverIP,
+                          schoolID: schoolID,
+                          userID: userID,
+                          studentID: studentID,
+                        });
+                      }
+                    }
+                  ],
+                  { cancelable: false }
+                );
+              })
+              .catch(function (error) {
+                setLoading(false);
+                console.log("error = ", error);
+              });
+
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
 
   return (<AttendanceContextProvider>
     <KeyboardAvoidingView
@@ -124,11 +354,8 @@ const OnlineTest = ({ route, navigation }) => {
         {isLoading ? <View style={styles.loading}>
           <ActivityIndicator size='large' />
         </View> : (
-            <List
-              style={styles.container}
-              contentContainerStyle={styles.contentContainer}
-              data={questionList}
-              renderItem={renderItem}
+            <CustomListview
+              itemList={questionList}
             />)}
       </View>
     </KeyboardAvoidingView>
@@ -139,6 +366,7 @@ const OnlineTest = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'olive',
   },
   parallel: {
     flexDirection: 'row',
@@ -148,66 +376,46 @@ const styles = StyleSheet.create({
     marginRight: 4,
     marginBottom: 2,
   },
-  containerRow: {
-    flex: 1,
-    paddingLeft: 2,
-    paddingTop: 8,
-    paddingBottom: 8,
-    marginLeft: 4,
-    marginRight: 4,
-    marginTop: 4,
-    marginBottom: 2,
-    borderRadius: 10,
-    backgroundColor: 'floralwhite',
-    elevation: 6,
+  headerProps: {
+    margin: 4,
+    padding: 4,
   },
-  title: {
-    flex: 2,
+  contentContainer: {
+    paddingHorizontal: 2,
+    paddingVertical: 2,
+  },
+  controlContainer: {
+    borderRadius: 4,
+    margin: 4,
+    padding: 4,
+    backgroundColor: '#3366FF',
+  },
+  item: {
+    marginVertical: 4,
+
+  },
+  headerTitle: {
+    marginTop: 4,
+  },
+  qNo:  {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'blue'
+  },
+  question:  {
+    fontSize: 16,
+    color: 'navy'
+  },
+  headerText: {
     ...Platform.select({
       ios: {
-        fontSize: 16,
+        fontSize: 18,
       },
       android: {
         fontSize: 18,
       }
     }),
-    marginBottom: 5,
-    fontWeight: 'bold',
-    color: 'darkblue',
-    fontFamily: 'Verdana'
-  },
-  gradeText: {
-    flex: 2,
-    ...Platform.select({
-      ios: {
-        fontSize: 12,
-      },
-      android: {
-        fontSize: 14,
-      }
-    }),
-    marginTop: 5,
-    fontWeight: 'bold',
-    color: 'darkblue',
-    fontFamily: 'Verdana'
-  },
-  awardedGrade: {
-    flex: 1,
-    flexDirection: 'row-reverse',
-    justifyContent: 'center',
-    paddingLeft: 2,
-    marginRight: 20,
-    marginBottom: 2,
-  },
-  headerText: {
-    ...Platform.select({
-      ios: {
-        fontSize: 16,
-      },
-      android: {
-        fontSize: 16,
-      }
-    }),
+    marginTop: 4,
     fontWeight: 'bold',
     color: 'white',
   },
@@ -223,10 +431,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
-  buttonGroup: {
-    margin: 2,
-  },
-
   loading: {
     position: 'absolute',
     left: 0,
@@ -241,20 +445,10 @@ const styles = StyleSheet.create({
     textShadowColor: "magenta",
     color: 'blue'
   },
-  select: {
-    flex: 1,
-    marginTop: 10,
-    marginLeft: 5,
-    marginRight: 5,
-    borderRadius: 5,
-  },
-
-  gradeButton: {
-  },
 
   nextButton: {
     backgroundColor: 'lavenderblush',
-    height: 25,
+    height: 35,
     margin: 10,
     padding: 5,
     borderRadius: 15,
@@ -262,7 +456,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   nextText: {
-    fontSize: 12,
+    fontSize: 16,
+    fontFamily: 'verdana',
     color: 'indigo',
   }
 });

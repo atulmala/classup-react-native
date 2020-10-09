@@ -14,8 +14,8 @@ const ParentMenu = ({ route, navigation }) => {
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
-  const { wardID } = route.params;
-  const { wardName } = route.params;
+  const { studentID } = route.params;
+  const { studentName } = route.params;
   const { feeDefaultStatus } = route.params;
   const { welcomeMessage } = route.params;
 
@@ -56,8 +56,8 @@ const ParentMenu = ({ route, navigation }) => {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,
-      wardID: wardID,
-      wardName: wardName,
+      studentID: studentID,
+      studentName: studentName,
       userName: userName,
       comingFrom: "ParentMenu"
     });
@@ -68,8 +68,8 @@ const ParentMenu = ({ route, navigation }) => {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,
-      studentID: wardID,
-      wardName: wardName,
+      studentID: studentID,
+      studentName: studentName,
       userName: userName,
       comingFrom: "ParentMenu"
     });
@@ -79,7 +79,7 @@ const ParentMenu = ({ route, navigation }) => {
     return (
       <View style={styles.headerTitle}>
         <Text style={styles.headerText}>Parent/Student Menu</Text>
-        <Text style={styles.headerLine}>Student: {wardName}</Text>
+        <Text style={styles.headerLine}>Student: {studentName}</Text>
       </View>
     );
   };

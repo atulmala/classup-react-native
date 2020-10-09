@@ -30,6 +30,7 @@
     android:launchMode="singleTask"
     android:usesCleartextTraffic="true"
     android:largeHeap="true"
+    android:screenOrientation="portrait"
   >
     <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="YOUR-APP-URL-HERE"/>
     <meta-data android:name="expo.modules.updates.EXPO_SDK_VERSION" android:value="YOUR-APP-SDK-VERSION-HERE"/>

@@ -124,7 +124,8 @@ const App = () => {
           <Stack.Screen name="CoScholastic" component={CoScholastic} />
           <Stack.Screen name="OnlineTestToday" component={OnlineTestToday} />
           <Stack.Screen name="OnlineTestInstructions" component={OnlineTestInstructions} />
-          <Stack.Screen name="OnlineTest" component={OnlineTest} />
+          <Stack.Screen name="OnlineTest" component={OnlineTest}
+           />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

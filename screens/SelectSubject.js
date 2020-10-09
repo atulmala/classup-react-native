@@ -9,7 +9,7 @@ const SelectSubject = ({ route, navigation }) => {
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
-  const { wardID } = route.params;
+  const { studentID } = route.params;
   const { comingFrom } = route.params;
 
   var [subjectList] = useState([]);
@@ -39,7 +39,7 @@ const SelectSubject = ({ route, navigation }) => {
     navigation.navigate('HWListStudent', {
       serverIP: serverIP,
       userID: userID,
-      studentID: wardID,
+      studentID: studentID,
       subject: subjectList[index].subjectName,
       comingFrom: comingFrom
     });

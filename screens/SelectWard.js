@@ -44,8 +44,8 @@ const SelectWard = ({ route, navigation }) => {
           serverIP: serverIP,
           schoolID: ward.schoolID,
           userID: userID,
-          wardID: index,
-          wardName: ward.name,
+          studentID: index,
+          studentName: ward.name,
           feeDefaultStatus: feeDefaultStatus,
           welcomeMessage: welcomeMessage
         });

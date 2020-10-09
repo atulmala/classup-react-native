@@ -10,6 +10,7 @@ const OnlineTestToday = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
   const { studentID } = route.params;
+  const { studentName } = route.params;
   const { comingFrom } = route.params;
 
   const [testList] = useState([]);
@@ -50,6 +51,7 @@ const OnlineTestToday = ({ route, navigation }) => {
       schoolID: schoolID,
       userID: userID,
       studentID: studentID,
+      studentName: studentName,
       testID: testList[index].id,
       subject: testList[index].subject
     });
