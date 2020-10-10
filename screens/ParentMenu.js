@@ -42,11 +42,11 @@ const ParentMenu = ({ route, navigation }) => {
     }
     else {
       console.log('Fee status good');
-      Toast.show({
-        type: 'success',
-        text1: 'Login Successful',
-        text2: welcomeMessage
-      });
+      // Toast.show({
+      //   type: 'success',
+      //   text1: 'Login Successful',
+      //   text2: welcomeMessage
+      // });
     }
   };
   showToast();
@@ -96,6 +96,7 @@ const ParentMenu = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
       <View style={styles.parallel}>
         <TouchableOpacity style={[button, {backgroundColor: 'chocolate'}]} onPress={testPress}>
           <Text style={styles.font}>Month Wise Attendance</Text>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Image, Alert } from 'react-native';
 import { Text } from '@ui-kitten/components';
-import { Size } from '@ui-kitten/components/devsupport';
+import axios from 'axios';
 
 
 const OnlineTestInstructions = ({ route, navigation }) => {
@@ -10,34 +10,60 @@ const OnlineTestInstructions = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
   const { testID } = route.params;
+  const { duration } = route.params;
   const { studentID } = route.params;
   const { subject } = route.params;
 
   startTest = () => {
-    Alert.alert(
-      "Please Confirm ",
-      "Are You sure you want to start Online Test?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        {
-          text: "OK", onPress: () => {
-            navigation.navigate('OnlineTest', {
-              serverIP: serverIP,
-              userID: userID,
-              studentID: studentID,
-              testID: testID,
-              subject: subject,
-              comingFrom: "HWInstructions"
-            });
-          }
+    let url = serverIP.concat("/online_test/whether_attempted/", studentID, "/", testID, "/");
+    axios.get(url, {
+    })
+      .then(function (response) {
+        if (response.data.attempted == "true") {
+          Alert.alert(
+            "Already Attempted ",
+            "You have already attempted this test!",
+            [
+              {
+                text: "OK", onPress: () => {
+                  return;
+                }
+              }
+            ],
+            { cancelable: false }
+          );
         }
-      ],
-      { cancelable: false }
-    );
+        else {
+          Alert.alert(
+            "Please Confirm ",
+            "Are You sure you want to start Online Test?",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              {
+                text: "OK", onPress: () => {
+                  navigation.navigate('OnlineTest', {
+                    serverIP: serverIP,
+                    userID: userID,
+                    studentID: studentID,
+                    testID: testID,
+                    duration: duration,
+                    subject: subject,
+                    comingFrom: "HWInstructions"
+                  });
+                }
+              }
+            ],
+            { cancelable: false }
+          );
+        }
+      })
+      .catch(function (error) {
+        console.log("error = ", error);
+      });
   };
 
   const HeaderTitle = () => {
@@ -48,7 +74,7 @@ const OnlineTestInstructions = ({ route, navigation }) => {
       </View>
     );
   };
-  const RightArrow = ({  }) => {
+  const RightArrow = ({ }) => {
     return (
       <View style={{ flexDirection: 'row' }}>
         <TouchableOpacity onPress={startTest}>
@@ -69,13 +95,13 @@ const OnlineTestInstructions = ({ route, navigation }) => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () => <HeaderTitle />,
-      headerRight: () => <RightArrow  />,
+      headerRight: () => <RightArrow />,
       headerStyle: {
         backgroundColor: 'darkgoldenrod',
       },
     });
   });
-  
+
   return (
     <React.Fragment>
       <View style={styles.row}>
@@ -97,7 +123,7 @@ const OnlineTestInstructions = ({ route, navigation }) => {
       <View style={styles.row}>
         <Text style={styles.text} category='h6'>6. If you are ready, Click Green Arrow on top</Text>
       </View>
-    
+
     </React.Fragment>
   )
 }

@@ -4,7 +4,7 @@ import {
   TouchableOpacity, KeyboardAvoidingView, FlatList, Text
 } from 'react-native';
 
-import { Radio, Card,  } from '@ui-kitten/components';
+import { Radio, Card, } from '@ui-kitten/components';
 import { useHeaderHeight } from '@react-navigation/stack';
 import CountDown from 'react-native-countdown-component';
 
@@ -19,10 +19,10 @@ const OnlineTest = ({ route, navigation }) => {
   const { userID } = route.params;
   const { studentID } = route.params;
   const { testID } = route.params;
+  const { duration } = route.params;
   const { subject } = route.params;
 
   const [isLoading, setLoading] = useState(true);
-  const [duration, setDuration] = useState(60 * 30 + 10);
 
   const [questionList] = useState([]);
   const [studentAnswers] = useState([]);
@@ -49,12 +49,12 @@ const OnlineTest = ({ route, navigation }) => {
 
             let question = {};
             question.index = i;
-            question.id = res.id;
+            question.question_id = res.id;
             question.question = res.question;
-            question.option_a = res.option_a;
-            question.option_b = res.option_b;
-            question.option_c = res.option_c;
-            question.option_d = res.option_d;
+            question.option_a = res.option_a.replace(/\.0$/,'');
+            question.option_b = res.option_b.replace(/\.0$/,'');
+            question.option_c = res.option_c.replace(/\.0$/,'');
+            question.option_d = res.option_d.replace(/\.0$/,'');
 
             let answer = {};
             answer.index = i;
@@ -67,21 +67,25 @@ const OnlineTest = ({ route, navigation }) => {
             studentAnswers.push(answer);
           }
         }
+        let url1 = serverIP.concat("/online_test/mark_attempted/", studentID, "/", testID, "/");
+        axios.post(url1)
+          .then(function (response) {
+            console.log(response);
+          });
         setLoading(false);
-        console.log(studentAnswers);
       })
       .catch(function (error) {
         // handle error
         console.log(error);
         setLoading(false);
-          Alert.alert(
-            "Error in Download",
-            "Error occurred while downloading Questions. Please Exit ClassUp, then try again.",
-            [
-              { text: "OK", onPress: () => console.log("OK Pressed") }
-            ],
-            { cancelable: false }
-          );
+        Alert.alert(
+          "Error in Download",
+          "Error occurred while downloading Questions. Please Exit ClassUp, then try again.",
+          [
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+          ],
+          { cancelable: false }
+        );
       });
   }, [schoolID]);
 
@@ -93,7 +97,7 @@ const OnlineTest = ({ route, navigation }) => {
         </View>
         <View style={styles.headerTitle}>
           <CountDown
-            until={duration}
+            until={60 * duration + 10}
             onFinish={timeOver}
             onPress={() => alert('hello')}
             size={12}
@@ -142,60 +146,70 @@ const OnlineTest = ({ route, navigation }) => {
         status='basic'
         header={headerProps => renderItemHeader(headerProps, title)}
       >
-        <Radio
-          style={styles.item}
-          checked={studentAnswers[title.index].option_marked == 'A'}
-          onChange={() => {
-            studentAnswers[title.index].option_marked = 'A';
-            setChecked(Math.floor(Math.random() * 1001));
-            markOption(title, 'A');
-          }
-          }>
-          <Text category='S1' status='primary'>
-            {'A. '}
+        <View style={styles.parallel}>
+          <Text style={styles.option} >
+            {'A '}
           </Text>
-          {title.option_a}
-        </Radio>
-        <Radio
-          style={styles.item}
-          checked={studentAnswers[title.index].option_marked == 'B'}
-          onChange={() => {
-            studentAnswers[title.index].option_marked = 'B';
-            setChecked(Math.floor(Math.random() * 1001));
-            markOption(title, 'B');
-          }
-          }>
-          <Text category='S1' status='primary'>
-            {'B. '}
-          </Text>{
-            title.option_b}
-        </Radio>
-        <Radio
-          style={styles.item}
-          checked={studentAnswers[title.index].option_marked == 'C'}
-          onChange={() => {
-            studentAnswers[title.index].option_marked = 'C';
-            setChecked(Math.floor(Math.random() * 1001));
-            markOption(title, 'C');
-          }
-          }>
-          <Text category='S1' status='primary'>
-            {'C. '}
+          <Radio
+            style={styles.item}
+            checked={studentAnswers[title.index].option_marked == 'A'}
+            onChange={() => {
+              studentAnswers[title.index].option_marked = 'A';
+              setChecked(Math.floor(Math.random() * 1001));
+              markOption(title, 'A');
+            }
+            }>
+            {title.option_a}
+          </Radio>
+        </View>
+        <View style={styles.parallel}>
+          <Text style={styles.option} >
+            {'B '}
           </Text>
-          {title.option_c}
-        </Radio>
-        <Radio
-          style={styles.item}
-          checked={studentAnswers[title.index].option_marked == 'D'}
-          onChange={() => {
-            studentAnswers[title.index].option_marked = 'D';
-            setChecked(Math.floor(Math.random() * 1001));
-            markOption(title, 'D');
-          }
-          }>
-          <Text category='S1' status='primary'>
-            {'D. '}
-          </Text>{title.option_d}</Radio>
+          <Radio
+            style={styles.item}
+            checked={studentAnswers[title.index].option_marked == 'B'}
+            onChange={() => {
+              studentAnswers[title.index].option_marked = 'B';
+              setChecked(Math.floor(Math.random() * 1001));
+              markOption(title, 'B');
+            }
+            }>
+            {title.option_b}
+          </Radio>
+        </View>
+        <View style={styles.parallel}>
+          <Text style={styles.option} >
+            {'C '}
+          </Text>
+          <Radio
+            style={styles.item}
+            checked={studentAnswers[title.index].option_marked == 'C'}
+            onChange={() => {
+              studentAnswers[title.index].option_marked = 'C';
+              setChecked(Math.floor(Math.random() * 1001));
+              markOption(title, 'C');
+            }
+            }>
+            {title.option_c}
+          </Radio>
+        </View>
+        <View style={styles.parallel}>
+          <Text style={styles.option} >
+            {'D '}
+          </Text>
+          <Radio
+            style={styles.item}
+            checked={studentAnswers[title.index].option_marked == 'D'}
+            onChange={() => {
+              studentAnswers[title.index].option_marked = 'D';
+              setChecked(Math.floor(Math.random() * 1001));
+              markOption(title, 'D');
+            }
+            }>
+            {title.option_d}
+          </Radio>
+        </View>
       </Card>)
   };
 
@@ -248,7 +262,7 @@ const OnlineTest = ({ route, navigation }) => {
               params1.question_id = question_id;
               params1.option_marked = answer.option_marked;
 
-              params.question_id = params1;
+              params[question_id] = params1;
             }
             let url = serverIP.concat("/online_test/submit_answers/");
             axios.post(url, {
@@ -267,6 +281,7 @@ const OnlineTest = ({ route, navigation }) => {
                           schoolID: schoolID,
                           userID: userID,
                           studentID: studentID,
+                          feeDefaultStatus: "no"
                         });
                       }
                     }
@@ -278,7 +293,6 @@ const OnlineTest = ({ route, navigation }) => {
                 setLoading(false);
                 console.log("error = ", error);
               });
-
           }
         }
       ],
@@ -307,7 +321,8 @@ const OnlineTest = ({ route, navigation }) => {
               params1.question_id = question_id;
               params1.option_marked = answer.option_marked;
 
-              params.question_id = params1;
+              params[question_id] = params1;
+              console.log("params = ", params);
             }
             let url = serverIP.concat("/online_test/submit_answers/");
             axios.post(url, {
@@ -326,6 +341,7 @@ const OnlineTest = ({ route, navigation }) => {
                           schoolID: schoolID,
                           userID: userID,
                           studentID: studentID,
+                          feeDefaultStatus: "no"
                         });
                       }
                     }
@@ -372,7 +388,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     paddingLeft: 2,
-    marginLeft: 4,
+    marginLeft: 2,
     marginRight: 4,
     marginBottom: 2,
   },
@@ -397,14 +413,20 @@ const styles = StyleSheet.create({
   headerTitle: {
     marginTop: 4,
   },
-  qNo:  {
+  qNo: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'blue'
   },
-  question:  {
+  question: {
     fontSize: 16,
     color: 'navy'
+  },
+  option: {
+    marginTop: 4,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'darkslategrey'
   },
   headerText: {
     ...Platform.select({

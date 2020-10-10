@@ -53,6 +53,7 @@ const OnlineTestToday = ({ route, navigation }) => {
       studentID: studentID,
       studentName: studentName,
       testID: testList[index].id,
+      duration: testList[index].duration,
       subject: testList[index].subject
     });
 
