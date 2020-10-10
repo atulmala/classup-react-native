@@ -51,6 +51,16 @@ const ParentMenu = ({ route, navigation }) => {
   };
   showToast();
 
+  let params = {
+    serverIP: serverIP,
+      schoolID: schoolID,
+      userID: userID,
+      studentID: studentID,
+      studentName: studentName,
+      userName: userName,
+      comingFrom: "ParentMenu"
+  };
+
   const _gotoSelectSubject = () => {
     navigation.navigate('SelectSubject', {
       serverIP: serverIP,
@@ -73,6 +83,14 @@ const ParentMenu = ({ route, navigation }) => {
       userName: userName,
       comingFrom: "ParentMenu"
     });
+  };
+
+  const _showUpcomingTests = () => {
+    navigation.navigate('UpcomingTests', params);
+  };
+
+  const _selectExam = () => {
+    navigation.navigate('SelectExam', params);
   };
 
   const HeaderTitle = () => {
@@ -114,7 +132,7 @@ const ParentMenu = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'goldenrod'}]}>
+        <TouchableOpacity style={[button, {backgroundColor: 'goldenrod'}]} onPress={_showUpcomingTests}>
           <Text style={styles.font}>Upcoming Tests</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[button, {backgroundColor: 'brown'}]} onPress={_gotoOnlineTestToday}>
@@ -122,7 +140,7 @@ const ParentMenu = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'darkorchid'}]}>
+        <TouchableOpacity style={[button, {backgroundColor: 'darkorchid'}]} onPress={_selectExam}>
           <Text style={styles.font}>Exam Results</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[button, {backgroundColor: 'darkslategray'}]}>

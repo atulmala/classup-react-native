@@ -33,6 +33,8 @@ import CoScholastic from './screens/CoScholastic';
 import OnlineTestToday from './screens/OnlineTestToday';
 import OnlineTestInstructions from './screens/OnlineTestInstructions';
 import OnlineTest from './screens/OnlineTest';
+import UpcomingTests from './screens/UpcomingTests';
+import ExamResult from './screens/ExamResult';
 
 const Stack = createStackNavigator();
 
@@ -124,8 +126,9 @@ const App = () => {
           <Stack.Screen name="CoScholastic" component={CoScholastic} />
           <Stack.Screen name="OnlineTestToday" component={OnlineTestToday} />
           <Stack.Screen name="OnlineTestInstructions" component={OnlineTestInstructions} />
-          <Stack.Screen name="OnlineTest" component={OnlineTest}
-           />
+          <Stack.Screen name="OnlineTest" component={OnlineTest} />
+          <Stack.Screen name="UpcomingTests" component={UpcomingTests} />
+          <Stack.Screen name="ExamResult" component={ExamResult} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

@@ -8,42 +8,49 @@ const SelectExam = ({ route, navigation }) => {
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
+  const { studentID } = route.params;
+  const { studentName } = route.params;
   const { comingFrom } = route.params;
 
   const [examList] = useState([]);
 
   const [isLoading, setLoading] = useState(true);
 
+  var url;
   useEffect(() => {
     switch (comingFrom) {
-      case "teacherMenu":
-        let url = serverIP.concat("/academics/get_exam_list_teacher/", userID, "/");
-        axios
-          .get(url)
-          .then(function (response) {
-            for (var i = 0; i < response.data.length; i++) {
-              let exam = {};
-              exam.id = response.data[i].id;
-              exam.title = response.data[i].title;
-              exam.examType = response.data[i].exam_type;
-              exam.startDate = response.data[i].start_date;
-              exam.endDate = response.data[i].end_date;
-              exam.startClass = response.data[i].start_class;
-              exam.endClass = response.data[i].end_class;
-
-              examList.push(exam);
-            }
-            setLoading(false);
-          })
-          .catch(function (error) {
-            // handle error
-            console.log(error);
-          });
+      case "TeacherMenu":
+        url = serverIP.concat("/academics/get_exam_list_teacher/", userID, "/");
+        break;
+      case "ParentMenu":
+        url = serverIP.concat("/academics/get_exam_list/", studentID, "/");
         break;
     }
+    axios
+      .get(url)
+      .then(function (response) {
+        for (var i = 0; i < response.data.length; i++) {
+          let exam = {};
+          exam.id = response.data[i].id;
+          exam.title = response.data[i].title;
+          exam.examType = response.data[i].exam_type;
+          exam.startDate = response.data[i].start_date;
+          exam.endDate = response.data[i].end_date;
+          exam.startClass = response.data[i].start_class;
+          exam.endClass = response.data[i].end_class;
+
+          examList.push(exam);
+        }
+        setLoading(false);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+
   }, []);
 
-  const scheduleTest = (index) => {
+  const nextScreen = (index) => {
     let exam = {};
     exam.id = examList[index].id;
     exam.title = examList[index].title;
@@ -52,17 +59,31 @@ const SelectExam = ({ route, navigation }) => {
     exam.endDate = examList[index].endDate;
     exam.startClass = examList[index].startClass;
     exam.endClass = examList[index].endClass;
-    navigation.navigate('TestList', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      exam: exam
-    });
 
+    switch (comingFrom) {
+      case "teacherMenu":
+        navigation.navigate('TestList', {
+          serverIP: serverIP,
+          schoolID: schoolID,
+          userID: userID,
+          exam: exam
+        });
+        break;
+      case "ParentMenu":
+        navigation.navigate('ExamResult', {
+          serverIP: serverIP,
+          schoolID: schoolID,
+          userID: userID,
+          studentID: studentID,
+          studentName: studentName,
+          exam: exam,
+        });
+        break;
+    }
   };
 
   const renderItem = ({ item, index }) => (
-    <ListItem style={styles.title} title={item.title} onPress={() => scheduleTest(index)} />
+    <ListItem style={styles.title} title={item.title} onPress={() => nextScreen(index)} />
   );
 
 
