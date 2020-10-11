@@ -1,9 +1,10 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, ActivityIndicator, Alert, Image, TouchableOpacity, Text } from 'react-native';
-import { Layout } from '@ui-kitten/components';
+import { StyleSheet, View, ActivityIndicator, Alert, Image, TouchableOpacity, Text } from 'react-native';
 import axios from 'axios';
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import { Button, ButtonGroup, Layout } from '@ui-kitten/components';
+import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
+import { VictoryBar, VictoryChart, VictoryGroup, VictoryAxis, VictoryLabel, VictoryTheme } from "victory-native";
 
 const ExamResult = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -14,8 +15,6 @@ const ExamResult = ({ route, navigation }) => {
   const { studentName } = route.params;
   const { exam } = route.params;
 
-  const [resultList] = useState([]);
-
   const [isLoading, setLoading] = useState(true);
   const [tableMode, setTableMode] = useState(true);
   const [graphMode, setGraphMode] = useState(false);
@@ -23,6 +22,11 @@ const ExamResult = ({ route, navigation }) => {
   const [tableHead] = useState(['S No', 'Subject', 'MM', 'Marks', 'High.', 'Ave.']);
   const [subjectList] = useState([]);
   const [subjectMarks] = useState([]);
+  const [labels] = useState([]);
+
+  const [marksArray] = useState([]);
+  const [highestArray] = useState([]);
+  const [averageArray] = useState([]);
 
   // retrieve the list of classes, sections, and subjects for this school
   const getResults = () => {
@@ -32,29 +36,52 @@ const ExamResult = ({ route, navigation }) => {
   useEffect(() => {
     axios.all([getResults()]).then(
       axios.spread(function (results) {
+        let marksRow;
         for (var i = 0; i < results.data.length; i++) {
           let s_no = i + 1;
           let subject = results.data[i].subject;
+          labels.push(subject);
           let max_marks = results.data[i].max_marks;
           let marks = results.data[i].marks;
-          let appeared = results.data[i].appeared;
+          let m = {};
+          m.x = subject;
+          m.y = marks;
+          m.label = marks;
+          marksArray.push(m);
+
           let highest = results.data[i].highest;
+          let h = {};
+          h.x = subject;
+          h.y = highest;
+          h.label = highest;
+          highestArray.push(h);
+
           let average = results.data[i].average;
+          let a = {};
+          a.x = subject;
+          a.y = parseInt(average);
+          a.label = parseInt(average);
+          averageArray.push(a);
 
           subjectList.push(s_no);
-          let marksRow = [subject, max_marks, marks, highest, average];
+          marksRow = [subject, max_marks, marks, highest, average];
           subjectMarks.push(marksRow);
         }
-        console.log("resultList = ", resultList);
+        console.log("marksArray = ", marksArray);
+        console.log("averageArray = ", averageArray);
+
         setLoading(false);
       })
     );
   }, [schoolID]);
 
-  const DisplayModes = ({ onPress }) => {
+  const DisplayModes = () => {
     return (
       <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={() => {
+          setGraphMode(false);
+          setTableMode(true);
+        }}>
           <Image
             source={require('../assets/tables.png')}
             style={{
@@ -65,7 +92,10 @@ const ExamResult = ({ route, navigation }) => {
             }}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={() => {
+          setTableMode(false);
+          setGraphMode(true);
+        }}>
           <Image
             source={require('../assets/bar_chart.png')}
             style={{
@@ -106,13 +136,143 @@ const ExamResult = ({ route, navigation }) => {
         <ActivityIndicator size='large' />
       </View> : (
           <View style={styles.container}>
-            <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
-              <Row data={tableHead} flexArr={[1, 2, 1, 1, 1, 1]} style={styles.head} textStyle={styles.text} />
-              <TableWrapper style={styles.wrapper}>
-                <Col data={subjectList} style={styles.title}  textStyle={styles.text} />
-                <Rows data={subjectMarks} flexArr={[2, 1, 1, 1, 1]} style={styles.row} textStyle={styles.text} />
-              </TableWrapper>
-            </Table>
+            { tableMode &&
+              <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
+                <Row data={tableHead} flexArr={[1, 2, 1, 1, 1, 1]} style={styles.head} textStyle={styles.text} />
+                <TableWrapper style={styles.wrapper}>
+                  <Col data={subjectList} style={styles.title} textStyle={styles.text} />
+                  <Rows data={subjectMarks} flexArr={[2, 1, 1, 1, 1]} style={styles.row} textStyle={styles.text} />
+                </TableWrapper>
+              </Table>
+            }
+            { graphMode &&
+              <View style={styles.container}>
+                <VictoryChart
+                  theme={VictoryTheme.material}
+                  width={400}
+                  style={{
+                    flex: 1,
+                    parent: { maxWidth: "120%", width: "100%" }
+                  }}
+                  domainPadding={{ x: 25 }}
+                >
+                  <VictoryLabel text="Chart Title" x={200} y={20} textAnchor="middle"/>
+                  <VictoryAxis
+                    axisLabelComponent={<VictoryLabel />}
+                    scale={{ x: "time" }}
+                    style={{
+                      axisLabel: {
+                        fontFamily: "verdana",
+                        fontWeight: 100,
+                        letterSpacing: "1px",
+                        stroke: "white",
+                        fontSize: 10,
+                      },
+                      grid: { stroke: "lightgrey" },
+                      tickLabels: {
+                        padding: -5,
+                        fontFamily: "verdana",
+                        fontWeight: 'bold',
+                        letterSpacing: "1px",
+                        stroke: "#61dafb ",
+                        fontSize: 10,
+                        angle: 335,
+                        verticalAnchor: "end",
+                        textAnchor: 'end'
+                      }
+                    }}
+                  />
+                  <VictoryAxis
+                    dependentAxis={true}
+                    axisLabelComponent={<VictoryLabel />}
+                    label={"marks"}
+                    fixLabelOverlap={true}
+                    style={{
+                      axisLabel: {
+                        fontFamily: "verdana",
+                        fontWeight: 100,
+                        letterSpacing: "1px",
+                        stroke: "white",
+                        fontSize: 10,
+                        margin: "30px"
+                      },
+                      grid: { stroke: "lightgrey" },
+                      tickLabels: {
+                        textAnchor: 'start',
+                        fontFamily: "verdana",
+                        fontWeight: 100,
+                        letterSpacing: "1px",
+                        stroke: "#61dafb ",
+                        fontSize: 10,
+                        marginBlock: "20px"
+                      }
+                    }}
+                  />
+                  <VictoryGroup
+                    offset={10}
+                    style={{ data: { width: 10 } }}
+                    colorScale={["darkslateblue", "darkgreen", "orangered"]}
+                  >
+                    <VictoryBar
+                      style={{ data: { width: 15 } }}
+                      data={marksArray}
+                      labelComponent={
+                        <VictoryLabel
+                          style={{
+                            fontFamily: 'verdana',
+                            fontSize: 10,
+                            color: "darkslateblue"
+                          }}
+                          verticalAnchor="middle"
+                          textAnchor="end" />
+                      }
+                      animate={{
+                        duration: 10000,
+                        easing: "bounce"
+                      }}
+                    />
+                    <VictoryBar
+                      style={{ data: { width: 15 } }}
+                      data={highestArray}
+                      labelComponent={
+                        <VictoryLabel
+                          style={{
+                            fontFamily: 'verdana',
+                            fontSize: 10,
+                            color: "darkgreen"
+                          }}
+                          verticalAnchor="middle"
+                          textAnchor="start" />
+                      }
+                      animate={{
+                        duration: 10000,
+                        easing: "bounce"
+                      }}
+                    />
+                    <VictoryBar
+                      style={{ data: { width: 10 } }}
+                      data={averageArray}
+                      labelComponent={
+                        <VictoryLabel
+                        dy={-12}
+                          style={{
+                            fontFamily: 'verdana',
+                            fontSize: 10,
+                            color: "orangered"
+                          }}
+                          verticalAnchor="middle"
+                          textAnchor="start" />
+                      }
+                      animate={{
+                        duration: 10000,
+                        easing: "bounce"
+                      }}
+                    />
+                  </VictoryGroup>
+                </VictoryChart>
+               
+              </View>
+            }
           </View>
         )}
     </View>
@@ -123,15 +283,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 2,
     paddingTop: 5,
-    backgroundColor: '#fff'
+    backgroundColor: 'mintcream'
   },
   head: {
     height: 40,
-    backgroundColor: '#f1f8ff'
+    backgroundColor: 'khaki',
+    fontFamily: 'verdana',
+    fontWeight: 'bold'
   },
   wrapper: {
     flexDirection: 'row',
-
   },
   title: {
     flex: 1,
@@ -141,8 +302,9 @@ const styles = StyleSheet.create({
     height: 28
   },
   text: {
-    textAlign: 'left',
-    paddingLeft: 5
+    textAlign: 'center',
+    fontSize: 14,
+    color: 'darkolivegreen'
   },
   parallel: {
     flexDirection: 'row',
@@ -150,7 +312,7 @@ const styles = StyleSheet.create({
     height: 100
   },
   headerText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
   },
@@ -159,6 +321,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+ 
   loading: {
     position: 'absolute',
     left: 0,
