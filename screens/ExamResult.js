@@ -4,7 +4,7 @@ import { StyleSheet, View, ActivityIndicator, Alert, Image, TouchableOpacity, Te
 import axios from 'axios';
 import { Button, ButtonGroup, Layout } from '@ui-kitten/components';
 import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
-import { VictoryBar, VictoryChart, VictoryGroup, VictoryAxis, VictoryLabel, VictoryTheme } from "victory-native";
+import { VictoryBar, VictoryChart, VictoryLegend, VictoryGroup, VictoryAxis, VictoryLabel, VictoryTheme } from "victory-native";
 
 const ExamResult = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -156,7 +156,16 @@ const ExamResult = ({ route, navigation }) => {
                   }}
                   domainPadding={{ x: 25 }}
                 >
-                  <VictoryLabel text="Chart Title" x={200} y={20} textAnchor="middle"/>
+                  <VictoryLegend x={80} y={0}
+                    centerTitle
+                    orientation="horizontal"
+                    style={{ title: { fontSize: 20 } }}
+                    data={[
+                      { name: "Your Marks", symbol: { fill: "darkslateblue" } },
+                      { name: "Highest", symbol: { fill: "darkgreen" } },
+                      { name: "Average", symbol: { fill: "orangered" } }
+                    ]}
+                  />
                   <VictoryAxis
                     axisLabelComponent={<VictoryLabel />}
                     scale={{ x: "time" }}
@@ -254,7 +263,7 @@ const ExamResult = ({ route, navigation }) => {
                       data={averageArray}
                       labelComponent={
                         <VictoryLabel
-                        dy={-12}
+                          dy={-12}
                           style={{
                             fontFamily: 'verdana',
                             fontSize: 10,
@@ -270,7 +279,7 @@ const ExamResult = ({ route, navigation }) => {
                     />
                   </VictoryGroup>
                 </VictoryChart>
-               
+
               </View>
             }
           </View>
@@ -321,7 +330,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
- 
+
   loading: {
     position: 'absolute',
     left: 0,
