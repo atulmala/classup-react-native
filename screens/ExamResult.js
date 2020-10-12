@@ -211,7 +211,7 @@ const ExamResult = ({ route, navigation }) => {
                         fontFamily: "verdana",
                         fontWeight: 100,
                         letterSpacing: "1px",
-                        stroke: "#61dafb ",
+                        stroke: "#61dafb",
                         fontSize: 10,
                         marginBlock: "20px"
                       }

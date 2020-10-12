@@ -1,0 +1,293 @@
+import React, { useEffect, useState } from 'react';
+import {
+  Platform, StyleSheet, View, ActivityIndicator, Alert, Image,
+  TouchableOpacity, KeyboardAvoidingView, FlatList, Text
+} from 'react-native';
+
+import { Card, } from '@ui-kitten/components';
+import { useHeaderHeight } from '@react-navigation/stack';
+
+import axios from 'axios';
+
+const LectureListTeacher = ({ route, navigation }) => {
+  const { serverIP } = route.params;
+  const { schoolID } = route.params;
+  const { userName } = route.params;
+  const { userID } = route.params;
+
+  const [isLoading, setLoading] = useState(true);
+  const [lectureList] = useState([]);
+
+  useEffect(() => {
+    let url = serverIP.concat("/lectures/get_teacher_lectures/", userID, "/");
+    axios
+      .get(url)
+      .then(function (response) {
+        for (var i = 0; i < response.data.length; i++) {
+          let res = response.data[i];
+
+          let lecture = {};
+          lecture.index = i;
+          lecture.id = res.id;
+
+          let longDate = res.creation_date;
+          let yyyymmdd = longDate.substring(0, 10);
+          let splittedDate = yyyymmdd.split("-");
+          lecture.creation_date = splittedDate[2] + "-" + splittedDate[1] + "-" + splittedDate[0];
+
+          lecture.teacher = res.teacher;
+          lecture.subject = res.subject;
+          lecture.the_class = res.the_class;
+          lecture.section = res.section;
+          lecture.topic = res.topic;
+          lecture.youtube_link = res.youtube_link;
+          lecture.doc_link = res.doc_link;
+          lecture.pdf_link = res.pdf_link;
+
+          lectureList.push(lecture);
+        }
+        console.log(lectureList);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        setLoading(false);
+      });
+  }, [schoolID]);
+
+  const createLecture = () => {
+    console.log("inside createLecture");
+  };
+
+  const BigPlus = ({ onPress }) => {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity onPress={onPress}>
+          <Image
+            source={require('../assets/big_plus.png')}
+            style={{
+              width: 25,
+              height: 25,
+              borderRadius: 40 / 2,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const HeaderTitle = () => {
+    return (
+      <View style={styles.headerTitle}>
+        <Text style={styles.headerText}>Lecture List</Text>
+      </View>
+    );
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerTitleAlign: 'left',
+      headerStyle: {
+        backgroundColor: 'olivedrab',
+      },
+      headerRight: () => <BigPlus onPress={createLecture} />,
+    });
+  });
+
+  const renderItemHeader = (headerProps, lecture) => (
+    <View style={styles.containerLine}>
+      <View style={[headerProps, styles.containerRow]}>
+        <View style={styles.container_text}>
+          <Text style={styles.baseText}>
+            Date:
+              <Text style={styles.innerText}> {lecture.creation_date}</Text>
+          </Text>
+        </View>
+        <View style={styles.container_text}>
+          <Text style={styles.baseText}>
+            Class:
+              <Text style={styles.innerText}> {lecture.the_class}</Text>
+          </Text>
+        </View>
+        <TouchableOpacity onPress={() => deleteHW(index)}>
+          <Image
+            style={styles.tinyLogo}
+            source={require('../assets/delete_icon.jpeg')}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const CustomRow = ({ title }) => {
+    return (
+      <Card
+        style={styles.item}
+        status='danger'
+        header={headerProps => renderItemHeader(headerProps, title)}
+      >
+        <Text style={styles.baseText}>
+          Subject:
+              <Text style={styles.innerText}> {title.subject}</Text>
+        </Text>
+      </Card>)
+  };
+
+  const CustomListview = ({ itemList }) => {
+    return (
+      <View style={styles.container}>
+        <FlatList
+          data={itemList}
+          renderItem={({ item }) => <CustomRow
+            title={item}
+            index={item.index}
+          />}
+        />
+      </View>
+    )
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={useHeaderHeight()}
+      style={styles.container} >
+      <View style={styles.container}>
+        {isLoading ? <View style={styles.loading}>
+          <ActivityIndicator size='large' />
+        </View> : (
+            <CustomListview
+              itemList={lectureList}
+            />)}
+      </View>
+    </KeyboardAvoidingView>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'olive',
+  },
+  headerProps: {
+    flex: 3,
+    margin: 2,
+    padding: 2,
+  },
+  item: {
+    marginVertical: 0,
+  },
+  headerTitle: {
+    marginTop: 4,
+  },
+  headerText: {
+    ...Platform.select({
+      ios: {
+        fontSize: 18,
+      },
+      android: {
+        fontSize: 18,
+      }
+    }),
+    marginTop: 4,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  containerRow: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  containerLine: {
+    flex: 1,
+    paddingLeft: 12,
+    marginLeft: 12,
+    marginRight: 4,
+    borderRadius: 10,
+    elevation: 6,
+  },
+  tinyLogo: {
+    margin: 12,
+    width: 24,
+    height: 24,
+  },
+  container_text: {
+    flex: 3,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+
+  baseText: {
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    fontWeight: 'bold',
+    color: 'mediumslateblue',
+  },
+  innerText: {
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    color: 'mediumblue',
+  },
+  innerTextDescription: {
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    color: 'navy',
+  },
+  hyperlink: {
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    color: 'dodgerblue',
+    margin: 4
+  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5FCFF88'
+  },
+
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5FCFF88'
+  },
+
+});
+
+export default LectureListTeacher;

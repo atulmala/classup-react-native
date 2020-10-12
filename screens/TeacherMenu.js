@@ -9,44 +9,36 @@ const TeacherMenu = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
 
+  let params = {
+    serverIP: serverIP,
+    schoolID: schoolID,
+    userID: userID,
+    userName: userName,
+    comingFrom: "teacherMenu"
+  };
+
+  const nextScreen = (sender) =>  {
+    switch (sender) {
+      case "LectureListTeacher":
+        navigation.navigate('LectureListTeacher', params);
+        break;
+    }
+  };
+
   const _gotoSelectClass = () => {
-    navigation.navigate('SelectClass', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      userName: userName,
-      comingFrom: "teacherMenu"
-    });
+    navigation.navigate('SelectClass', params);
   };
 
   const _gotoTestExams = () => {
-    navigation.navigate('SelectExam', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      userName: userName,
-      comingFrom: "teacherMenu"
-    });
+    navigation.navigate('SelectExam', params);
   };
 
   const _gotoShowHW = () => {
-    navigation.navigate('HWListTeacher', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      userName: userName,
-      comingFrom: "teacherMenu"
-    });
+    navigation.navigate('HWListTeacher', params);
   };
 
   const _selectClassCoSchol = () => {
-    navigation.navigate('SelectClassCoSchol', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      userName: userName,
-      comingFrom: "teacherMenu"
-    });
+    navigation.navigate('SelectClassCoSchol', params);
   };
 
   React.useLayoutEffect(() => {
@@ -57,7 +49,6 @@ const TeacherMenu = ({ route, navigation }) => {
           schoolID: schoolID,
           userID: userID,
           userName: userName,
-
         })}>
           <Text style={styles.nextText}>Logout</Text>
         </TouchableOpacity>
@@ -110,7 +101,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Homework</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn6}>
+        <TouchableOpacity style={styles.btn6} onPress={() => nextScreen('LectureListTeacher')}>
           <Image
             source={require('../assets/online_class.png')}
             style={styles.ImageIconStyle2}

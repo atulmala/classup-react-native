@@ -267,7 +267,7 @@ const HWListTeacher = ({ route, navigation }) => {
     navigation.setOptions({
       headerRight: () => <BigPlus onPress={createHW} />,
       headerStyle: {
-        backgroundColor: 'darkslategrey',
+        backgroundColor: 'coral',
       },
     });
   });
