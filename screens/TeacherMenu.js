@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { Layout, Text } from '@ui-kitten/components';
+import Toast from 'react-native-toast-message';
 
 
 const TeacherMenu = ({ route, navigation }) => {
@@ -16,6 +17,15 @@ const TeacherMenu = ({ route, navigation }) => {
     userName: userName,
     comingFrom: "teacherMenu"
   };
+
+  React.useEffect(() => {
+    Toast.show({
+      type: 'success',
+      position: 'top',
+      text1: 'Welcome',
+      text2: "Welcome to ClassUp, " + userName,
+    });
+  });
 
   const nextScreen = (sender) =>  {
     switch (sender) {
@@ -56,6 +66,7 @@ const TeacherMenu = ({ route, navigation }) => {
   });
   return (
     <View style={styles.container}>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
       <View style={styles.parallel}>
         <TouchableOpacity style={styles.btn1} onPress={_gotoSelectClass}>
           <Image

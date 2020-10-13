@@ -36,6 +36,7 @@ import OnlineTest from './screens/OnlineTest';
 import UpcomingTests from './screens/UpcomingTests';
 import ExamResult from './screens/ExamResult';
 import LectureListTeacher from './screens/LectureListTeacher';
+import CreateLecture from './screens/CreateLecture';
 
 const Stack = createStackNavigator();
 
@@ -131,6 +132,7 @@ const App = () => {
           <Stack.Screen name="UpcomingTests" component={UpcomingTests} />
           <Stack.Screen name="ExamResult" component={ExamResult} />
           <Stack.Screen name="LectureListTeacher" component={LectureListTeacher} />
+          <Stack.Screen name="CreateLecture" component={CreateLecture} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

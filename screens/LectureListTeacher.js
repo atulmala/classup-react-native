@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Platform, StyleSheet, View, ActivityIndicator, Alert, Image,
+  Platform, StyleSheet, View, ActivityIndicator, Alert, Image, Linking,
   TouchableOpacity, KeyboardAvoidingView, FlatList, Text
 } from 'react-native';
 
-import { Card, } from '@ui-kitten/components';
+import { Card, Button } from '@ui-kitten/components';
 import { useHeaderHeight } from '@react-navigation/stack';
 
 import axios from 'axios';
@@ -56,10 +56,6 @@ const LectureListTeacher = ({ route, navigation }) => {
       });
   }, [schoolID]);
 
-  const createLecture = () => {
-    console.log("inside createLecture");
-  };
-
   const BigPlus = ({ onPress }) => {
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -81,9 +77,7 @@ const LectureListTeacher = ({ route, navigation }) => {
 
   const HeaderTitle = () => {
     return (
-      <View style={styles.headerTitle}>
-        <Text style={styles.headerText}>Lecture List</Text>
-      </View>
+      <Text style={styles.headerText}>Lecture List</Text>
     );
   };
 
@@ -113,7 +107,7 @@ const LectureListTeacher = ({ route, navigation }) => {
               <Text style={styles.innerText}> {lecture.the_class}</Text>
           </Text>
         </View>
-        <TouchableOpacity onPress={() => deleteHW(index)}>
+        <TouchableOpacity onPress={() => deleteLecture(lecture)}>
           <Image
             style={styles.tinyLogo}
             source={require('../assets/delete_icon.jpeg')}
@@ -123,16 +117,111 @@ const LectureListTeacher = ({ route, navigation }) => {
     </View>
   );
 
+  const openVideo = (title) => {
+    Linking.openURL(title.youtube_link)
+  }
+
+  const openDoc = (title) => {
+    Linking.openURL(title.pdf_link)
+  }
+
+  const createLecture = () => {
+    navigation.navigate('CreateLecture', {
+      serverIP: serverIP,
+      schoolID: schoolID,
+      userID: userID,
+      userName: userName,
+      comingFrom: "DeleteLecture"
+    });
+  }
+
+  const deleteLecture = (title) => {
+    console.log("title = ", title);
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to Delete this Lecture?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            {
+              isLoading && (
+                <View>
+                  <ActivityIndicator style={styles.loading} size='large' />
+                </View>
+              )
+            }
+
+            try {
+              axios.delete(serverIP.concat("/lectures/delete_lecture/", title.id, "/"))
+                .then(function (response) {
+                  console.log(response);
+                  setLoading(false);
+                  Alert.alert(
+                    "Lecture Deleted",
+                    "Lecture Deleted.",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+                          navigation.navigate('LectureListTeacher', {
+                            serverIP: serverIP,
+                            schoolID: schoolID,
+                            userID: userID,
+                            userName: userName,
+                            comingFrom: "DeleteLecture"
+                          });
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                });
+            } catch (error) {
+              console.error(error);
+            }
+            var position = 0;
+            for (var lecture of lectureList) {
+              if (lecture.id == title.id) {
+                lectureList.splice(position, 1)
+                break
+              }
+              else {
+                position++;
+              }
+            }
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
   const CustomRow = ({ title }) => {
     return (
       <Card
         style={styles.item}
-        status='danger'
         header={headerProps => renderItemHeader(headerProps, title)}
       >
         <Text style={styles.baseText}>
           Subject:
               <Text style={styles.innerText}> {title.subject}</Text>
+        </Text>
+        <Text style={styles.baseText}>
+          Topic:
+              <Text style={styles.innerTextDescription}> {title.topic}</Text>
+        </Text>
+        <Text style={styles.baseText}>
+          Video Link:
+              <Text style={styles.innerTextDescription} onPress={() => openVideo(title)}> {title.youtube_link}</Text>
+        </Text>
+        <Text style={styles.baseText}>
+          Doc Link:
+              <Text style={styles.innerTextDescription} onPress={() => openDoc(title)}> {title.pdf_link}</Text>
         </Text>
       </Card>)
   };
@@ -178,12 +267,19 @@ const styles = StyleSheet.create({
     margin: 2,
     padding: 2,
   },
+  footerContainer: {
+    padding: 0,
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  footerControl: {
+    marginHorizontal: 2,
+  },
   item: {
-    marginVertical: 0,
+    marginVertical: 1,
   },
-  headerTitle: {
-    marginTop: 4,
-  },
+
   headerText: {
     ...Platform.select({
       ios: {
@@ -193,7 +289,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
       }
     }),
-    marginTop: 4,
+    marginTop: 0,
     fontWeight: 'bold',
     color: 'white',
   },
@@ -206,7 +302,6 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     marginLeft: 12,
     marginRight: 4,
-    borderRadius: 10,
     elevation: 6,
   },
   tinyLogo: {
@@ -219,7 +314,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
   },
-
   baseText: {
     ...Platform.select({
       ios: {
@@ -229,26 +323,33 @@ const styles = StyleSheet.create({
         fontSize: 16,
       }
     }),
+    marginBottom: 4,
+    fontFamily: 'verdana',
     fontWeight: 'bold',
     color: 'mediumslateblue',
   },
   innerText: {
     ...Platform.select({
       ios: {
+        fontFamily: 'verdana',
         fontSize: 14,
       },
       android: {
+        fontFamily: 'sans-serif',
         fontSize: 16,
       }
     }),
+
     color: 'mediumblue',
   },
   innerTextDescription: {
     ...Platform.select({
       ios: {
+        fontFamily: 'ArialMT',
         fontSize: 14,
       },
       android: {
+        fontFamily: 'sans-serif-thin',
         fontSize: 16,
       }
     }),
@@ -257,7 +358,8 @@ const styles = StyleSheet.create({
   hyperlink: {
     ...Platform.select({
       ios: {
-        fontSize: 14,
+        fontFamily: 'Arial',
+        fontSize: 12,
       },
       android: {
         fontSize: 16,
@@ -276,18 +378,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#F5FCFF88'
   },
-
-  loading: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#F5FCFF88'
-  },
-
 });
 
 export default LectureListTeacher;

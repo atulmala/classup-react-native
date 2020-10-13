@@ -225,7 +225,7 @@ const HWListTeacher = ({ route, navigation }) => {
                     setLoading(false);
                     Alert.alert(
                       "HW Deleted",
-                      "Home Deleted.",
+                      "Home Work Deleted.",
                       [
                         {
                           text: "OK", onPress: () => {
