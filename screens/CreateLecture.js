@@ -2,48 +2,15 @@ import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import {
-  StyleSheet, ScrollView, View, ActivityIndicator, Keyboard, KeyboardAvoidingView, Image, Alert,
-  Platform, TouchableOpacity, TouchableWithoutFeedback, Text
+  StyleSheet, ScrollLayout, ActivityIndicator, Keyboard, KeyboardAvoidingLayout, Image, Alert,
+  Platform, TouchableOpacity, TouchableWithoutFeedback, Text, View
 } from 'react-native';
 import {
-  IndexPath, Layout, Select, Input, Button, SelectItem, Icon
+  IndexPath, Select, Input, Button, SelectItem, Icon, Layout
 } from '@ui-kitten/components';
 import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-
-const showEvent = Platform.select({
-  android: 'keyboardDidShow',
-  default: 'keyboardWillShow',
-});
-
-const hideEvent = Platform.select({
-  android: 'keyboardDidHide',
-  default: 'keyboardWillHide',
-});
-
-const attachmentIcon = (props) => (
-  <Icon {...props} name='attach-outline' />
-);
-
-const Upload = ({ onPress }) => {
-  return (
-    <View style={{ flexDirection: 'row' }}>
-      <TouchableOpacity onPress={onPress}>
-        <Image
-          source={require('../assets/upload3.png')}
-          style={{
-            width: 25,
-            height: 25,
-            borderRadius: 40 / 2,
-            marginLeft: 15,
-            marginRight: 10
-          }}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-}
 
 const CreateLecture = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -51,7 +18,35 @@ const CreateLecture = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
 
-  const [placement, setPlacement] = React.useState('bottom');
+  const Upload = () => {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity onPress={pickDocument}>
+          <Image
+            source={require('../assets/pdf.png')}
+            style={{
+              width: 30,
+              height: 30,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={uploadLecture}>
+          <Image
+            source={require('../assets/upload3.png')}
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 40 / 2,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const HeaderTitle = () => {
     return (
@@ -63,9 +58,9 @@ const CreateLecture = ({ route, navigation }) => {
     navigation.setOptions({
       headerTitle: () => <HeaderTitle />,
       headerTitleAlign: 'left',
-      headerRight: () => <Upload onPress={uploadHW} />,
+      headerRight: () => <Upload />,
       headerStyle: {
-        backgroundColor: 'darkseagreen',
+        backgroundColor: 'darkolivegreen',
       },
     });
   });
@@ -75,18 +70,14 @@ const CreateLecture = ({ route, navigation }) => {
   const [selectedClassIndex, setSelectedClassIndex] = useState(new IndexPath(0));
   const displayClassValue = classList[selectedClassIndex.row];
 
-  const [sectionList] = useState([]);
-  var selectedSection;
-  const [selectedSectionIndex, setSelectedSectionIndex] = useState(new IndexPath(0),);
-  const displaySectionValue = sectionList[selectedSectionIndex.row];
-
   const [subjectList] = useState([]);
   var selectedSubject;
   const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(new IndexPath(0));
   const displaySubjectValue = subjectList[selectedSubjectIndex.row];
 
-  const [lectureDescription, setHWDescription] = useState('');
+  const [lectureDescription, setLectureDescription] = useState('');
   const [attachmentPresent, setAttachmentPresent] = useState(false);
+  const [videoLink, setVideoLink] = React.useState("None");
   const [pdfName, setPdfName] = React.useState("None");
   const [uri, setUri] = useState("");
 
@@ -101,34 +92,16 @@ const CreateLecture = ({ route, navigation }) => {
     return axios.get(serverIP.concat("/academics/class_list/", schoolID, "/"));
   };
 
-  const getSectionList = () => {
-    return axios.get(serverIP.concat("/academics/section_list/", schoolID, "/"));
-  };
-
   const getSubjectList = () => {
     return axios.get(serverIP.concat("/teachers/teacher_subject_list/", userID, "/"));
   };
 
   useEffect(() => {
-    const keyboardShowListener = Keyboard.addListener(showEvent, () => {
-      setPlacement('top');
-    });
-
-    const keyboardHideListener = Keyboard.addListener(hideEvent, () => {
-      setPlacement('bottom');
-    });
-
-
-    axios.all([getClassList(), getSectionList(), getSubjectList()]).then(
-      axios.spread(function (classes, sections, subjects) {
+    axios.all([getClassList(), getSubjectList()]).then(
+      axios.spread(function (classes, subjects) {
         classList.push("Select");
         for (var i = 0; i < classes.data.length; i++) {
           classList.push(classes.data[i].standard);
-        }
-
-        sectionList.push("Select");
-        for (i = 0; i < sections.data.length; i++) {
-          sectionList.push(sections.data[i].section);
         }
 
         subjectList.push("Select");
@@ -138,11 +111,6 @@ const CreateLecture = ({ route, navigation }) => {
         setLoading(false);
       })
     );
-
-    return () => {
-      keyboardShowListener.remove();
-      keyboardHideListener.remove();
-    };
   }, []);
 
   const pickDocument = async () => {
@@ -168,7 +136,7 @@ const CreateLecture = ({ route, navigation }) => {
     }
   }
 
-  const uploadHW = () => {
+  const uploadLecture = () => {
     if (selectedClassIndex.row === 0) {
       Toast.show({
         type: 'error',
@@ -180,19 +148,6 @@ const CreateLecture = ({ route, navigation }) => {
     }
     else {
       selectedClass = classList[selectedClassIndex.row];
-    }
-
-    if (selectedSectionIndex.row === 0) {
-      Toast.show({
-        type: 'error',
-        position: 'bottom',
-        text1: 'Error: Section Not Selected',
-        text2: "Please Select a Section",
-      });
-      return;
-    }
-    else {
-      selectedSection = sectionList[selectedSectionIndex.row];
     }
 
     if (selectedSubjectIndex.row === 0) {
@@ -212,15 +167,25 @@ const CreateLecture = ({ route, navigation }) => {
       Toast.show({
         type: 'error',
         position: 'bottom',
-        text1: 'Error: HW Description not Entered',
-        text2: "Please enter HW Description",
+        text1: 'Error: Lecture Description not Entered',
+        text2: "Please enter Lecture Description",
+      });
+      return;
+    }
+
+    if (pdfName == "None" && videoLink == "None") {
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Error: Neither Video nor Doc present',
+        text2: "Attach at least Video Link or Document or both",
       });
       return;
     }
 
     Alert.alert(
       "Please Confirm ",
-      "Are You sure you want to Upload this HW?",
+      "Are You sure you want to Create this Lecture ?",
       [
         {
           text: "Cancel",
@@ -232,13 +197,12 @@ const CreateLecture = ({ route, navigation }) => {
             setLoading(true);
             {
               isLoading && (
-                <View>
+                <Layout>
                   <ActivityIndicator style={styles.loading} size='large' />
-                </View>
+                </Layout>
               )
             }
 
-            var d = new Date();
             var fileIncluded = "false"
             if (attachmentPresent) {
               fileIncluded = "true"
@@ -248,14 +212,12 @@ const CreateLecture = ({ route, navigation }) => {
 
             formData.append("teacher", userID);
             formData.append("school_id", schoolID);
-            formData.append("d", d.getDate());
-            formData.append("m", d.getMonth() + 1);
-            formData.append("y", d.getFullYear() + 1);
             formData.append("the_class", selectedClass);
-            formData.append("section", selectedSection);
+            formData.append("section", "all_sections");
             formData.append("subject", selectedSubject);
-            formData.append("all_sections", "No");
-            formData.append("notes", lectureDescription);
+            formData.append("all_sections", "true");
+            formData.append("lesson_topic", lectureDescription);
+            formData.append("youtube_link", videoLink);
             formData.append("file_included", fileIncluded);
             if (attachmentPresent) {
               const split = uri.split('/');
@@ -269,22 +231,22 @@ const CreateLecture = ({ route, navigation }) => {
               formData.append("file_name", name);
             }
             try {
-              axios.post(serverIP.concat("/homework/create_hw/"), formData)
+              axios.post(serverIP.concat("/lectures/share_lecture/"), formData)
                 .then(function (response) {
                   console.log(response);
                   setLoading(false);
                   Alert.alert(
-                    "HW Uploaded",
-                    "Home Work Uploaded to Server.",
+                    "Lecture Uploaded",
+                    "Lecture Uploaded to Server.",
                     [
                       {
                         text: "OK", onPress: () => {
-                          navigation.navigate('HWListTeacher', {
+                          navigation.navigate('LectureListTeacher', {
                             serverIP: serverIP,
                             schoolID: schoolID,
                             userID: userID,
                             userName: userName,
-                            comingFrom: "CreateHW"
+                            comingFrom: "CreateLecture"
                           });
                         }
                       }
@@ -303,96 +265,65 @@ const CreateLecture = ({ route, navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <Layout style={styles.container} level='1'>
-        <Toast ref={(ref) => Toast.setRef(ref)} />
-        {isLoading ? <Layout style={styles.loading}>
-          <ActivityIndicator size='large' />
-        </Layout> : (
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-              <Layout style={styles.mainContainer}>
-                <Layout style={styles.verticalSpace} />
-                <Layout style={styles.parallel}>
-                  <Select
-                    style={styles.select}
-                    label={evaProps => <Text {...evaProps}>Select Class:</Text>}
-                    value={displayClassValue}
-                    selectedIndex={selectedClassIndex}
-                    onSelect={index => setSelectedClassIndex(index)}>
-                    {classList.map(renderOption)}
-                  </Select>
-                  <Select
-                    style={styles.select}
-                    label={evaProps => <Text {...evaProps}>Select Section:</Text>}
-                    value={displaySectionValue}
-                    selectedIndex={selectedSectionIndex}
-                    onSelect={index => setSelectedSectionIndex(index)}>
-                    {sectionList.map(renderOption)}
-                  </Select>
-                </Layout>
-                <Layout style={styles.parallel}>
-                  <Select
-                    style={styles.select}
-                    label={evaProps => <Text {...evaProps}>Select Subject:</Text>}
-                    value={displaySubjectValue}
-                    selectedIndex={selectedSubjectIndex}
-                    onSelect={index => setSelectedSubjectIndex(index)}>
-                    {subjectList.map(renderOption)}
-                  </Select>
-                </Layout>
-                <Layout style={styles.verticalSpace} />
-                <Layout>
-                  <Input
-                    style={styles.lectureDescription}
-                    size='small'
-                    editable
-                    placeholder='Enter Lecture Description'
-                    onChangeText={text => setHWDescription(text)}
-                    placement={placement}
-                    textStyle={{ textAlignVertical: 'top' }}
-                    caption="Mandatory"
-                  />
-                  <Layout style={styles.verticalSpace} />
-                  <Layout style={styles.verticalSpace} />
-                  <Input
-                    style={styles.lectureDescription}
-                    editable
-                    size='small'
-                    placeholder='Lecture Video Link'
-                    onChangeText={text => setHWDescription(text)}
-                    placement={placement}
-                    textStyle={{ textAlignVertical: 'top' }}
-                  />
-                </Layout>
-                <Layout style={styles.verticalSpace} />
-                <Layout style={styles.container}>
-                  <Input
-                    style={styles.lectureDescription}
-                    size='small'
-                    width='90%'
-                    disabled
-                    placeholder={pdfName}
-                    label={evaProps => <Text {...evaProps}>PDF Attahed:</Text>}
-                  />
-                </Layout>
-                <Layout style={styles.parallel}>
-                  <Button
-                    style={styles.button}
-                    size='small'
-                    status='info'
-                    accessoryLeft={attachmentIcon}
-                    onPress={pickDocument}>
-                    {"Attach PDF Document (Optonal)"}
-                  </Button>
-                </Layout>
-              </Layout>
-            </TouchableWithoutFeedback>
-          )}
-      </Layout>
-    </KeyboardAvoidingView>
+    <Layout style={styles.container} level='1'>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
+      {isLoading ? <Layout style={styles.loading}>
+        <ActivityIndicator size='large' />
+      </Layout> : (
+          <Layout style={styles.mainContainer}>
+            <Layout style={styles.parallel}>
+              <Select
+                style={styles.select1}
+                label={evaProps => <Text {...evaProps}>Select Class:</Text>}
+                value={displayClassValue}
+                selectedIndex={selectedClassIndex}
+                onSelect={index => setSelectedClassIndex(index)}>
+                {classList.map(renderOption)}
+              </Select>
+              <Select
+                style={styles.select2}
+                label={evaProps => <Text {...evaProps}>Select Subject:</Text>}
+                value={displaySubjectValue}
+                selectedIndex={selectedSubjectIndex}
+                onSelect={index => setSelectedSubjectIndex(index)}>
+                {subjectList.map(renderOption)}
+              </Select>
+            </Layout>
+            <Layout style={styles.verticalSpace} />
+            <Layout>
+              <Input
+                style={styles.lectureDescription}
+                size='small'
+                editable
+                placeholder='Enter Lecture Description (Mandatory)'
+                onChangeText={text => setLectureDescription(text)}
+                textStyle={{ textAlignVertical: 'top' }}
+              />
+              <Layout style={styles.verticalSpace} />
+              <Layout style={styles.verticalSpace} />
+              <Input
+                style={styles.lectureDescription}
+                editable
+                size='small'
+                placeholder='Lecture Video Link'
+                onChangeText={text => setVideoLink(text)}
+                textStyle={{ textAlignVertical: 'top' }}
+              />
+            </Layout>
+            <Layout style={styles.verticalSpace} />
+            <Layout style={styles.container}>
+              <Input
+                style={styles.lectureDescription}
+                size='small'
+                width='90%'
+                disabled
+                placeholder={pdfName}
+                label={evaProps => <Text {...evaProps}>PDF Attahed:</Text>}
+              />
+            </Layout>
+          </Layout>
+        )}
+    </Layout>
   );
 }
 const styles = StyleSheet.create({
@@ -400,7 +331,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     width: "100%",
-
   },
   evaProps: {
     textShadowColor: "magenta"
@@ -418,17 +348,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
-  select: {
+  select1: {
     flex: 1,
     margin: 5,
     borderRadius: 5,
   },
-  button: {
-    margin: 2,
-    backgroundColor: "cornflowerblue",
-    width: "80%",
-    height: "60%",
+  select2: {
+    flex: 2,
+    margin: 5,
+    borderRadius: 5,
   },
+
   parallel: {
     flexDirection: 'row',
     justifyContent: 'center',

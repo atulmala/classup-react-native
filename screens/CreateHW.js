@@ -26,24 +26,7 @@ const attachmentIcon = (props) => (
   <Icon {...props} name='attach-outline' />
 );
 
-const Upload = ({ onPress }) => {
-  return (
-    <View style={{ flexDirection: 'row' }}>
-      <TouchableOpacity onPress={onPress}>
-        <Image
-          source={require('../assets/upload3.png')}
-          style={{
-            width: 25,
-            height: 25,
-            borderRadius: 40 / 2,
-            marginLeft: 15,
-            marginRight: 10
-          }}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-}
+
 
 const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -53,9 +36,39 @@ const SelectClass = ({ route, navigation }) => {
 
   const [placement, setPlacement] = React.useState('bottom');
 
+  const Upload = ({ onPress }) => {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity onPress={pickDocument}>
+          <Image
+            source={require('../assets/pdf.png')}
+            style={{
+              width: 30,
+              height: 30,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={uploadHW}>
+          <Image
+            source={require('../assets/upload3.png')}
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 40 / 2,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Upload onPress={uploadHW} />,
+      headerRight: () => <Upload  />,
       headerStyle: {
         backgroundColor: 'darkslategrey',
       },
@@ -306,7 +319,6 @@ const SelectClass = ({ route, navigation }) => {
         </Layout> : (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <Layout style={styles.mainContainer}>
-                <Layout style={styles.verticalSpace} />
                 <Layout style={styles.parallel}>
                   <Select
                     style={styles.select}
@@ -340,12 +352,11 @@ const SelectClass = ({ route, navigation }) => {
                   <Input
                     style={styles.hwDescription}
                     editable
-                    label={evaProps => <Text {...evaProps}>Enter Homework Description:</Text>}
+                    placeholder="Enter Homework Description (Mandatory)"
                     multiline={true}
                     onChangeText={text => setHWDescription(text)}
                     placement={placement}
                     textStyle={{ minHeight: 64, textAlignVertical: 'top' }}
-                    caption="Mandatory"
                   />
                 </Layout>
                 <Layout style={styles.verticalSpace} />
@@ -359,15 +370,7 @@ const SelectClass = ({ route, navigation }) => {
                     label={evaProps => <Text {...evaProps}>PDF Attahed:</Text>}
                   />
                 </Layout>
-                <Layout style={styles.parallel}>
-                  <Button
-                    style={styles.button}
-                    status='info'
-                    accessoryLeft={attachmentIcon}
-                    onPress={pickDocument}>
-                    {"Attach PDF Document (Optonal)"}
-                  </Button>
-                </Layout>
+                
               </Layout>
             </TouchableWithoutFeedback>
           )}
@@ -380,7 +383,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     width: "100%",
-    
+
   },
   evaProps: {
     textShadowColor: "magenta"

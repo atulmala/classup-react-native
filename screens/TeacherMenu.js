@@ -135,8 +135,7 @@ const TeacherMenu = ({ route, navigation }) => {
 }
 
 let button = {
-  justifyContent: 'space-between',
-  width: '45%',
+  width: '48%',
   margin: 5,
   padding: 20,
   borderRadius: 15,
