@@ -73,7 +73,7 @@ const TakeAttendance = ({ route, navigation }) => {
   }, []);
 
   const attendanceTaken = () => {
-    let url = serverIP.concat("/attendance/attendance_taken/", schoolId, "/", selectedClass, "/", selectedSection, "/",
+    let url = serverIP.concat("/attendance/attendance_taken/", schoolID, "/", selectedClass, "/", selectedSection, "/",
       selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/", userID, "/");
     return axios.post(url);
   };
@@ -83,7 +83,7 @@ const TakeAttendance = ({ route, navigation }) => {
     for (var i = 0; i < absenteeList.length; i++) {
       absentees[absenteeList[i]] = absenteeList[i];
     }
-    let url = serverIP.concat("/attendance/update1/", schoolId, "/", selectedClass, "/", selectedSection, "/",
+    let url = serverIP.concat("/attendance/update1/", schoolID, "/", selectedClass, "/", selectedSection, "/",
       selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/", userID, "/");
     return axios.post(url, absentees);
   };
@@ -93,7 +93,7 @@ const TakeAttendance = ({ route, navigation }) => {
     for (var i = 0; i < correctionList.length; i++) {
       corrections[correctionList[i]] = correctionList[i];
     }
-    let url = serverIP.concat("/attendance/delete2/", schoolId, "/", selectedClass, "/", selectedSection, "/",
+    let url = serverIP.concat("/attendance/delete2/", schoolID, "/", selectedClass, "/", selectedSection, "/",
       selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/");
     return axios.post(url, corrections);
   };
@@ -131,7 +131,7 @@ const TakeAttendance = ({ route, navigation }) => {
                         text: "OK", onPress: () => {
                           navigation.navigate('TeacherMenu', {
                             serverIP: serverIP,
-                            schoolId: schoolId,
+                            schoolID: schoolID,
                             userID: userID,
                             userName: userName,
                             selectedSubject: selectedSubject,

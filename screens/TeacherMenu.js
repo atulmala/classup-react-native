@@ -15,7 +15,7 @@ const TeacherMenu = ({ route, navigation }) => {
     schoolID: schoolID,
     userID: userID,
     userName: userName,
-    comingFrom: "teacherMenu"
+    comingFrom: "TeacherMenu"
   };
 
   React.useEffect(() => {
@@ -27,39 +27,14 @@ const TeacherMenu = ({ route, navigation }) => {
     });
   });
 
-  const nextScreen = (sender) =>  {
-    switch (sender) {
-      case "LectureListTeacher":
-        navigation.navigate('LectureListTeacher', params);
-        break;
-    }
-  };
-
-  const _gotoSelectClass = () => {
-    navigation.navigate('SelectClass', params);
-  };
-
-  const _gotoTestExams = () => {
-    navigation.navigate('SelectExam', params);
-  };
-
-  const _gotoShowHW = () => {
-    navigation.navigate('HWListTeacher', params);
-  };
-
-  const _selectClassCoSchol = () => {
-    navigation.navigate('SelectClassCoSchol', params);
+  const nextScreen = (screen) =>  {
+    navigation.navigate(screen, params);
   };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
-        <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('LoginScreen', {
-          serverIP: serverIP,
-          schoolID: schoolID,
-          userID: userID,
-          userName: userName,
-        })}>
+        <TouchableOpacity style={styles.nextButton} onPress={() => nextScreen('LoginScreen')}>
           <Text style={styles.nextText}>Logout</Text>
         </TouchableOpacity>
     });
@@ -68,7 +43,7 @@ const TeacherMenu = ({ route, navigation }) => {
     <View style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn1} onPress={_gotoSelectClass}>
+        <TouchableOpacity style={[button, {backgroundColor: 'chocolate'}]} onPress={() => nextScreen('SelectClass')}>
           <Image
             source={require('../assets/attendance.png')}
             style={styles.ImageIconStyle}
@@ -76,7 +51,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text style={styles.text} status='primary'>Take/Update Attendance</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn2}>
+        <TouchableOpacity style={[button, {backgroundColor: 'midnightblue'}]}>
           <Image
             source={require('../assets/attendance_summary.png')}
             style={styles.ImageIconStyle}
@@ -86,7 +61,7 @@ const TeacherMenu = ({ route, navigation }) => {
       </View>
 
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn3} >
+        <TouchableOpacity style={[button, {backgroundColor: 'darkolivegreen'}]} >
           <Image
             source={require('../assets/school_bus.png')}
             style={styles.ImageIconStyle2}
@@ -94,7 +69,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Bus Attendance</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn4}>
+        <TouchableOpacity style={[button, {backgroundColor: 'dodgerblue'}]}>
           <Image
             source={require('../assets/communication_center.png')}
             style={styles.ImageIconStyle2}
@@ -104,7 +79,7 @@ const TeacherMenu = ({ route, navigation }) => {
       </View>
 
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn5} onPress={_gotoShowHW}>
+        <TouchableOpacity style={[button, {backgroundColor: 'goldenrod'}]} onPress={() => nextScreen('HWListTeacher')}>
           <Image
             source={require('../assets/homework.png')}
             style={styles.ImageIconStyle}
@@ -112,7 +87,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Homework</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn6} onPress={() => nextScreen('LectureListTeacher')}>
+        <TouchableOpacity style={[button, {backgroundColor: 'brown'}]} onPress={() => nextScreen('LectureListTeacher')}>
           <Image
             source={require('../assets/online_class.png')}
             style={styles.ImageIconStyle2}
@@ -121,7 +96,7 @@ const TeacherMenu = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn7} onPress={_gotoTestExams}>
+        <TouchableOpacity style={[button, {backgroundColor: 'darkorchid'}]} onPress={() => nextScreen('SelectExam')}>
           <Image
             source={require('../assets/exam4.png')}
             style={styles.ImageIconStyle}
@@ -129,7 +104,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Test/Exam Management</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn8} onPress={_selectClassCoSchol}>
+        <TouchableOpacity style={[button, {backgroundColor: 'darkslategray'}]} onPress={() => nextScreen('SelectClassCoSchol')}>
           <Image
             source={require('../assets/grades.png')}
             style={styles.ImageIconStyle2}
@@ -139,7 +114,7 @@ const TeacherMenu = ({ route, navigation }) => {
       </View>
 
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn5} >
+        <TouchableOpacity style={[button, {backgroundColor: 'indianred'}]} >
           <Image
             source={require('../assets/password.jpg')}
             style={styles.ImageIconStyle}
@@ -147,7 +122,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Change Password</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn8}>
+        <TouchableOpacity style={[button, {backgroundColor: 'indigo'}]}>
           <Image
             source={require('../assets/set_my_subjects.png')}
             style={styles.ImageIconStyle2}
@@ -186,45 +161,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
     textAlign: 'center',
-    color: 'midnightblue'
+    color: 'white'
   },
-  btn1: {
-    ...button,
-    backgroundColor: '#FFCDD2',
-  },
-  btn2: {
-    ...button,
-    backgroundColor: '#F8BBD0',
-  },
-  btn3: {
-    ...button,
-    backgroundColor: '#CE93D8',
-  },
-  btn4: {
-    ...button,
-    backgroundColor: '#B39DDB',
-  },
-  btn5: {
-    ...button,
-    backgroundColor: '#BBDEFB',
-  },
-  btn6: {
-    ...button,
-    backgroundColor: '#90CAF9',
-  },
-  btn7: {
-    ...button,
-    backgroundColor: 'burlywood',
-  },
-  btn8: {
-    ...button,
-    backgroundColor: '#80DEEA',
-  },
+  
   font: {
     fontWeight: 'bold',
     fontSize: 16,
     textAlign: 'center',
-    color: 'midnightblue'
+    color: 'white'
   },
   nextButton: {
     backgroundColor: 'lavenderblush',

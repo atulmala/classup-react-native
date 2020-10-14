@@ -2,13 +2,9 @@ import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, View, ActivityIndicator, Alert} from 'react-native';
-import { IndexPath, Layout, Text, Select, Button, SelectItem, Icon, Radio, RadioGroup} from '@ui-kitten/components';
+import { IndexPath, Layout, Text, Select, Button, SelectItem, Radio, RadioGroup} from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-
-const calendarIcon = (props) => (
-  <Icon {...props} name='calendar' />
-);
 
 const SelectClassCoSchol = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -107,6 +103,7 @@ const SelectClassCoSchol = ({ route, navigation }) => {
     }
 
     let url = serverIP.concat("/teachers/whether_class_teacher2/", userID, "/");
+    console.log("url = ", url);
     axios({
       method: "GET",
       url: url,

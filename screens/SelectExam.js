@@ -61,7 +61,7 @@ const SelectExam = ({ route, navigation }) => {
     exam.endClass = examList[index].endClass;
 
     switch (comingFrom) {
-      case "teacherMenu":
+      case "TeacherMenu":
         navigation.navigate('TestList', {
           serverIP: serverIP,
           schoolID: schoolID,
