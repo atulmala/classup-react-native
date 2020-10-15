@@ -39,6 +39,7 @@ import LectureListTeacher from './screens/LectureListTeacher';
 import CreateLecture from './screens/CreateLecture';
 import SelectSubjectLectures from './screens/SelectSubjectLectures';
 import LectureListStudent from './screens/LectureListStudent';
+import CommunicationCenter from './screens/CommunicationCenter';
 
 const Stack = createStackNavigator();
 
@@ -137,6 +138,7 @@ const App = () => {
           <Stack.Screen name="CreateLecture" component={CreateLecture} />
           <Stack.Screen name="SelectSubjectLectures" component={SelectSubjectLectures} />
           <Stack.Screen name="LectureListStudent" component={LectureListStudent} />
+          <Stack.Screen name="CommunicationCenter" component={CommunicationCenter} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

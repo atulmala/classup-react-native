@@ -1,7 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
-import { Layout, Text } from '@ui-kitten/components';
-import Toast from 'react-native-toast-message';
+import { StyleSheet, View, TouchableOpacity, Image, Text } from 'react-native';
 
 
 const TeacherMenu = ({ route, navigation }) => {
@@ -18,30 +16,12 @@ const TeacherMenu = ({ route, navigation }) => {
     comingFrom: "TeacherMenu"
   };
 
-  React.useEffect(() => {
-    Toast.show({
-      type: 'success',
-      position: 'top',
-      text1: 'Welcome',
-      text2: "Welcome to ClassUp, " + userName,
-    });
-  });
-
   const nextScreen = (screen) =>  {
     navigation.navigate(screen, params);
   };
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () =>
-        <TouchableOpacity style={styles.nextButton} onPress={() => nextScreen('LoginScreen')}>
-          <Text style={styles.nextText}>Logout</Text>
-        </TouchableOpacity>
-    });
-  });
   return (
     <View style={styles.container}>
-      <Toast ref={(ref) => Toast.setRef(ref)} />
       <View style={styles.parallel}>
         <TouchableOpacity style={[button, {backgroundColor: 'chocolate'}]} onPress={() => nextScreen('SelectClass')}>
           <Image
@@ -69,7 +49,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Bus Attendance</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[button, {backgroundColor: 'dodgerblue'}]}>
+        <TouchableOpacity style={[button, {backgroundColor: 'dodgerblue'}]} onPress={() => nextScreen('CommunicationCenter')}>
           <Image
             source={require('../assets/communication_center.png')}
             style={styles.ImageIconStyle2}
@@ -104,7 +84,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Test/Exam Management</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[button, {backgroundColor: 'darkslategray'}]} onPress={() => nextScreen('SelectClassCoSchol')}>
+        <TouchableOpacity style={[button, {backgroundColor: 'rosybrown'}]} onPress={() => nextScreen('SelectClassCoSchol')}>
           <Image
             source={require('../assets/grades.png')}
             style={styles.ImageIconStyle2}
@@ -122,7 +102,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Change Password</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[button, {backgroundColor: 'indigo'}]}>
+        <TouchableOpacity style={[button, {backgroundColor: 'lightsalmon'}]}>
           <Image
             source={require('../assets/set_my_subjects.png')}
             style={styles.ImageIconStyle2}
@@ -169,19 +149,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white'
   },
-  nextButton: {
-    backgroundColor: 'lavenderblush',
-    height: 25,
-    margin: 10,
-    padding: 5,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  nextText: {
-    fontSize: 12,
-    color: 'indigo',
-  },
   TextStyle: {
     color: 'white',
     fontSize: 16,
@@ -202,11 +169,6 @@ const styles = StyleSheet.create({
     width: 50,
     resizeMode: 'stretch',
   },
-  SeparatorLine: {
-    backgroundColor: '#fff',
-    width: 0,
-    height: 40,
-  }
 })
 
 export default TeacherMenu;
