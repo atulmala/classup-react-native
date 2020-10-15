@@ -10,18 +10,20 @@ import { useIsFocused } from '@react-navigation/native';
 
 import axios from 'axios';
 
-const LectureListTeacher = ({ route, navigation }) => {
+const LectureListStudent = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
+  const { studentID } = route.params;
+  const { subject } = route.params;
 
   const [isLoading, setLoading] = useState(true);
   const isFocused = useIsFocused();
   const [lectureList] = useState([]);
 
   useEffect(() => {
-    let url = serverIP.concat("/lectures/get_teacher_lectures/", userID, "/");
+    let url = serverIP.concat("/lectures/get_student_lectures/", studentID, "?subject=", subject);
     axios
       .get(url)
       .then(function (response) {
@@ -59,28 +61,9 @@ const LectureListTeacher = ({ route, navigation }) => {
       });
   }, [isFocused]);
 
-  const BigPlus = ({ onPress }) => {
-    return (
-      <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity onPress={onPress}>
-          <Image
-            source={require('../assets/big_plus.png')}
-            style={{
-              width: 25,
-              height: 25,
-              borderRadius: 40 / 2,
-              marginLeft: 15,
-              marginRight: 10
-            }}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   const HeaderTitle = () => {
     return (
-      <Text style={styles.headerText}>Lecture List</Text>
+      <Text style={styles.headerText}>Lecture List for { subject}</Text>
     );
   };
 
@@ -91,9 +74,16 @@ const LectureListTeacher = ({ route, navigation }) => {
       headerStyle: {
         backgroundColor: 'olivedrab',
       },
-      headerRight: () => <BigPlus onPress={createLecture} />,
     });
   });
+
+  const openVideo = (title) => {
+    Linking.openURL(title.youtube_link)
+  }
+
+  const openDoc = (title) => {
+    Linking.openURL(title.doc_link)
+  }
 
   const renderItemHeader = (headerProps, lecture) => (
     <View style={styles.containerLine}>
@@ -110,99 +100,9 @@ const LectureListTeacher = ({ route, navigation }) => {
               <Text style={styles.innerText}> {lecture.the_class}</Text>
           </Text>
         </View>
-        <TouchableOpacity onPress={() => deleteLecture(lecture)}>
-          <Image
-            style={styles.tinyLogo}
-            source={require('../assets/delete_icon.jpeg')}
-          />
-        </TouchableOpacity>
       </View>
     </View>
   );
-
-  const openVideo = (title) => {
-    Linking.openURL(title.youtube_link)
-  }
-
-  const openDoc = (title) => {
-    Linking.openURL(title.doc_link)
-  }
-
-  const createLecture = () => {
-    navigation.navigate('CreateLecture', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      userName: userName,
-      comingFrom: "DeleteLecture"
-    });
-  }
-
-  const deleteLecture = (title) => {
-    console.log("title = ", title);
-    Alert.alert(
-      "Please Confirm ",
-      "Are You sure you want to Delete this Lecture?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        {
-          text: "OK", onPress: () => {
-            setLoading(true);
-            {
-              isLoading && (
-                <View>
-                  <ActivityIndicator style={styles.loading} size='large' />
-                </View>
-              )
-            }
-
-            try {
-              axios.delete(serverIP.concat("/lectures/delete_lecture/", title.id, "/"))
-                .then(function (response) {
-                  console.log(response);
-                  setLoading(false);
-                  Alert.alert(
-                    "Lecture Deleted",
-                    "Lecture Deleted.",
-                    [
-                      {
-                        text: "OK", onPress: () => {
-                          navigation.navigate('LectureListTeacher', {
-                            serverIP: serverIP,
-                            schoolID: schoolID,
-                            userID: userID,
-                            userName: userName,
-                            comingFrom: "DeleteLecture"
-                          });
-                        }
-                      }
-                    ],
-                    { cancelable: false }
-                  );
-                });
-            } catch (error) {
-              console.error(error);
-            }
-            var position = 0;
-            for (var lecture of lectureList) {
-              if (lecture.id == title.id) {
-                lectureList.splice(position, 1)
-                break
-              }
-              else {
-                position++;
-              }
-            }
-          }
-        }
-      ],
-      { cancelable: false }
-    );
-  }
 
   const CustomRow = ({ title }) => {
     return (
@@ -212,7 +112,7 @@ const LectureListTeacher = ({ route, navigation }) => {
       >
         <Text style={styles.baseText}>
           Subject:
-              <Text style={styles.innerText}> {title.subject}</Text>
+              <Text style={styles.innerText}> {title.teacher}</Text>
         </Text>
         <Text style={styles.baseText}>
           Topic:
@@ -245,26 +145,21 @@ const LectureListTeacher = ({ route, navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={useHeaderHeight()}
-      style={styles.container} >
-      <View style={styles.container}>
-        {isLoading ? <View style={styles.loading}>
-          <ActivityIndicator size='large' />
-        </View> : (
-            <CustomListview
-              itemList={lectureList}
-            />)}
-      </View>
-    </KeyboardAvoidingView>
+    <View style={styles.container}>
+      {isLoading ? <View style={styles.loading}>
+        <ActivityIndicator size='large' />
+      </View> : (
+          <CustomListview
+            itemList={lectureList}
+          />)}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'olive',
+    backgroundColor: 'cornsilk',
   },
   headerProps: {
     flex: 3,
@@ -384,4 +279,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LectureListTeacher;
+export default LectureListStudent;

@@ -221,7 +221,10 @@ const CreateLecture = ({ route, navigation }) => {
             formData.append("file_included", fileIncluded);
             if (attachmentPresent) {
               const split = uri.split('/');
-              const name = split.pop();
+              let name = split.pop()
+              name = name.replace(/ /g,"_");
+              console.log ("name = ", name);
+
               formData.append("file",
                 {
                   uri: uri,

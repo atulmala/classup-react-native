@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text, FlatList, TouchableWithoutFeedback } from 'react-native';
 import { Divider, List, ListItem } from '@ui-kitten/components';
 import axios from 'axios';
 
-const SelectSubject = ({ route, navigation }) => {
+const SelectSubjectLectures = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
@@ -34,8 +34,25 @@ const SelectSubject = ({ route, navigation }) => {
       });
   }, []);
 
-  const showHW = (index) => {
-    navigation.navigate('HWListStudent', {
+  const HeaderTitle = () => {
+    return (
+      <Text style={styles.headerText}>Select Subject for Lecture</Text>
+    );
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerTitleAlign: 'left',
+      headerStyle: {
+        backgroundColor: 'burlywood',
+      },
+    });
+  });
+
+
+  const showLectures = (index) => {
+    navigation.navigate('LectureListStudent', {
       serverIP: serverIP,
       userID: userID,
       studentID: studentID,
@@ -46,7 +63,7 @@ const SelectSubject = ({ route, navigation }) => {
   };
 
   const renderItem = ({ item, index }) => (
-    <ListItem style={styles.title} title={item.subjectName} onPress={() => showHW(index)} />
+    <ListItem style={styles.title} title={item.subjectName} onPress={() => showLectures(index)} />
   );
 
 
@@ -70,30 +87,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  containerRow: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingLeft: 2,
-    paddingTop: 8,
-    paddingBottom: 8,
-    marginLeft: 4,
-    marginRight: 4,
-    marginTop: 4,
-    marginBottom: 2,
-    borderRadius: 10,
-    backgroundColor: '#FFF',
-    elevation: 6,
-  },
-  container_text: {
-    flex: 3,
-    flexDirection: 'column',
-    marginLeft: 12,
-    justifyContent: 'center',
-  },
   title: {
     fontSize: 16,
     color: '#000',
     fontFamily: 'Verdana'
+  },
+  headerText: {
+    ...Platform.select({
+      ios: {
+        fontSize: 18,
+      },
+      android: {
+        fontSize: 18,
+      }
+    }),
+    marginTop: 0,
+    fontWeight: 'bold',
+    color: 'white',
   },
 
 
@@ -109,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectSubject;
+export default SelectSubjectLectures;

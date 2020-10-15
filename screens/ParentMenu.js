@@ -53,44 +53,16 @@ const ParentMenu = ({ route, navigation }) => {
 
   let params = {
     serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      studentID: studentID,
-      studentName: studentName,
-      userName: userName,
-      comingFrom: "ParentMenu"
+    schoolID: schoolID,
+    userID: userID,
+    studentID: studentID,
+    studentName: studentName,
+    userName: userName,
+    comingFrom: "ParentMenu"
   };
 
-  const _gotoSelectSubject = () => {
-    navigation.navigate('SelectSubject', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      studentID: studentID,
-      studentName: studentName,
-      userName: userName,
-      comingFrom: "ParentMenu"
-    });
-  };
-
-  const _gotoOnlineTestToday = () =>  {
-    navigation.navigate('OnlineTestToday', {
-      serverIP: serverIP,
-      schoolID: schoolID,
-      userID: userID,
-      studentID: studentID,
-      studentName: studentName,
-      userName: userName,
-      comingFrom: "ParentMenu"
-    });
-  };
-
-  const _showUpcomingTests = () => {
-    navigation.navigate('UpcomingTests', params);
-  };
-
-  const _selectExam = () => {
-    navigation.navigate('SelectExam', params);
+  const nextScreen = (screen) => {
+    navigation.navigate(screen, params);
   };
 
   const HeaderTitle = () => {
@@ -116,50 +88,50 @@ const ParentMenu = ({ route, navigation }) => {
     <ScrollView style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'chocolate'}]} onPress={testPress}>
+        <TouchableOpacity style={[button, { backgroundColor: 'chocolate' }]} onPress={testPress}>
           <Text style={styles.font}>Month Wise Attendance</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, {backgroundColor: 'midnightblue'}]} onPress={testPress}>
+        <TouchableOpacity style={[button, { backgroundColor: 'midnightblue' }]} onPress={testPress}>
           <Text style={styles.font}>Time Table</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'darkolivegreen'}]} onPress={_gotoSelectSubject}>
+        <TouchableOpacity style={[button, { backgroundColor: 'darkolivegreen' }]} onPress={() => nextScreen('SelectSubject')}>
           <Text style={styles.font}>Home Work</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, {backgroundColor: 'dodgerblue'}]} onPress={testPress}>
+        <TouchableOpacity style={[button, { backgroundColor: 'dodgerblue' }]} onPress={() => nextScreen('SelectSubjectLectures')}>
           <Text style={styles.font}>Online Classes</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'goldenrod'}]} onPress={_showUpcomingTests}>
+        <TouchableOpacity style={[button, { backgroundColor: 'goldenrod' }]} onPress={() => nextScreen('UpcomingTests')}>
           <Text style={styles.font}>Upcoming Tests</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, {backgroundColor: 'brown'}]} onPress={_gotoOnlineTestToday}>
+        <TouchableOpacity style={[button, { backgroundColor: 'brown' }]} onPress={() => nextScreen('OnlineTestToday')}>
           <Text style={styles.font}>Online Test</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'darkorchid'}]} onPress={_selectExam}>
+        <TouchableOpacity style={[button, { backgroundColor: 'darkorchid' }]} onPress={() => nextScreen('SelectExam')}>
           <Text style={styles.font}>Exam Results</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, {backgroundColor: 'darkslategray'}]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'darkslategray' }]}>
           <Text style={styles.font}>Communicate With School</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'indianred'}]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'indianred' }]}>
           <Text style={styles.font}>Communication History</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, {backgroundColor: 'indigo'}]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'indigo' }]}>
           <Text style={styles.font}>Image/Video From School</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'maroon'}]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'maroon' }]}>
           <Text style={styles.font}>Upload Student Pic</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, {backgroundColor: 'olivedrab'}]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'olivedrab' }]}>
           <Text style={styles.font}>Change Password</Text>
         </TouchableOpacity>
       </View>
