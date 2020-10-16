@@ -40,6 +40,9 @@ import CreateLecture from './screens/CreateLecture';
 import SelectSubjectLectures from './screens/SelectSubjectLectures';
 import LectureListStudent from './screens/LectureListStudent';
 import CommunicationCenter from './screens/CommunicationCenter';
+import SelectClassTeacherCommunication from './screens/SelectClassTeacherCommunication';
+import SelectStudentsForMessage from './screens/SelectStudentsForMessage';
+import ComposeMessageTeacher from './screens/ComposeMessageTeacher';
 
 const Stack = createStackNavigator();
 
@@ -139,6 +142,9 @@ const App = () => {
           <Stack.Screen name="SelectSubjectLectures" component={SelectSubjectLectures} />
           <Stack.Screen name="LectureListStudent" component={LectureListStudent} />
           <Stack.Screen name="CommunicationCenter" component={CommunicationCenter} />
+          <Stack.Screen name="SelectClassTeacherCommunication" component={SelectClassTeacherCommunication}/>
+          <Stack.Screen name="SelectStudentsForMessage" component={SelectStudentsForMessage} />
+          <Stack.Screen name="ComposeMessageTeacher" component={ComposeMessageTeacher} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

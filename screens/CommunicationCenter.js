@@ -5,11 +5,6 @@ import Toast from 'react-native-toast-message';
 const ParentMenu = ({ route, navigation }) => {
   console.log('inside ParentMenu');
 
-  const testPress = () => {
-    Alert.alert('was pressed');
-    console.log('was pressed');
-  };
-
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
@@ -50,7 +45,7 @@ const ParentMenu = ({ route, navigation }) => {
     <ScrollView style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'chocolate' }]} onPress={testPress}>
+        <TouchableOpacity style={[button, { backgroundColor: 'chocolate' }]} onPress={() => nextScreen('SelectClassTeacherCommunication')}>
           <Text style={styles.font}>Communicate With Parents</Text>
         </TouchableOpacity>
       </View>
