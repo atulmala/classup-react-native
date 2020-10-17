@@ -4,7 +4,6 @@ import { Divider, List, ListItem, Icon } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
-
 const SelectStudentsForMessage = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
@@ -15,11 +14,11 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
   const { section } = route.params;
 
   const [studentList] = useState([]);
-  const [selectedStudentList] = useState([]);
+  const [selectedStudentList, setSelectedStudentList] = useState([]);
 
   const [isLoading, setLoading] = useState(true);
   const [checked, setChecked] = useState(0);
-
+  const [allSelected, setAllSelected] = useState(false);
 
   useEffect(() => {
     let url = serverIP.concat("/student/list/", schoolID, "/", the_class, "/", section, "/");
@@ -43,6 +42,30 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
       });
   }, []);
 
+  const selectAll = () => {
+    setLoading(true);
+    setAllSelected(!allSelected);
+    for (student of studentList) {
+      if (allSelected) {
+        student.selected = true;
+        let position = selectedStudentList.indexOf(student.id);
+        if (position > -1) {
+          // this student was in the selected list. remove...
+          selectedStudentList.splice(position, 1);
+        }
+        else {
+          selectedStudentList.push(student.id);
+        }
+      }
+      else {
+        student.selected = false;
+        setSelectedStudentList([]);
+      }
+    }
+    console.log("no of selected students = ", selectedStudentList);
+    setLoading(false);
+  };
+
   const selectStudents = (index) => {
     for (student of studentList) {
       if (student.index == index) {
@@ -59,8 +82,8 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
     console.log("selectedStudentList = ", selectedStudentList);
   };
 
-  const composeMessage = () =>  {
-    if (selectedStudentList.length == 0)  {
+  const composeMessage = () => {
+    if (selectedStudentList.length == 0) {
       console.log("no student selected");
       Toast.show({
         type: 'error',
@@ -74,7 +97,7 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
         [
           {
             text: "OK", onPress: () => {
-              
+
             }
           }
         ],
@@ -82,6 +105,16 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
       );
       return;
     }
+
+    navigation.navigate("ComposeMessageTeacher", {
+      serverIP: serverIP,
+      schoolID: schoolID,
+      userID: userID,
+      userName: userName,
+      the_class: the_class,
+      section: section,
+      recepients: selectedStudentList,
+    });
   };
 
   const renderItemIcon = (props) => {
@@ -105,6 +138,17 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
   const ComposeButton = ({ onPress }) => {
     return (
       <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity onPress={selectAll}>
+          <Image
+            source={require('../assets/select_all.png')}
+            style={{
+              width: 25,
+              height: 25,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
         <TouchableOpacity onPress={composeMessage}>
           <Image
             source={require('../assets/compose_message2.png')}

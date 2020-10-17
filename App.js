@@ -43,6 +43,7 @@ import CommunicationCenter from './screens/CommunicationCenter';
 import SelectClassTeacherCommunication from './screens/SelectClassTeacherCommunication';
 import SelectStudentsForMessage from './screens/SelectStudentsForMessage';
 import ComposeMessageTeacher from './screens/ComposeMessageTeacher';
+import PreviewAttachment from './screens/PreviewAttachment';
 
 const Stack = createStackNavigator();
 
@@ -145,6 +146,7 @@ const App = () => {
           <Stack.Screen name="SelectClassTeacherCommunication" component={SelectClassTeacherCommunication}/>
           <Stack.Screen name="SelectStudentsForMessage" component={SelectStudentsForMessage} />
           <Stack.Screen name="ComposeMessageTeacher" component={ComposeMessageTeacher} />
+          <Stack.Screen name="PreviewAttachment" component={PreviewAttachment} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

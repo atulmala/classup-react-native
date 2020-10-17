@@ -95,7 +95,7 @@ const SelectClassTeacherCommunication = ({ route, navigation }) => {
         });
         return;
       case 0:
-        recepeients = "wholeSchool ";
+        recepeients = "wholeClass";
         break;
       case 1:
         recepeients = "selectedStudents";
@@ -103,14 +103,15 @@ const SelectClassTeacherCommunication = ({ route, navigation }) => {
     }
 
     switch (recepeients) {
-      case "wholeSchool":
-        navigation.navigate('ComposeMessage', {
+      case "wholeClass":
+        navigation.navigate('ComposeMessageTeacher', {
           serverIP: serverIP,
           schoolID: schoolID,
           userID: userID,
           userName: userName,
-          selectedClass: selectedClass,
-          selectedSection: selectedSection,
+          the_class: selectedClass,
+          section: selectedSection,
+          recepients: 'wholeClass',
         });
         break;
       case "selectedStudents":
@@ -130,7 +131,7 @@ const SelectClassTeacherCommunication = ({ route, navigation }) => {
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
-        <Text style={styles.headerText} status='warning' >Select Class, Section & Recepients</Text>
+        <Text style={styles.headerText} >Select Class, Section & Recepients</Text>
       </View>
     );
   };
@@ -157,7 +158,7 @@ const SelectClassTeacherCommunication = ({ route, navigation }) => {
             <Layout
               style={styles.scrollContainer}
               contentContainerStyle={styles.scrollContentContainer}>
-              <Layout style={styles.verticalSpace} />
+              <Layout  />
               <Layout style={styles.parallel}>
                 <Layout style={styles.container}>
                   <Text style={styles.text} category='s1' status='info'>
@@ -255,6 +256,7 @@ const styles = StyleSheet.create({
       },
       android: {
         fontSize: 16,
+        
       }
     }),
     fontWeight: 'bold',

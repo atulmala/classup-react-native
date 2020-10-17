@@ -22,12 +22,6 @@ const hideEvent = Platform.select({
   default: 'keyboardWillHide',
 });
 
-const attachmentIcon = (props) => (
-  <Icon {...props} name='attach-outline' />
-);
-
-
-
 const SelectClass = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
@@ -370,7 +364,6 @@ const SelectClass = ({ route, navigation }) => {
                     label={evaProps => <Text {...evaProps}>PDF Attahed:</Text>}
                   />
                 </Layout>
-                
               </Layout>
             </TouchableWithoutFeedback>
           )}

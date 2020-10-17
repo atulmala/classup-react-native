@@ -1,16 +1,16 @@
 import _ from 'lodash';
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
-  StyleSheet, ScrollLayout, ActivityIndicator, Keyboard, KeyboardAvoidingLayout, Image, Alert,
+  StyleSheet, ActivityIndicator, Image, Alert,
   Platform, TouchableOpacity, TouchableWithoutFeedback, Text, View
 } from 'react-native';
-import {
-  IndexPath, Select, Input, Button, SelectItem, Icon, Layout
-} from '@ui-kitten/components';
+import { Input, Button, Icon, Layout } from '@ui-kitten/components';
 import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+
+var RNFS = require('react-native-fs');
 
 const ComposeMessageTeacher = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -21,15 +21,35 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
   const { section } = route.params;
   const { recepients } = route.params;
 
+  console.log("recepients = ", recepients);
+
+  const [isLoading, setLoading] = useState(false);
+  const [message, setMessage] = React.useState("");
+  const [pdfName, setPdfName] = React.useState("None");
+  const [uri, setUri] = React.useState("");
+  const [attachmentPresent, setAttachmentPresent] = useState(false);
+  const [attachmentType, setAttachmentType] = useState("unknown");
+
   const Upload = () => {
     return (
       <View style={{ flexDirection: 'row' }}>
         <TouchableOpacity onPress={pickDocument}>
           <Image
+            source={require('../assets/attachmemt.png')}
+            style={{
+              width: 35,
+              height: 35,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={sendMessage}>
+          <Image
             source={require('../assets/send_message.png')}
             style={{
-              width: 30,
-              height: 30,
+              width: 40,
+              height: 40,
               marginLeft: 15,
               marginRight: 10
             }}
@@ -39,14 +59,69 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
     );
   }
 
+  const pickDocument = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+
+        type: [DocumentPicker.types.pdf],
+      });
+      if (res.uri.startsWith('content://')) {
+        const fileNameAndExtension = res.name;
+        const destPath = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`;
+        console.log("destPath = ", destPath);
+        await RNFS.copyFile(res.uri, destPath);
+        setUri("file://".concat(destPath));
+        console.log("uri=", uri);
+      }
+      else {
+        console.log("source does not start with content://")
+      }
+      console.log(
+        res.uri,
+        res.type, // mime type
+        res.name,
+        res.size
+      );
+      setUri(res.uri);
+      setAttachmentPresent(true);
+      // setUri(res.uri);
+      setAttachmentType(res.type);
+      setPdfName(res.name);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  const previewAttachment = () => {
+    let images = []
+    let props = {};
+    let require = "require";
+    props.url = uri;
+    props.source = require.concat("(", uri, ")");
+    images.push(props);
+
+    navigation.navigate('PreviewAttachment', {
+      type: attachmentType,
+      images: images,
+      source: {
+        'uri': uri
+      },
+      pdfName: pdfName,
+    });
+  }
+
   const HeaderTitle = () => {
     return (
       <View>
         <Text style={styles.headerText}>Compose Message</Text>
-        {recepients == "whole_school" &&
+        {recepients == "wholeClass" &&
           <Text style={styles.headerText}>Whole Class: {the_class}-{section}</Text>}
-        {recepients != "whole_school" &&
-          <Text style={styles.headerText}>Selected Students: {the_class}-{section}</Text>}
+        {recepients != "wholeClass" &&
+          <Text style={styles.headerText2}>Selected Students: {the_class}-{section}</Text>}
       </View>
     );
   };
@@ -57,18 +132,30 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
       headerTitleAlign: 'left',
       headerRight: () => <Upload />,
       headerStyle: {
-        backgroundColor: 'darkolivegreen',
+        backgroundColor: 'dodgerblue',
       },
     });
   });
 
   const sendMessage = () => {
-    if (message == "") {
+    if (message.length == 0) {
+      alert("Message is empty");
       Toast.show({
         type: 'error',
         position: 'bottom',
         text1: 'Error: Empty Message',
         text2: "Please enter message",
+      });
+      return;
+    }
+
+    if (message.length > 400) {
+      alert("Max character limit 400 exceeded");
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Error: Very long message',
+        text2: "Please limit the message to 400 characters",
       });
       return;
     }
@@ -99,43 +186,58 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
             }
 
             let formData = new FormData();
-
+            
+            formData.append("coming_from", "TeacherCommunication");
             formData.append("teacher", userID);
+            formData.append("message", message);
             formData.append("school_id", schoolID);
-            formData.append("the_class", selectedClass);
-            formData.append("section", "all_sections");
-            formData.append("file_included", fileIncluded);
+            formData.append("class", the_class);
+            formData.append("section", section);
+
+            if (recepients == "wholeClass") {
+              formData.append("whole_class", "true");
+            }
+            else {
+              formData.append("whole_class", "false");
+              for (recepient of recepients)  {
+                formData.append('recepients', recepient)
+              }
+            }
+            console.log("recepients just before putting into formData = ", recepients);
+            // formData.append("recepients", JSON.stringify(recepients));
+            formData.append("image_included", fileIncluded);
             if (attachmentPresent) {
               const split = uri.split('/');
               let name = split.pop()
               name = name.replace(/ /g, "_");
-              console.log("name = ", name);
+              console.log("name = ", pdfName);
 
               formData.append("file",
                 {
                   uri: uri,
                   type: 'application/pdf',
-                  name: name
+                  name: pdfName
                 });
-              formData.append("file_name", name);
+              formData.append("image_name", pdfName);
             }
+            console.log("formData = ", formData);
             try {
-              axios.post(serverIP.concat("/lectures/share_lecture/"), formData)
+              axios.post(serverIP.concat("/operations/send_message/", schoolID, "/"), formData)
                 .then(function (response) {
                   console.log(response);
                   setLoading(false);
                   Alert.alert(
-                    "Lecture Uploaded",
-                    "Lecture Uploaded to Server.",
+                    "Messages Sent",
+                    "Messages Sent and will be delivered in about an hour time!.",
                     [
                       {
                         text: "OK", onPress: () => {
-                          navigation.navigate('LectureListTeacher', {
+                          navigation.navigate('TeacherMenu', {
                             serverIP: serverIP,
                             schoolID: schoolID,
                             userID: userID,
                             userName: userName,
-                            comingFrom: "CreateLecture"
+                            comingFrom: "SendMessage"
                           });
                         }
                       }
@@ -153,65 +255,77 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
     );
   };
 
+  const PreviewIcon = (props) => {
+    return (
+      <Icon {...props} name='eye-outline'></Icon>
+    );
+  };
+  const DeleteIcon = (props) => {
+    return (
+      <Icon {...props} name='trash-2-outline'></Icon>
+    );
+  };
+
   return (
-    <Layout style={styles.container} level='1'>
+    <Layout style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
-      {isLoading ? <Layout style={styles.loading}>
+      {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
-      </Layout> : (
-          <Layout style={styles.mainContainer}>
-            <Layout style={styles.parallel}>
-              <Select
-                style={styles.select1}
-                label={evaProps => <Text {...evaProps}>Select Class:</Text>}
-                value={displayClassValue}
-                selectedIndex={selectedClassIndex}
-                onSelect={index => setSelectedClassIndex(index)}>
-                {classList.map(renderOption)}
-              </Select>
-              <Select
-                style={styles.select2}
-                label={evaProps => <Text {...evaProps}>Select Subject:</Text>}
-                value={displaySubjectValue}
-                selectedIndex={selectedSubjectIndex}
-                onSelect={index => setSelectedSubjectIndex(index)}>
-                {subjectList.map(renderOption)}
-              </Select>
-            </Layout>
-            <Layout style={styles.verticalSpace} />
-            <Layout>
-              <Input
-                style={styles.lectureDescription}
-                size='small'
-                editable
-                placeholder='Enter Lecture Description (Mandatory)'
-                onChangeText={text => setLectureDescription(text)}
-                textStyle={{ textAlignVertical: 'top' }}
-              />
+      </View> : (
+          <Layout style={styles.container} level='1'>
+            <Toast ref={(ref) => Toast.setRef(ref)} />
+            <Layout style={styles.mainContainer}>
               <Layout style={styles.verticalSpace} />
+              <Layout>
+                <Input
+                  style={styles.lectureDescription}
+                  size='large'
+                  editable
+                  multiline
+                  placeholder='Enter Message (Mandatory) - Max 400 characters'
+                  onChangeText={text => setMessage(text)}
+                  textStyle={{ minHeight: 80, textAlignVertical: 'top' }}
+                />
+                <Layout style={styles.verticalSpace} />
+              </Layout>
               <Layout style={styles.verticalSpace} />
-              <Input
-                style={styles.lectureDescription}
-                editable
-                size='small'
-                placeholder='Lecture Video Link'
-                onChangeText={text => setVideoLink(text)}
-                textStyle={{ textAlignVertical: 'top' }}
-              />
+              <Layout >
+                <Input
+                  style={styles.lectureDescription}
+                  size='small'
+                  width='90%'
+                  disabled
+                  placeholder={pdfName}
+                  label={evaProps => <Text {...evaProps}>Attachment:</Text>}
+                />
+                <Layout style={styles.verticalSpace} />
+                <Layout style={styles.parallel}>
+                  <Layout style={styles.buttonContainer}>
+                    <Button
+                      style={styles.button}
+                      appearance='outline'
+                      size='tiny'
+                      status='info'
+                      accessoryLeft={PreviewIcon}
+                      onPress={previewAttachment}>
+                      {"Preview Attachment"}
+                    </Button>
+                  </Layout>
+                  <Layout style={styles.buttonContainer}>
+                    <Button
+                      style={styles.button}
+                      appearance='outline'
+                      size='tiny'
+                      status='danger'
+                      accessoryLeft={DeleteIcon}
+                      onPress={sendMessage}>
+                      {"Remove Attachment"}
+                    </Button>
+                  </Layout>
+                </Layout>
+              </Layout>
             </Layout>
-            <Layout style={styles.verticalSpace} />
-            <Layout style={styles.container}>
-              <Input
-                style={styles.lectureDescription}
-                size='small'
-                width='90%'
-                disabled
-                placeholder={pdfName}
-                label={evaProps => <Text {...evaProps}>PDF Attahed:</Text>}
-              />
-            </Layout>
-          </Layout>
-        )}
+          </Layout>)}
     </Layout>
   );
 }
@@ -220,45 +334,44 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     width: "100%",
+    marginTop: 10,
   },
   evaProps: {
     textShadowColor: "magenta"
   },
+  parallel: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    height: 100
+  },
   headerText: {
     ...Platform.select({
       ios: {
-        fontSize: 18,
+        fontSize: 16,
       },
       android: {
-        fontSize: 18,
+        fontSize: 16,
       }
     }),
     marginTop: 0,
     fontWeight: 'bold',
     color: 'white',
   },
-  select1: {
-    flex: 1,
-    margin: 5,
-    borderRadius: 5,
-  },
-  select2: {
-    flex: 2,
-    margin: 5,
-    borderRadius: 5,
-  },
-
-  parallel: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+  headerText2: {
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 14,
+      }
+    }),
+    marginTop: 0,
+    fontWeight: 'bold',
+    color: 'white',
   },
   verticalSpace: {
-    marginTop: 10
-  },
-  mainContainer: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 10
+    marginTop: 5
   },
   lectureDescription: {
     marginLeft: 5,
@@ -266,6 +379,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     paddingBottom: 0,
     textAlignVertical: 'top',
+    minHeight: 64,
     borderColor: "cyan"
   },
   loading: {
@@ -277,7 +391,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F5FCFF88'
-  }
+  },
 });
 
 export default ComposeMessageTeacher;

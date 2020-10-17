@@ -115,6 +115,8 @@ target 'classup' do
 
   pod 'RNSketchCanvas', :path => '../node_modules/@terrylinla/react-native-sketch-canvas'
 
+  pod 'react-native-progress-view', :path => '../node_modules/@react-native-community/progress-view'
+
   post_install do |installer|
     flipper_post_install(installer)
     installer.pods_project.targets.each do |target|
