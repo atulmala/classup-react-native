@@ -44,7 +44,9 @@ import SelectClassTeacherCommunication from './screens/SelectClassTeacherCommuni
 import SelectStudentsForMessage from './screens/SelectStudentsForMessage';
 import ComposeMessageTeacher from './screens/ComposeMessageTeacher';
 import PreviewAttachment from './screens/PreviewAttachment';
-
+import SetSubjects from './screens/SetSubjects';
+import SelectMonth from './screens/SelectMonth';
+import AttendanceSummaryClass from './screens/AttendanceSummaryClass';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -147,6 +149,9 @@ const App = () => {
           <Stack.Screen name="SelectStudentsForMessage" component={SelectStudentsForMessage} />
           <Stack.Screen name="ComposeMessageTeacher" component={ComposeMessageTeacher} />
           <Stack.Screen name="PreviewAttachment" component={PreviewAttachment} />
+          <Stack.Screen name="SetSubjects" component={SetSubjects} />
+          <Stack.Screen name="SelectMonth" component={SelectMonth} />
+          <Stack.Screen name="AttendanceSummaryClass" component={AttendanceSummaryClass} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

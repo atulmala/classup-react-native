@@ -31,7 +31,7 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text style={styles.text} status='primary'>Take/Update Attendance</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[button, {backgroundColor: 'midnightblue'}]}>
+        <TouchableOpacity style={[button, {backgroundColor: 'midnightblue'}]} onPress={() => nextScreen('SelectMonth')}>
           <Image
             source={require('../assets/attendance_summary.png')}
             style={styles.ImageIconStyle}
@@ -102,12 +102,12 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Change Password</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[button, {backgroundColor: 'lightsalmon'}]}>
+        <TouchableOpacity style={[button, {backgroundColor: 'lightsalmon'}]} onPress={() => nextScreen('SetSubjects')}>
           <Image
             source={require('../assets/set_my_subjects.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text body style={styles.text}>Set My Subjects</Text>
+          <Text body style={styles.text} >Set My Subjects</Text>
         </TouchableOpacity>
       </View>
     </View>

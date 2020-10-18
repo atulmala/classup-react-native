@@ -3,7 +3,7 @@
    LastUpgradeVersion = "1130"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "YES"
+      parallelizeBuildables = "NO"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
@@ -39,6 +39,17 @@
             </BuildableReference>
          </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+            BuildableName = "classup.app"
+            BlueprintName = "classup"
+            ReferencedContainer = "container:classup.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -60,6 +71,8 @@
             ReferencedContainer = "container:classup.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
