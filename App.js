@@ -47,6 +47,7 @@ import PreviewAttachment from './screens/PreviewAttachment';
 import SetSubjects from './screens/SetSubjects';
 import SelectMonth from './screens/SelectMonth';
 import AttendanceSummaryClass from './screens/AttendanceSummaryClass';
+import AttendanceSummaryStudent from './screens/AttendanceSummaryStudent';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -152,6 +153,7 @@ const App = () => {
           <Stack.Screen name="SetSubjects" component={SetSubjects} />
           <Stack.Screen name="SelectMonth" component={SelectMonth} />
           <Stack.Screen name="AttendanceSummaryClass" component={AttendanceSummaryClass} />
+          <Stack.Screen name="AttendanceSummaryStudent" component={AttendanceSummaryStudent} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

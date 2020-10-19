@@ -16,6 +16,21 @@ const TeacherMenu = ({ route, navigation }) => {
     comingFrom: "TeacherMenu"
   };
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('LoginScreen', {
+          serverIP: serverIP,
+          schoolID: schoolID,
+          userID: userID,
+          userName: userName,
+
+        })}>
+          <Text style={styles.nextText}>Logout</Text>
+        </TouchableOpacity>
+    });
+  });
+
   const nextScreen = (screen) =>  {
     navigation.navigate(screen, params);
   };
@@ -141,6 +156,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     color: 'white'
+  },
+  nextButton: {
+    backgroundColor: 'lavenderblush',
+    height: 25,
+    margin: 10,
+    padding: 5,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   
   font: {

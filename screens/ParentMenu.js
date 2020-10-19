@@ -88,7 +88,7 @@ const ParentMenu = ({ route, navigation }) => {
     <ScrollView style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'chocolate' }]} onPress={testPress}>
+        <TouchableOpacity style={[button, { backgroundColor: 'chocolate' }]} onPress={() => nextScreen('AttendanceSummaryStudent')}>
           <Text style={styles.font}>Month Wise Attendance</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[button, { backgroundColor: 'midnightblue' }]} onPress={testPress}>

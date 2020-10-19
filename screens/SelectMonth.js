@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, ScrollView, View, ActivityIndicator } from 'react-native';
 import { IndexPath, Layout, Text, Select, Button, SelectItem, CheckBox, RadioGroup, Radio } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
@@ -28,10 +28,10 @@ const SelectMonth = ({ route, navigation }) => {
   const displaySubjectValue = subjectList[selectedSubjectIndex.row];
 
   const [selectedYearIndex, setSelectedYearIndex] = React.useState(-1);
-  let year = "Current Year";
+  let year = "till_date";
 
-  const [monthList] = useState(['Select', 'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December']);
+  const [monthList] = useState(['Select', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
   var selectedMonth;
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(new IndexPath(0));
   const displayMonthValue = monthList[selectedMonthIndex.row];
@@ -155,14 +155,26 @@ const SelectMonth = ({ route, navigation }) => {
       }
     }
     else {
-      selectedMonth = "tillDate";
+      selectedMonth = "Jan";
     }
 
     console.log("selectedClass = ", selectedClass);
+    console.log("selectedSubject = ", selectedSubject);
     console.log("selectedSection = ", selectedSection);
     console.log("selectedMonth = ", selectedMonth);
-    console.log("selectedSubject = ", selectedSubject);
+    console.log ("year = ", year);
 
+    navigation.navigate('AttendanceSummaryClass', {
+      serverIP: serverIP,
+      schoolID: schoolID,
+      userID: userID,
+      userName: userName,
+      theClass: selectedClass,
+      section: selectedSection,
+      subject: selectedSubject,
+      month: selectedMonth,
+      year: year
+    });
   };
 
   const HeaderTitle = () => {

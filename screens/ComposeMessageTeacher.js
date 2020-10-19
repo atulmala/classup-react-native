@@ -186,7 +186,7 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
             }
 
             let formData = new FormData();
-            
+
             formData.append("coming_from", "TeacherCommunication");
             formData.append("teacher", userID);
             formData.append("message", message);
@@ -199,7 +199,7 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
             }
             else {
               formData.append("whole_class", "false");
-              for (recepient of recepients)  {
+              for (recepient of recepients) {
                 formData.append('recepients', recepient)
               }
             }
@@ -222,7 +222,7 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
             }
             console.log("formData = ", formData);
             try {
-              axios.post(serverIP.concat("/operations/send_message/", schoolID, "/"), formData)
+              axios.post(serverIP.concat("/operations/send_message/", schoolID, "/"), formData)
                 .then(function (response) {
                   console.log(response);
                   setLoading(false);
@@ -244,8 +244,32 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
                     ],
                     { cancelable: false }
                   );
+                }).catch(error => {
+                  console.log("ran into error");
+                  setLoading(false);
+                  console.log(error);
+                  Alert.alert(
+                    "Messages Sent",
+                    "Messages Sent and will be delivered in about an hour time!.",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+                          navigation.navigate('TeacherMenu', {
+                            serverIP: serverIP,
+                            schoolID: schoolID,
+                            userID: userID,
+                            userName: userName,
+                            comingFrom: "SendMessage"
+                          });
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
                 });
             } catch (error) {
+              console.log("ran into error");
+              setLoading(false);
               console.error(error);
             }
           }
@@ -272,8 +296,7 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
-          <Layout style={styles.container} level='1'>
-            <Toast ref={(ref) => Toast.setRef(ref)} />
+          <Layout style={styles.container} level='6'>
             <Layout style={styles.mainContainer}>
               <Layout style={styles.verticalSpace} />
               <Layout>
@@ -334,7 +357,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     width: "100%",
-    marginTop: 10,
+    padding: 5
   },
   evaProps: {
     textShadowColor: "magenta"

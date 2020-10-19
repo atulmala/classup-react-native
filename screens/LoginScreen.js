@@ -59,8 +59,8 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     setLoading(true);
-    // let serverIP = 'https://www.classupclient.com';
-    let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    let serverIP = 'https://www.classupclient.com';
+    // let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
     let url = serverIP.concat('/auth/login1/');
     axios({
       method: "POST",
@@ -110,11 +110,7 @@ const LoginScreen = ({ navigation }) => {
             });
           }
           else {
-            Toast.show({
-              type: 'success',
-              text1: 'Login Successful',
-              text2: json.welcome_message,
-            });
+
 
             // send the device/player_id for push notification to backend
             let platform = Platform.OS;
