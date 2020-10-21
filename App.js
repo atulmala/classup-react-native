@@ -57,6 +57,7 @@ import ComposeMessageParent from './screens/ComposeMessageParent';
 import ActivityGroups from './screens/ActivityGroups';
 import ActivityMembers from './screens/ActivityMembers';
 import ComposeMessageActivity from './screens/ComposeMessageActivity';
+import ImageVideos from './screens/ImageVideos';
 
 const Stack = createStackNavigator();
 
@@ -173,6 +174,7 @@ const App = () => {
           <Stack.Screen name="ActivityGroups" component={ActivityGroups} />
           <Stack.Screen name="ActivityMembers" component={ActivityMembers} />
           <Stack.Screen name="ComposeMessageActivity" component={ComposeMessageActivity} />
+          <Stack.Screen name="ImageVideos" component={ImageVideos} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

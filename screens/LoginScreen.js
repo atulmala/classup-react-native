@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator, } from 'react-native';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -231,6 +231,8 @@ const LoginScreen = ({ navigation }) => {
           placeholder="Enter Login ID"
           placeholderTextColor="#e8eaf6"
           keyboardType="email-address"
+          autoCapitalize = "none"
+          autoCorrect={false}
           onChangeText={text => setLoginID(text)} />
       </View>
       <View style={styles.inputView} >
@@ -239,6 +241,8 @@ const LoginScreen = ({ navigation }) => {
           style={styles.inputText}
           defaultValue={password}
           keyboardType="email-address"
+          autoCapitalize = "none"
+          autoCorrect={false}
           placeholder="Enter Password"
           placeholderTextColor="#e8eaf6"
           onChangeText={text => setPassword(text)} />

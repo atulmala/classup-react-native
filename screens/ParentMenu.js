@@ -123,7 +123,7 @@ const ParentMenu = ({ route, navigation }) => {
         <TouchableOpacity style={[button, { backgroundColor: 'indianred' }]} onPress={() => nextScreen('CommunicationHistoryParent')}>
           <Text style={styles.font}>Communication History</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'indigo' }]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'indigo' }]} onPress={() => nextScreen('ImageVideos')}>
           <Text style={styles.font}>Image/Video From School</Text>
         </TouchableOpacity>
       </View>
