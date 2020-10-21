@@ -50,17 +50,17 @@ const ParentMenu = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'darkolivegreen' }]} onPress={() => nextScreen('SelectSubject')}>
+        <TouchableOpacity style={[button, { backgroundColor: 'darkolivegreen' }]} onPress={() => nextScreen('ActivityGroups')}>
           <Text style={styles.font}>Activity Group Communication</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'goldenrod' }]} onPress={() => nextScreen('UpcomingTests')}>
+        <TouchableOpacity style={[button, { backgroundColor: 'goldenrod' }]} onPress={() => nextScreen('CommunicationHistoryTeacher')}>
           <Text style={styles.font}>Communication History</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'darkorchid' }]} onPress={() => nextScreen('SelectExam')}>
+        <TouchableOpacity style={[button, { backgroundColor: 'darkorchid' }]} onPress={() => nextScreen('Circulars')}>
           <Text style={styles.font}>Notices & Circulars</Text>
         </TouchableOpacity>
       </View>

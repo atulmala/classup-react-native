@@ -21,8 +21,6 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
   const { section } = route.params;
   const { recepients } = route.params;
 
-  console.log("recepients = ", recepients);
-
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = React.useState("");
   const [pdfName, setPdfName] = React.useState("None");

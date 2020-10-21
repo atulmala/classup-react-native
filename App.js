@@ -48,6 +48,16 @@ import SetSubjects from './screens/SetSubjects';
 import SelectMonth from './screens/SelectMonth';
 import AttendanceSummaryClass from './screens/AttendanceSummaryClass';
 import AttendanceSummaryStudent from './screens/AttendanceSummaryStudent';
+import CommunicationHistoryTeacher from './screens/CommunicationHistoryTeacher';
+import RecepientList from './screens/RecepientList';
+import CommunicationHistoryParent from './screens/CommunicationHistoryParent';
+import Circulars from './screens/Circulars';
+import SelectCategories from './screens/SelectCategories';
+import ComposeMessageParent from './screens/ComposeMessageParent';
+import ActivityGroups from './screens/ActivityGroups';
+import ActivityMembers from './screens/ActivityMembers';
+import ComposeMessageActivity from './screens/ComposeMessageActivity';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -154,6 +164,15 @@ const App = () => {
           <Stack.Screen name="SelectMonth" component={SelectMonth} />
           <Stack.Screen name="AttendanceSummaryClass" component={AttendanceSummaryClass} />
           <Stack.Screen name="AttendanceSummaryStudent" component={AttendanceSummaryStudent} />
+          <Stack.Screen name="CommunicationHistoryTeacher" component={CommunicationHistoryTeacher} />
+          <Stack.Screen name="RecepientList" component={RecepientList} />
+          <Stack.Screen name="CommunicationHistoryParent" component={CommunicationHistoryParent} />
+          <Stack.Screen name="Circulars" component={Circulars} />
+          <Stack.Screen name="SelectCategories" component={SelectCategories} />
+          <Stack.Screen name="ComposeMessageParent" component={ComposeMessageParent} />
+          <Stack.Screen name="ActivityGroups" component={ActivityGroups} />
+          <Stack.Screen name="ActivityMembers" component={ActivityMembers} />
+          <Stack.Screen name="ComposeMessageActivity" component={ComposeMessageActivity} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

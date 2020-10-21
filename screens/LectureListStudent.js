@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Platform, StyleSheet, View, ActivityIndicator, Alert, Image, Linking,
-  TouchableOpacity, KeyboardAvoidingView, FlatList, Text
-} from 'react-native';
+import { Platform, StyleSheet, View, ActivityIndicator, Linking, FlatList, Text } from 'react-native';
 
 import { Card } from '@ui-kitten/components';
-import { useHeaderHeight } from '@react-navigation/stack';
 import { useIsFocused } from '@react-navigation/native';
 
 import axios from 'axios';

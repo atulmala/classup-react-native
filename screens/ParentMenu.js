@@ -115,12 +115,12 @@ const ParentMenu = ({ route, navigation }) => {
         <TouchableOpacity style={[button, { backgroundColor: 'darkorchid' }]} onPress={() => nextScreen('SelectExam')}>
           <Text style={styles.font}>Exam Results</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'darkslategray' }]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'darkslategray' }]} onPress={() => nextScreen('SelectCategories')}>
           <Text style={styles.font}>Communicate With School</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'indianred' }]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'indianred' }]} onPress={() => nextScreen('CommunicationHistoryParent')}>
           <Text style={styles.font}>Communication History</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[button, { backgroundColor: 'indigo' }]}>
