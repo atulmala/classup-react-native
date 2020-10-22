@@ -1,13 +1,28 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { color } from 'react-native-reanimated';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import Colors from '../Constants/colors';
 
-const AdminMenu = ({ rout, navigation }) => {
+const AdminMenu = ({ route, navigation }) => {
+  const { serverIP } = route.params;
+  const { schoolID } = route.params;
+  const { userName } = route.params;
+  const { userID } = route.params;
 
   const testPress = () => {
-    Alert.alert('was pressed')
-    console.log('was pressed')
+    Alert.alert('was pressed');
+    console.log('was pressed');
+  };
+
+  let params = {
+    serverIP: serverIP,
+    schoolID: schoolID,
+    userID: userID,
+    userName: userName,
+    comingFrom: "AdminMenu"
+  };
+
+  const nextScreen = (screen) => {
+    navigation.navigate(screen, params);
   };
   return (
     <View style={styles.container}>
@@ -16,12 +31,12 @@ const AdminMenu = ({ rout, navigation }) => {
         <TouchableOpacity style={styles.btn1} onPress={testPress}>
           <Text style={styles.font}>Teacher Attendance</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btn2}>
+        <TouchableOpacity style={styles.btn2} onPress={ () => {nextScreen('SelectClassesAdmin')}}>
           <Text style={styles.font}>Send Bulk SMS</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn3}>
+        <TouchableOpacity style={styles.btn3} onPress={() => {nextScreen('SelectDate')}}>
           <Text style={styles.font}>Daily Attendance Summary</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btn4}>

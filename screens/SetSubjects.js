@@ -76,8 +76,6 @@ const SetSubjects = ({ route, navigation }) => {
           unSelectedSubjects[subjectList[index].name] = subjectList[index].code;
           delete selectedSubjects[subjectList[index].name];
         }
-        console.log("selectedSubjects = ", selectedSubjects);
-        console.log("unSelectedSubjects = ", unSelectedSubjects);
       }}
     />
   );

@@ -58,6 +58,10 @@ import ActivityGroups from './screens/ActivityGroups';
 import ActivityMembers from './screens/ActivityMembers';
 import ComposeMessageActivity from './screens/ComposeMessageActivity';
 import ImageVideos from './screens/ImageVideos';
+import SelectClassesAdmin from './screens/SelectClassesAdmin';
+import ComposeMessageAdmin from './screens/ComposeMessageAdmin';
+import SelectDate from './screens/SelectDate';
+import AttendanceSummarySchool from './screens/AttendanceSummarySchool';
 
 const Stack = createStackNavigator();
 
@@ -175,6 +179,10 @@ const App = () => {
           <Stack.Screen name="ActivityMembers" component={ActivityMembers} />
           <Stack.Screen name="ComposeMessageActivity" component={ComposeMessageActivity} />
           <Stack.Screen name="ImageVideos" component={ImageVideos} />
+          <Stack.Screen name="SelectClassesAdmin" component={SelectClassesAdmin} />
+          <Stack.Screen name="ComposeMessageAdmin" component={ComposeMessageAdmin} />
+          <Stack.Screen name="SelectDate" component={SelectDate} />
+          <Stack.Screen name="AttendanceSummarySchool" component={AttendanceSummarySchool} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

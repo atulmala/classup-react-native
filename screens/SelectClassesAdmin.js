@@ -10,44 +10,38 @@ const SelectClassesAdmin = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
   const { comingFrom } = route.params;
-  
 
-  const [subjectList] = useState([]);
-  const [preSelectedSubjects] = useState([]);
-  const [selectedSubjects] = useState({});
-  const [unSelectedSubjects] = useState({});
+
+  const [classList] = useState([]);
+  const [selectedClasses] = useState([]);
+  const [selectedAll, setSelectedAll] = useState(false);
 
   const [isLoading, setLoading] = useState(true);
   const [checked, setChecked] = useState(0);
 
-  const getSubjectList = () => {
-    return axios.get(serverIP.concat("/academics/subject_list/", schoolID, "/"));
-  };
-
-  const getTeacherSubjectList = () => {
-    return axios.get(serverIP.concat("/teachers/teacher_subject_list/", userID, "/"));
+  const getClassList = () => {
+    return axios.get(serverIP.concat("/academics/class_list/", schoolID, "/"));
   };
 
   useEffect(() => {
-    axios.all([getSubjectList(), getTeacherSubjectList()]).then(
-      axios.spread(function (subjects, teacherSubjects) {
-        for (i = 0; i < teacherSubjects.data.length; i++) {
-          preSelectedSubjects.push(teacherSubjects.data[i].subject);
+    axios.all([getClassList()]).then(
+      axios.spread(function (classes) {
+        for (i = 0; i < classes.data.length; i++) {
+          let theClass = {};
+          theClass.class = classes.data[i].standard;
+          theClass.selected = false;
+          classList.push(theClass);
         }
 
-        for (var i = 0; i < subjects.data.length; i++) {
-          let subject = {};
-          subject.index = i;
-          subject.id = subjects.data[i].id;
-          subject.name = subjects.data[i].subject_name;
-          subject.code = subjects.data[i].subject_code;
-          
-          subject.selected = false;
-          if (preSelectedSubjects.findIndex(element => element == subject.name) > -1)  {
-            subject.selected = true;
-          }
-          subjectList.push(subject);
-        }
+        let teachers = {};
+        teachers.class = "Teachers";
+        teachers.selected = false;
+        classList.push(teachers);
+
+        let staff = {};
+        staff.class = "Staff";
+        staff.selected = false;
+        classList.push(staff);
 
         setLoading(false);
       })
@@ -62,96 +56,80 @@ const SelectClassesAdmin = ({ route, navigation }) => {
 
   const renderItem = ({ item, index }) => (
     <ListItem
-      title={`${item.name} `}
+      title={`${item.class} `}
       accessoryRight={item.selected ? renderItemIcon : null}
       onPress={() => {
         setChecked(Math.floor(Math.random() * 1001));
-        subjectList[index].selected = !subjectList[index].selected;
-        
-        if (subjectList[index].selected)  {
-          selectedSubjects[subjectList[index].name] = subjectList[index].code;
-          delete unSelectedSubjects[subjectList[index].name];
+        classList[index].selected = !classList[index].selected;
+
+        if (classList[index].selected) {
+          selectedClasses.push(classList[index].class);
         }
-        else  {
-          unSelectedSubjects[subjectList[index].name] = subjectList[index].code;
-          delete selectedSubjects[subjectList[index].name];
+        else {
+          let idx = selectedClasses.indexOf(classList[index].class);
+          if (idx > -1) {
+            selectedClasses.splice(idx, 1);
+          }
         }
-        console.log("selectedSubjects = ", selectedSubjects);
-        console.log("unSelectedSubjects = ", unSelectedSubjects);
       }}
     />
   );
 
-  const setSubjects = () =>   {
-    Alert.alert(
-      "Please Confirm ",
-      "Are You sure you want Set Subjects?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        {
-          text: "OK", onPress: () => {
-            setLoading(true);
-            {
-              isLoading && (
-                <Layout>
-                  <ActivityIndicator style={styles.loading} size='large' />
-                </Layout>
-              )
-            }
+  const selectAll = () => {
+    setLoading(true);
+    setSelectedAll(!selectedAll);
+    selectedClasses.length = 0;
+    classList.map(item => {
+      if (selectedAll)  {
+        item.selected = false;
+      }
+      else  {
+        item.selected = true;
+        selectedClasses.push(item.class);
+      }
+    })
+    setLoading(false);
+  }
 
-            try {
-              axios.post(serverIP.concat("/teachers/unset_subjects/", userID, "/"), unSelectedSubjects)
-                .then(function (response) {
-                  console.log(response);
-                });
+  const composeMessage = () => {
+    if (selectedClasses.length == 0) {
+      alert("Please select recepients");
+      return
+    }
+    else {
+      navigation.navigate('ComposeMessageAdmin', {
+        'serverIP': serverIP,
+        'schoolID': schoolID,
+        'userID': userID,
+        'userName': userName,
+        'recepients': selectedClasses,
+      });
+    }
 
-                axios.post(serverIP.concat("/teachers/set_subjects/", userID, "/"), selectedSubjects)
-                .then(function (response) {
-                  console.log(response);
-                  setLoading(false);
-                  Alert.alert(
-                    "Subject Set",
-                    "Subjects Set.",
-                    [
-                      {
-                        text: "OK", onPress: () => {
-                          navigation.navigate('TeacherMenu', {
-                            serverIP: serverIP,
-                            schoolID: schoolID,
-                            userID: userID,
-                            userName: userName,
-                            comingFrom: "SetSubjects"
-                          });
-                        }
-                      }
-                    ],
-                    { cancelable: false }
-                  );
-                });
-            
-            } catch (error) {
-              console.error(error);
-            }
-          }
-        }
-      ],
-      { cancelable: false }
-    );
   }
 
   const HeaderRight = () => {
     return (
       <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity onPress={setSubjects}>
+        <TouchableOpacity onPress={selectAll}>
           <Image
-            source={require('../assets/done.png')}
+            source={require('../assets/select_all.png')}
             style={{
-              width: 35,
-              height: 35,
+              width: 25,
+              height: 25,
+              marginTop: 4,
+              marginLeft: 15,
+              marginRight: 10
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={composeMessage}>
+          <Image
+            source={require('../assets/compose_message.png')}
+            style={{
+              width: 30,
+              height: 30,
+              marginTop: 4,
               marginLeft: 15,
               marginRight: 10
             }}
@@ -164,7 +142,7 @@ const SelectClassesAdmin = ({ route, navigation }) => {
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
-        <Text style={styles.headerText} status='warning' >Select Subjects</Text>
+        <Text style={styles.headerText} status='warning' >Select Classes</Text>
       </View>
     );
   };
@@ -174,7 +152,7 @@ const SelectClassesAdmin = ({ route, navigation }) => {
       headerTitle: () => <HeaderTitle />,
       headerTitleAlign: 'left',
       headerStyle: {
-        backgroundColor: 'darkkhaki',
+        backgroundColor: '#ff9800',
       },
       headerRight: () => <HeaderRight />
     });
@@ -188,7 +166,7 @@ const SelectClassesAdmin = ({ route, navigation }) => {
       </View> : (
           <List
             style={styles.title}
-            data={subjectList}
+            data={classList}
             keyExtractor={(item) => item.name}
             ItemSeparatorComponent={Divider}
             renderItem={renderItem}
