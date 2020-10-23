@@ -467,8 +467,8 @@ const MarksEntry = ({ route, navigation }) => {
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
-        <Text style={styles.headerText}>Marks Entry {exam.title}</Text>
-        <Text style={styles.headerLine}>{theClass} {subject}</Text>
+        <Text style={styles.headerText}>Marks Entry </Text>
+        <Text style={styles.headerLine}>{exam.title} {theClass} {subject}</Text>
       </View>
     );
   };
@@ -478,7 +478,7 @@ const MarksEntry = ({ route, navigation }) => {
       headerTitle: () => <HeaderTitle />,
       headerTitleAlign: 'left',
       headerStyle: {
-        backgroundColor: 'chocolate',
+        backgroundColor: '#3f51b5',
       },
       headerRight: () =>
         <View style={styles.parallel}>
@@ -513,6 +513,7 @@ const MarksEntry = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#7987d2',
   },
   parallel: {
     flexDirection: 'row',
@@ -525,15 +526,14 @@ const styles = StyleSheet.create({
   containerRow: {
     flex: 1,
     paddingLeft: 2,
-    paddingTop: 8,
-    paddingBottom: 8,
-    marginLeft: 4,
-    marginRight: 4,
-    marginTop: 4,
-    marginBottom: 2,
-    borderRadius: 10,
-    backgroundColor: 'peachpuff',
-    elevation: 6,
+    paddingTop: 4,
+    paddingBottom: 4,
+    marginLeft: 2,
+    marginRight: 2,
+    marginTop: 1,
+    marginBottom: 1,
+    borderRadius: 5,
+    backgroundColor: '#f0f4c3',
   },
   title: {
     flex: 2,
@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
       }
     }),
     fontWeight: 'bold',
-    color: 'darkblue',
+    color: '#4053bf',
     fontFamily: 'Verdana'
   },
   checkbox: {
@@ -569,10 +569,10 @@ const styles = StyleSheet.create({
   headerLine: {
     ...Platform.select({
       ios: {
-        fontSize: 14,
+        fontSize: 10,
       },
       android: {
-        fontSize: 14,
+        fontSize: 10,
       }
     }),
     fontWeight: 'bold',
@@ -604,18 +604,18 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 5,
   },
-
   nextButton: {
     backgroundColor: 'lavenderblush',
     height: 25,
-    margin: 10,
+    margin: 5,
     padding: 5,
-    borderRadius: 15,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center'
   },
   nextText: {
     fontSize: 12,
+    fontWeight: 'bold',
     color: 'indigo',
   }
 });

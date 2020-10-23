@@ -63,6 +63,8 @@ import ComposeMessageAdmin from './screens/ComposeMessageAdmin';
 import SelectDate from './screens/SelectDate';
 import AttendanceSummarySchool from './screens/AttendanceSummarySchool';
 import AddTeacher from './screens/AddTeacher';
+import TeachersList from './screens/TeachersList';
+import UpdateTeacher from './screens/UpdateTeacher';
 
 const Stack = createStackNavigator();
 
@@ -185,6 +187,8 @@ const App = () => {
           <Stack.Screen name="SelectDate" component={SelectDate} />
           <Stack.Screen name="AttendanceSummarySchool" component={AttendanceSummarySchool} />
           <Stack.Screen name="AddTeacher" component={AddTeacher} />
+          <Stack.Screen name="TeachersList" component={TeachersList} />
+          <Stack.Screen name="UpdateTeacher" component={UpdateTeacher} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

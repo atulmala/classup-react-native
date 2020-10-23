@@ -40,8 +40,7 @@ const ActivityGroups = ({ route, navigation }) => {
 
   const showMembers = (index) => {
     let groupIncharge = groupList[index].inchargeID;
-    console.log("userID = ", userID);
-    console.log("groupIncharge = ", groupIncharge);
+    
     if (userID != groupIncharge) {
       alert("You are not the Incharge of this Group. Only Group Incharge can see the member list!")
     }
