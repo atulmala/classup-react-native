@@ -44,7 +44,7 @@ const AdminMenu = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn5} onPress={testPress}>
+        <TouchableOpacity style={styles.btn5} onPress={() => {nextScreen('AddTeacher')}}>
           <Text style={styles.font}>Add Teacher</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btn6}>

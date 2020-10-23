@@ -22,7 +22,7 @@ const hideEvent = Platform.select({
   default: 'keyboardWillHide',
 });
 
-const SelectClass = ({ route, navigation }) => {
+const CreateHW = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
@@ -424,4 +424,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SelectClass;
+export default CreateHW;

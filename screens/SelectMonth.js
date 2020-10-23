@@ -180,7 +180,7 @@ const SelectMonth = ({ route, navigation }) => {
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
-        <Text style={styles.headerText} status='warning' >Select Class, Section & Month</Text>
+        <Text style={styles.headerText}>Select Class, Section & Month</Text>
       </View>
     );
   };

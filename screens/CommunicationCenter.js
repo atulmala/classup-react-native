@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   parallel: {
     height: 100,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center'
   },
   font: {
