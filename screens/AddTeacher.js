@@ -2,12 +2,10 @@ import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import {
-  StyleSheet, ScrollView, View, ActivityIndicator, Keyboard, KeyboardAvoidingView, Image, Alert,
+  StyleSheet, View, ActivityIndicator, Keyboard, KeyboardAvoidingView, Image, Alert,
   Platform, TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
-import {
-  IndexPath, Layout, Text, Select, Input, Button, SelectItem, Icon
-} from '@ui-kitten/components';
+import { Layout, Text, Select, Input, Button, SelectItem, Icon } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
@@ -41,8 +39,8 @@ const AddTeacher = ({ route, navigation }) => {
           <Image
             source={require('../assets/add_teacher.png')}
             style={{
-              width: 30,
-              height: 30,
+              width: 35,
+              height: 35,
               marginLeft: 15,
               marginRight: 10
             }}
@@ -69,10 +67,6 @@ const AddTeacher = ({ route, navigation }) => {
       },
     });
   });
-
-  const renderOption = (title) => (
-    <SelectItem title={title} />
-  );
 
   useEffect(() => {
     const keyboardShowListener = Keyboard.addListener(showEvent, () => {
@@ -247,6 +241,7 @@ const AddTeacher = ({ route, navigation }) => {
                 <Layout>
                   <Input
                     style={styles.hwDescription}
+                    size='small'
                     editable
                     placeholder="Teacher Full Name (Mandatory)"
                     status='primary'
@@ -260,6 +255,7 @@ const AddTeacher = ({ route, navigation }) => {
                 <Layout>
                   <Input
                     style={styles.hwDescription}
+                    size='small'
                     editable
                     placeholder="10-digit Mobile Number(Mandatory)"
                     status='success'
@@ -274,6 +270,7 @@ const AddTeacher = ({ route, navigation }) => {
                 <Layout>
                   <Input
                     style={styles.hwDescription}
+                    size='small'
                     editable
                     placeholder="Teacher Login (Mandatory)"
                     status='warning'

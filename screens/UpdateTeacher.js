@@ -116,11 +116,21 @@ const UpdateTeacher = ({ route, navigation }) => {
       <View style={{ flexDirection: 'row' }}>
         <TouchableOpacity onPress={updateTeacher}>
           <Image
-            source={require('../assets/update-teacher.png')}
+            source={require('../assets/update-teacher1.png')}
+            style={{
+              width: 35,
+              height: 34,
+              marginLeft: 15,
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={deleteTeacher}>
+          <Image
+            source={require('../assets/delete-teacher1.png')}
             style={{
               width: 35,
               height: 35,
-              marginLeft: 15,
+              marginLeft: 10,
               marginRight: 10
             }}
           />
@@ -142,7 +152,7 @@ const UpdateTeacher = ({ route, navigation }) => {
       headerTitle: () => <HeaderTitle />,
       headerRight: () => <Upload />,
       headerStyle: {
-        backgroundColor: '#c45100',
+        backgroundColor: '#64b5b6',
       },
     });
   });
@@ -177,6 +187,34 @@ const UpdateTeacher = ({ route, navigation }) => {
       });
       return;
     }
+
+    if (checked)  {
+      if (selectedClassIndex.row === 0) {
+        Toast.show({
+          type: 'error',
+          position: 'bottom',
+          text1: 'Error: Class Not Selected',
+          text2: "Teacher set as Class Teacher but Class not selected. Please Select a Class",
+        });
+        return;
+      }
+      else  {
+        selectedClass = classList[selectedClassIndex.row];
+      }
+  
+      if (selectedSectionIndex.row === 0) {
+        Toast.show({
+          type: 'error',
+          position: 'bottom',
+          text1: 'Error: Section Not Selected',
+          text2: "Teacher set as Class Teacher but Section not selected. Please Select a Section",
+        });
+        return;
+      }
+      else  {
+        selectedSection = sectionList[selectedSectionIndex.row];
+      }
+    }
     Alert.alert(
       "Please Confirm ",
       "Are You sure you want to Update this Teacher?",
@@ -196,17 +234,19 @@ const UpdateTeacher = ({ route, navigation }) => {
                 </View>
               )
             }
-            let url = serverIP.concat('/teachers/add_teacher/');
+            let url = serverIP.concat('/teachers/update_teacher/');
             axios({
               method: "POST",
               url: url,
               data: {
-                'user': userID,
                 'school_id': schoolID,
-                'employee_id': teacherMobile,
-                'full_name': teacherName,
-                'email': login,
-                'mobile': teacherMobile,
+                'teacher_id': id,
+                'teacher_login': login,
+                'teacher_mobile': teacherMobile,
+                'teacher_name': teacherName,
+                'is_class_teacher': checked? 'true': 'false',
+                'the_class': selectedClass,
+                'section': selectedSection,
               }
             }).then(
               result => {
@@ -215,10 +255,9 @@ const UpdateTeacher = ({ route, navigation }) => {
                 console.log(json);
                 let status = json.status;
                 let message = json.message
-                if (json.status == "success") {
+                if (status == "success") {
                   Alert.alert(
-                    "Teacher Added",
-                    "Login ID and Password sent via SMS.",
+                    "Teacher Updated", message,
                     [
                       {
                         text: "OK", onPress: () => {
@@ -227,7 +266,7 @@ const UpdateTeacher = ({ route, navigation }) => {
                             schoolID: schoolID,
                             userID: userID,
                             userName: userName,
-                            comingFrom: "SendMessage"
+                            comingFrom: "AdminMenu"
                           });
                         }
                       }
@@ -237,7 +276,7 @@ const UpdateTeacher = ({ route, navigation }) => {
                 }
                 else {
                   Alert.alert(
-                    "Teacher Addition Failed", message,
+                    "Teacher Update Failed. Please try again.", message,
                     [
                       {
                         text: "OK", onPress: () => {
@@ -267,6 +306,91 @@ const UpdateTeacher = ({ route, navigation }) => {
     );
   };
 
+  const deleteTeacher = () => {
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to Delete this Teacher?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            {
+              isLoading && (
+                <View>
+                  <ActivityIndicator style={styles.loading} size='large' />
+                </View>
+              )
+            }
+            let url = serverIP.concat('/teachers/delete_teacher/');
+            axios({
+              method: "POST",
+              url: url,
+              data: {
+                'teacher_id': id,
+              }
+            }).then(
+              result => {
+                const json = result.data;
+                setLoading(false);
+                console.log(json);
+                let status = json.status;
+                if (status == "success") {
+                  Alert.alert(
+                    "Teacher Deleted", "Teacher Deleted",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+                          navigation.navigate('AdminMenu', {
+                            serverIP: serverIP,
+                            schoolID: schoolID,
+                            userID: userID,
+                            userName: userName,
+                            comingFrom: "AdminMenu"
+                          });
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                }
+                else {
+                  Alert.alert(
+                    "Teacher Deletions Failed. ", "Teacher Deletion Failed. Please try again.",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                  console.error(error);
+                }
+              },
+              error => {
+                setLoading(false);
+                console.log(error);
+                Toast.show({
+                  type: 'error',
+                  text1: 'Server Error',
+                  text2: 'Some issues at Server End. Please try again after some time.',
+                });
+              }
+            );
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+
+  }
+
   const personIcon = (props) => (
     <Icon {...props} name='person-outline' />
   );
@@ -294,6 +418,7 @@ const UpdateTeacher = ({ route, navigation }) => {
                   <Input
                     style={styles.hwDescription}
                     defaultValue={name}
+                    size='small'
                     placeholder="Teacher Full Name (Mandatory)"
                     status='primary'
                     accessoryLeft={personIcon}
@@ -308,6 +433,7 @@ const UpdateTeacher = ({ route, navigation }) => {
                   <Input
                     style={styles.hwDescription}
                     defaultValue={mobile}
+                    size='small'
                     placeholder="10-digit Mobile Number(Mandatory)"
                     status='success'
                     accessoryLeft={phoneIcon}
@@ -321,9 +447,9 @@ const UpdateTeacher = ({ route, navigation }) => {
                 <Layout>
                   <Input
                     style={styles.hwDescription}
+                    size='small'
                     disabled
                     editable={false}
-                    
                     defaultValue={login}
                     status='warning'
                     accessoryLeft={loginIcon}
@@ -352,6 +478,7 @@ const UpdateTeacher = ({ route, navigation }) => {
                   </Text>
                     <Select
                       style={styles.select}
+                      size='small'
                       disabled={checked ? false : true}
                       value={displayClassValue}
                       selectedIndex={selectedClassIndex}
@@ -365,6 +492,7 @@ const UpdateTeacher = ({ route, navigation }) => {
                   </Text>
                     <Select
                       style={styles.select}
+                      size='small'
                       disabled={checked ? false : true}
                       value={displaySectionValue}
                       selectedIndex={selectedSectionIndex}
