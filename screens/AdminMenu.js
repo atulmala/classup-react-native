@@ -28,7 +28,7 @@ const AdminMenu = ({ route, navigation }) => {
     <View style={styles.container}>
       <Text style={styles.StudentName}>Welcome Admin</Text>
       <View style={styles.parallel}>
-        <TouchableOpacity style={styles.btn1} onPress={testPress}>
+        <TouchableOpacity style={styles.btn1} onPress={() => {nextScreen('SelectDateTeacherAttendance')}}>
           <Text style={styles.font}>Teacher Attendance</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btn2} onPress={ () => {nextScreen('SelectClassesAdmin')}}>
@@ -39,7 +39,7 @@ const AdminMenu = ({ route, navigation }) => {
         <TouchableOpacity style={styles.btn3} onPress={() => {nextScreen('SelectDate')}}>
           <Text style={styles.font}>Daily Attendance Summary</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btn4}>
+        <TouchableOpacity style={styles.btn4} onPress={() => {nextScreen('SelectClassStudentUpdate')}}>
           <Text style={styles.font}>Update Student</Text>
         </TouchableOpacity>
       </View>

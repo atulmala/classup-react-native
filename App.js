@@ -65,6 +65,11 @@ import AttendanceSummarySchool from './screens/AttendanceSummarySchool';
 import AddTeacher from './screens/AddTeacher';
 import TeachersList from './screens/TeachersList';
 import UpdateTeacher from './screens/UpdateTeacher';
+import SelectDateTeacherAttendance from './screens/SelectDateTeacherAttendance';
+import TeacherAttendance from './screens/TeacherAttendance';
+import SelectClassStudentUpdate from './screens/SelectClassStudentUpdate';
+import StudentList from './screens/StudentList';
+import UpdateStudent from './screens/UpdateStudent';
 
 const Stack = createStackNavigator();
 
@@ -189,6 +194,11 @@ const App = () => {
           <Stack.Screen name="AddTeacher" component={AddTeacher} />
           <Stack.Screen name="TeachersList" component={TeachersList} />
           <Stack.Screen name="UpdateTeacher" component={UpdateTeacher} />
+          <Stack.Screen name="SelectDateTeacherAttendance" component={SelectDateTeacherAttendance} />
+          <Stack.Screen name="TeacherAttendance" component={TeacherAttendance} />
+          <Stack.Screen name="SelectClassStudentUpdate" component={SelectClassStudentUpdate} />
+          <Stack.Screen name="StudentList" component={StudentList} />
+          <Stack.Screen name="UpdateStudent" component={UpdateStudent} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

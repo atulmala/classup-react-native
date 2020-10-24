@@ -14,9 +14,6 @@ const TakeAttendance = ({ route, navigation }) => {
   const { selectedDay } = route.params;
   const { selectedMonth } = route.params;
   const { selectedYear } = route.params;
-  const { selectedClass } = route.params;
-  const { selectedSection } = route.params;
-  const { selectedSubject } = route.params;
 
   var [absenteeList] = useState([]);
   var [correctionList] = useState([]);
@@ -25,77 +22,69 @@ const TakeAttendance = ({ route, navigation }) => {
   const [isLoading, setLoading] = useState(true);
   const [firstTime, setFirstTime] = useState(true);
 
-  const [studentList] = useState([]);
-  const [totalStudents, setTotalStudents] = useState(0);
+  const [teacherList] = useState([]);
+  const [totalTeachers, setTotalTeachers] = useState(0);
   const [presentCount, setPresentCount] = useState(0);
 
-  const getStudentList = () => {
-    return axios.get(serverIP.concat("/student/list/", schoolID, "/", selectedClass, "/", selectedSection, "/"));
+  const getTeacherList = () => {
+    return axios.get(serverIP.concat("/teachers/teacher_list/", schoolID, "/"));
   };
 
   const getAbsenteeList = () => {
-    return axios.get(serverIP.concat("/attendance/retrieve/", schoolID, "/", selectedClass, "/", selectedSection,
-      "/", selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/"));
+    return axios.get(serverIP.concat("/teachers/retrieve_attendance/", schoolID, "/",
+      selectedDay, "/", selectedMonth, "/", selectedYear, "/"));
   };
 
   useEffect(() => {
-    axios.all([getStudentList(), getAbsenteeList()]).then(
-      axios.spread(function (students, absentees) {
+    axios.all([getTeacherList(), getAbsenteeList()]).then(
+      axios.spread(function (teachers, absentees) {
         for (var i = 0; i < absentees.data.length; i++) {
-          absenteeList.push(absentees.data[i].student);
+          absenteeList.push(absentees.data[i].teacher);
         }
-        total = students.data.length;
+        total = teachers.data.length;
 
-        setTotalStudents(total);
+        setTotalTeachers(total);
         setPresentCount(total - absentees.data.length);
 
-        for (i = 0; i < students.data.length; i++) {
-          let student = {};
+        for (i = 0; i < teachers.data.length; i++) {
+          let teacher = {};
           let s_no = i + 1;
-          student.id = students.data[i].id;
-          if (absenteeList.indexOf(student.id) > -1) {
-            student.presence = false;
+          teacher.id = teachers.data[i].id;
+          if (absenteeList.indexOf(teacher.id) > -1) {
+            teacher.presence = false;
           } else {
-            student.presence = true;
+            teacher.presence = true;
           }
-          student.title = s_no + ". " +
-            students.data[i].fist_name +
+          teacher.title = s_no + ". " +
+            teachers.data[i].first_name +
             " " +
-            students.data[i].last_name;
-          student.name =
-            students.data[i].fist_name +
+            teachers.data[i].last_name;
+          teacher.name =
+            teachers.data[i].first_name +
             " " +
-            students.data[i].last_name;
-          studentList.push(student);
+            teachers.data[i].last_name;
+          teacherList.push(teacher);
         }
         setLoading(false);
       }));
   }, []);
 
-  const attendanceTaken = () => {
-    let url = serverIP.concat("/attendance/attendance_taken/", schoolID, "/", selectedClass, "/", selectedSection, "/",
-      selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/", userID, "/");
-    return axios.post(url);
-  };
 
   const submitAttendance = () => {
     let absentees = {};
     for (var i = 0; i < absenteeList.length; i++) {
       absentees[absenteeList[i]] = absenteeList[i];
     }
-    let url = serverIP.concat("/attendance/update1/", schoolID, "/", selectedClass, "/", selectedSection, "/",
-      selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/", userID, "/");
-    return axios.post(url, absentees);
-  };
-
-  const submitCorrection = () => {
     let corrections = {};
-    for (var i = 0; i < correctionList.length; i++) {
+    for (i = 0; i < correctionList.length; i++) {
       corrections[correctionList[i]] = correctionList[i];
     }
-    let url = serverIP.concat("/attendance/delete2/", schoolID, "/", selectedClass, "/", selectedSection, "/",
-      selectedSubject, "/", selectedDay, "/", selectedMonth, "/", selectedYear, "/");
-    return axios.post(url, corrections);
+    let json = {};
+    json.absentees = absentees;
+    json.corrections = corrections;
+    let url = serverIP.concat("/teachers/process_attendance/", schoolID, "/", selectedDay, "/",
+      selectedMonth, "/", selectedYear, "/");
+    return axios.post(url, json);
   };
 
   const processAttendance = () => {
@@ -119,9 +108,9 @@ const TakeAttendance = ({ route, navigation }) => {
               )
             }
             axios
-              .all([attendanceTaken(), submitAttendance(), submitCorrection()])
+              .all([submitAttendance()])
               .then(
-                axios.spread(function (res1, res2, res3) {
+                axios.spread(function (res1) {
                   setLoading(false);
                   Alert.alert(
                     "Attendance Done",
@@ -129,13 +118,12 @@ const TakeAttendance = ({ route, navigation }) => {
                     [
                       {
                         text: "OK", onPress: () => {
-                          navigation.navigate('TeacherMenu', {
+                          navigation.navigate('AdminMenu', {
                             serverIP: serverIP,
                             schoolID: schoolID,
                             userID: userID,
                             userName: userName,
-                            selectedSubject: selectedSubject,
-                            comingFrom: "TakeAttendance"
+                            comingFrom: "TeacherAttendance"
                           });
                         }
                       }
@@ -175,21 +163,21 @@ const TakeAttendance = ({ route, navigation }) => {
             value={title.presence}
             onValueChange={(value) => {
               setIsEnabled(previousState => !previousState);
-              for (student of studentList) {
-                if (student.id == index) {
-                  student.presence = value;
+              for (teacher of teacherList) {
+                if (teacher.id == index) {
+                  teacher.presence = value;
                   if (value) {
                     setPresent(present + 1);
-                    let position = absenteeList.indexOf(student.id);
+                    let position = absenteeList.indexOf(teacher.id);
                     if (position > -1) {
-                      // this student was in the absentee list. will have to be marked as present
+                      // this teacher was in the absentee list. will have to be marked as present
                       absenteeList.splice(position, 1);
-                      correctionList.push(student.id);
+                      correctionList.push(teacher.id);
                     }
                   }
                   else {
                     setPresent(present - 1);
-                    absenteeList.push(student.id)
+                    absenteeList.push(teacher.id)
                   }
                   break;
                 }
@@ -215,22 +203,8 @@ const TakeAttendance = ({ route, navigation }) => {
       <View >
         <View style={styles.parallel}>
           <Text style={styles.baseText}>
-            Class:
-              <Text style={styles.innerText}> {selectedClass} - {selectedSection}</Text>
-          </Text>
-          <Text style={styles.baseText}>
-            Date:
-              <Text style={styles.innerText}> {selectedDay} / {selectedMonth} / {selectedYear}</Text>
-          </Text>
-          <Text style={styles.baseText}>
-            Subject:
-              <Text style={styles.innerText}> {selectedSubject}</Text>
-          </Text>
-        </View>
-        <View style={styles.parallel}>
-          <Text style={styles.baseText}>
             Total:
-              <Text style={styles.innerTotalText}> {totalStudents}</Text>
+              <Text style={styles.innerTotalText}> {totalTeachers}</Text>
           </Text>
           {<Text style={styles.baseText}>
             Present:
@@ -238,7 +212,7 @@ const TakeAttendance = ({ route, navigation }) => {
           </Text>}
           {<Text style={styles.baseText}>
             Absent:
-              <Text style={styles.innerAbsentText}> {totalStudents - present}</Text>
+              <Text style={styles.innerAbsentText}> {totalTeachers - present}</Text>
           </Text>}
         </View>
       </View>
@@ -253,15 +227,31 @@ const TakeAttendance = ({ route, navigation }) => {
           renderItem={({ item }) => <CustomRow
             title={item}
             index={item.id}
-
           />}
         />
       </View>
     )
   };
 
+  const HeaderTitle = () => {
+    return (
+      <View style={styles.headerTitle}>
+        <Text style={styles.headerText} status='warning' >Teacher Attendance</Text>
+        <Text style={styles.baseText}>
+          Date:
+              <Text style={styles.innerText}> {selectedDay}/{selectedMonth}/{selectedYear}</Text>
+        </Text>
+      </View>
+    );
+  };
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerTitleAlign: 'left',
+      headerStyle: {
+        backgroundColor: '#653594',
+      },
       headerRight: () =>
         <TouchableOpacity style={styles.nextButton} onPress={() => processAttendance()}>
           {!isLoading && <Text style={styles.nextText}>Submit</Text>}
@@ -277,7 +267,7 @@ const TakeAttendance = ({ route, navigation }) => {
           <ActivityIndicator size='large' />
         </View> : (
             <CustomListview
-              itemList={studentList}
+              itemList={teacherList}
             />)}
       </View>
     </AttendanceContextProvider>
@@ -324,6 +314,18 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     justifyContent: 'center',
   },
+  headerText: {
+    ...Platform.select({
+      ios: {
+        fontSize: 16,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    fontWeight: 'bold',
+    color: 'white',
+  },
   baseText: {
     fontSize: 14,
     fontWeight: 'bold',
@@ -346,8 +348,15 @@ const styles = StyleSheet.create({
     margin: 4
   },
   innerText: {
-    fontSize: 16,
-    color: '#4b0082',
+    ...Platform.select({
+      ios: {
+        fontSize: 14,
+      },
+      android: {
+        fontSize: 14,
+      }
+    }),
+    color: '#c5cae9',
     margin: 4
   },
   attendanceSwitch: {

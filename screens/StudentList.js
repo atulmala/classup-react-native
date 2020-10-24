@@ -3,32 +3,34 @@ import { StyleSheet, View, ActivityIndicator, Text, Image } from 'react-native';
 import { Divider, List, ListItem } from '@ui-kitten/components';
 import axios from 'axios';
 
-const TeachersList = ({ route, navigation }) => {
+const StudentList = ({ route, navigation }) => {
   const { serverIP } = route.params;
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
+  const { selectedClass } = route.params;
+  const { selectedSection } = route.params;
   const { comingFrom } = route.params;
 
-  var [teacherList] = useState([]);
+  var [studentList] = useState([]);
 
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    let url = serverIP.concat("/teachers/teacher_list/", schoolID, "/");
+    let url = serverIP.concat("/student/list/", schoolID, "/", selectedClass, "/", selectedSection, "/");
     axios
       .get(url)
       .then(function (response) {
         for (var i = 0; i < response.data.length; i++) {
-          let teacher = {};
+          let student = {};
 
-          teacher.index = i;
-          teacher.id = response.data[i].id;
-          teacher.name = response.data[i].first_name + " " + response.data[i].last_name;
-          teacher.login = response.data[i].email;
-          teacher.mobile = response.data[i].mobile;
+          student.index = i;
+          student.id = response.data[i].id;
+          student.regNo = response.data[i].student_erp_id;
+          student.name = response.data[i].fist_name + " " + response.data[i].last_name;
+          student.parent = response.data[i].parent;
 
-          teacherList.push(teacher);
+          studentList.push(student);
         }
         setLoading(false);
       })
@@ -38,15 +40,15 @@ const TeachersList = ({ route, navigation }) => {
       });
   }, []);
 
-  const updateTeacher = (index) => {
-    navigation.navigate('UpdateTeacher', {
+  const updateStudent = (index) => {
+    navigation.navigate('UpdateStudent', {
       serverIP: serverIP,
       schoolID: schoolID,
       userID: userID,
-      id: teacherList[index].id,
-      name: teacherList[index].name,
-      login: teacherList[index].login,
-      mobile: teacherList[index].mobile,
+      id: studentList[index].id,
+      name: studentList[index].name,
+      login: studentList[index].login,
+      mobile: studentList[index].mobile,
       comingFrom: comingFrom
     });
 
@@ -55,7 +57,7 @@ const TeachersList = ({ route, navigation }) => {
   const HeaderTitle = () => {
     return (
       <View>
-        <Text style={styles.headerText}>Select Teacher </Text>
+        <Text style={styles.headerText}>Select Student </Text>
       </View>
     );
   };
@@ -65,7 +67,7 @@ const TeachersList = ({ route, navigation }) => {
       headerTitle: () => <HeaderTitle />,
       headerTitleAlign: 'left',
       headerStyle: {
-        backgroundColor: 'yellowgreen',
+        backgroundColor: '#795548',
       },
     });
   });
@@ -73,22 +75,22 @@ const TeachersList = ({ route, navigation }) => {
   const renderDescription = ({ item, index }) => {
     return (
       <View style={styles.containerRow}>
-      <View style={styles.containerRow}>
-        <Image
-          style={styles.tinyLogo}
-          source={require('../assets/login-id.png')}
-        />
-        <Text style={styles.innerText}> {teacherList[index].login}</Text>
-        </View>
-        <View style={styles.containerRow}>
-        <View style={[styles.containerRow, {marginLeft: 25}]}>
+        <View style={styles.containerRow1}>
           <Image
             style={styles.tinyLogo}
-            source={require('../assets/telephone.png')}
+            source={require('../assets/id_card.png')}
           />
-          <Text style={styles.innerText}> {teacherList[index].mobile}</Text>
+          <Text style={styles.innerText}> {studentList[index].regNo}</Text>
         </View>
-      </View>
+        <View style={styles.containerRow2}>
+          <View style={[styles.containerRow, { marginLeft: 25 }]}>
+            <Image
+              style={styles.tinyLogo}
+              source={require('../assets/father.png')}
+            />
+            <Text style={styles.innerText}> {studentList[index].parent}</Text>
+          </View>
+        </View>
       </View>
     );
   }
@@ -98,7 +100,7 @@ const TeachersList = ({ route, navigation }) => {
       style={styles.title}
       title={item.name}
       description={() => renderDescription(item, index)}
-      onPress={() => updateTeacher(index)} />
+      onPress={() => updateStudent(index)} />
   );
 
   return (
@@ -108,7 +110,7 @@ const TeachersList = ({ route, navigation }) => {
       </View> : (
           <List
             style={styles.title}
-            data={teacherList}
+            data={studentList}
             keyExtractor={(item) => item.name}
             ItemSeparatorComponent={Divider}
             renderItem={renderItem}
@@ -128,6 +130,20 @@ const styles = StyleSheet.create({
     marginRight: 4,
     backgroundColor: '#FFF',
   },
+  containerRow1: {
+    flex: 1,
+    flexDirection: 'row',
+    marginLeft: 4,
+    marginRight: 4,
+    backgroundColor: '#FFF',
+  },
+  containerRow2: {
+    flex: 2,
+    flexDirection: 'row',
+    marginLeft: 4,
+    marginRight: 4,
+    backgroundColor: '#FFF',
+  },
   headerText: {
     ...Platform.select({
       ios: {
@@ -138,12 +154,12 @@ const styles = StyleSheet.create({
       }
     }),
     fontWeight: 'bold',
-    color: 'darkmagenta',
+    color: '#e1bee7',
   },
   tinyLogo: {
     marginTop: 6,
-    width: 16,
-    height: 16,
+    width: 20,
+    height: 20,
     color: 'red'
   },
   container_text: {
@@ -162,7 +178,7 @@ const styles = StyleSheet.create({
       }
     }),
     color: '#4b0082',
-    margin: 4
+    marginTop: 8,
   },
   title: {
     fontSize: 16,
@@ -181,4 +197,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TeachersList;
+export default StudentList;
