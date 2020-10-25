@@ -141,7 +141,14 @@ const styles = StyleSheet.create({
     color: 'darkmagenta',
   },
   tinyLogo: {
-    marginTop: 6,
+    ...Platform.select({
+      ios: {
+        marginTop: 6,
+      },
+      android: {
+        marginTop: 8,
+      }
+    }),
     width: 16,
     height: 16,
     color: 'red'

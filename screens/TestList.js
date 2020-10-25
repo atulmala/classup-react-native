@@ -331,10 +331,10 @@ const styles = StyleSheet.create({
   headerText: {
     ...Platform.select({
       ios: {
-        fontSize: 18,
+        fontSize: 16,
       },
       android: {
-        fontSize: 20,
+        fontSize: 18,
       }
     }),
     fontWeight: 'bold',

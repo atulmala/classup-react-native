@@ -552,7 +552,6 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   hwDescription: {
-
     paddingTop: 0,
     paddingBottom: 0,
     textAlignVertical: 'top',

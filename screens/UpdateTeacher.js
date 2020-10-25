@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
 
     paddingTop: 0,
     paddingBottom: 0,
-    textAlignVertical: 'top',
+    textAlignVertical: 'center',
     borderColor: "cyan"
   },
   loading: {

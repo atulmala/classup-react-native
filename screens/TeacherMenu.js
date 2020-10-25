@@ -24,7 +24,6 @@ const TeacherMenu = ({ route, navigation }) => {
           schoolID: schoolID,
           userID: userID,
           userName: userName,
-
         })}>
           <Text style={styles.nextText}>Logout</Text>
         </TouchableOpacity>
@@ -109,20 +108,19 @@ const TeacherMenu = ({ route, navigation }) => {
       </View>
 
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'indianred'}]} >
-          <Image
-            source={require('../assets/password.jpg')}
-            style={styles.ImageIconStyle}
-          />
-          <Text body style={styles.text}>Change Password</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity style={[button, {backgroundColor: 'lightsalmon'}]} onPress={() => nextScreen('SetSubjects')}>
           <Image
             source={require('../assets/set_my_subjects.png')}
             style={styles.ImageIconStyle2}
           />
           <Text body style={styles.text} >Set My Subjects</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[button, {backgroundColor: 'indianred'}]} onPress = {() => nextScreen('ChangePassword')}>
+          <Image
+            source={require('../assets/password.jpg')}
+            style={styles.ImageIconStyle}
+          />
+          <Text body style={styles.text}>Change Password</Text>
         </TouchableOpacity>
       </View>
     </View>

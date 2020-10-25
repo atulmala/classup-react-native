@@ -130,7 +130,7 @@ const ScheduleTest = ({ route, navigation }) => {
 
   const scheduleTest = () => {
     let testDate = minMaxPickerState.date.toLocaleDateString().split("/");
-    let yy = testDate[2];
+    let yy = minMaxPickerState.date.getFullYear();
     let mm = testDate[0];
     let dd = testDate[1];
 

@@ -220,7 +220,7 @@ const TakeAttendance = ({ route, navigation }) => {
           </Text>
           <Text style={styles.baseText}>
             Date:
-              <Text style={styles.innerText}> {selectedDay} / {selectedMonth} / {selectedYear}</Text>
+              <Text style={styles.innerText}> {selectedDay}/{selectedMonth}/{selectedYear}</Text>
           </Text>
           <Text style={styles.baseText}>
             Subject:

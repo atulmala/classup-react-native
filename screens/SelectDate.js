@@ -19,7 +19,7 @@ const SelectDate = ({ route, navigation }) => {
     const splitDate = date.toLocaleDateString().split("/");
     const selectedDay = splitDate[1];
     const selectedMonth = splitDate[0];
-    const selectedYear = splitDate[2];
+    const selectedYear = date.getFullYear();
 
     navigation.navigate('AttendanceSummarySchool', {
       serverIP: serverIP,
@@ -70,11 +70,11 @@ const SelectDate = ({ route, navigation }) => {
           />
         </Layout>
         <Layout style={styles.verticalSpace} />
-              <Layout style={styles.buttonContainer}>
-                <Button style={styles.button} appearance='outline' status='info' onPress={showAttendance} >
-                  {"Show Attendance Summary"}
-                </Button>
-              </Layout>
+        <Layout style={styles.buttonContainer}>
+          <Button style={styles.button} appearance='outline' status='info' onPress={showAttendance} >
+            {"Show Attendance Summary"}
+          </Button>
+        </Layout>
       </ScrollView >
 
     </Layout>
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
- 
+
   verticalSpace: {
     marginTop: 15
   },

@@ -19,7 +19,7 @@ const SelectDate = ({ route, navigation }) => {
     const splitDate = date.toLocaleDateString().split("/");
     const selectedDay = splitDate[1];
     const selectedMonth = splitDate[0];
-    const selectedYear = splitDate[2];
+    const selectedYear = date.getFullYear();
 
     navigation.navigate('TeacherAttendance', {
       serverIP: serverIP,

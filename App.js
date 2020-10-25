@@ -70,6 +70,7 @@ import TeacherAttendance from './screens/TeacherAttendance';
 import SelectClassStudentUpdate from './screens/SelectClassStudentUpdate';
 import StudentList from './screens/StudentList';
 import UpdateStudent from './screens/UpdateStudent';
+import ChangePassword from './screens/ChangePassword';
 
 const Stack = createStackNavigator();
 
@@ -199,6 +200,7 @@ const App = () => {
           <Stack.Screen name="SelectClassStudentUpdate" component={SelectClassStudentUpdate} />
           <Stack.Screen name="StudentList" component={StudentList} />
           <Stack.Screen name="UpdateStudent" component={UpdateStudent} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>
