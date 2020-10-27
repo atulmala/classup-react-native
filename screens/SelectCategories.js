@@ -8,6 +8,7 @@ const SelectCategories = ({ route, navigation }) => {
   const { schoolID } = route.params;
   const { userName } = route.params;
   const { userID } = route.params;
+  const { studentID } = route.params;
   const { comingFrom } = route.params;
 
   var [categories] = useState([]);

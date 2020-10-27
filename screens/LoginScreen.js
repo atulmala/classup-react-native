@@ -1,6 +1,9 @@
 import 'react-native-gesture-handler';
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator, } from 'react-native';
+import {
+  StyleSheet, View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity,
+  ActivityIndicator, Alert
+} from 'react-native';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
 import * as Device from 'expo-device';
@@ -10,14 +13,10 @@ import OneSignal from 'react-native-onesignal';
 var player_id;
 
 function onReceived(notification) {
-  console.log("Notification received: ", notification);
 }
 
 function onOpened(openResult) {
-  console.log('Message: ', openResult.notification.payload.body);
-  console.log('Data: ', openResult.notification.payload.additionalData);
-  console.log('isActive: ', openResult.notification.isAppInFocus);
-  console.log('openResult: ', openResult);
+
 }
 
 function onIds(device) {
@@ -59,8 +58,8 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     setLoading(true);
-    let serverIP = 'https://www.classupclient.com';
-    // let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    // let serverIP = 'https://www.classupclient.com';
+    let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
     let url = serverIP.concat('/auth/login1/');
     axios({
       method: "POST",
@@ -112,7 +111,6 @@ const LoginScreen = ({ navigation }) => {
           else {
             // send the device/player_id for push notification to backend
             let platform = Platform.OS;
-            console.log(platform);
             url = serverIP.concat('/auth/map_device_token/');
             fetch(url, {
               method: 'POST',
@@ -159,7 +157,6 @@ const LoginScreen = ({ navigation }) => {
             else {
               // parent user first check fee default status
               let feeDefaultStatus = json.fee_defaulter;
-              console.log('feeDefaultStatus = ', feeDefaultStatus);
               if (feeDefaultStatus == "yes") {
                 let stopAccess = json.stop_access;
                 if (stopAccess == "false") {
@@ -215,6 +212,96 @@ const LoginScreen = ({ navigation }) => {
     );
   };
 
+  const forgotPassword = () => {
+    let serverIP = 'https://www.classupclient.com';
+    if (loginID == "") {
+      toastMessage = "Please enter Login ID";
+      Toast.show({
+        type: 'error',
+        position: 'top',
+        text1: 'Error: Login ID Missing',
+        text2: toastMessage,
+      });
+      return;
+    }
+
+    Alert.alert(
+      "Please Confirm ",
+      "Are You sure you want to Reset your Password?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: () => {
+            setLoading(true);
+            {
+              isLoading && (
+                <View>
+                  <ActivityIndicator style={styles.loading} size='large' />
+                </View>
+              )
+            }
+            let url = serverIP.concat('/auth/forgot_password/');
+            axios({
+              method: "POST",
+              url: url,
+              data: {
+                'user': loginID,
+                'player_id': player_id,
+              }
+            }).then(
+              result => {
+                const json = result.data;
+                setLoading(false);
+                let status = json.forgot_password;
+                if (status == "successful") {
+                  Alert.alert(
+                    "Reset Successful", "You will get new password within 15 min by SMS/Notification",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                }
+                else {
+                  Alert.alert(
+                    "Reset Failed.", "User does not exist. Please contact ClassUp Support",
+                    [
+                      {
+                        text: "OK", onPress: () => {
+
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                  console.error(error);
+                }
+              },
+              error => {
+                setLoading(false);
+                console.log(error);
+                Toast.show({
+                  type: 'error',
+                  text1: 'Server Error',
+                  text2: 'Some issues at Server End. Please try again after some time.',
+                });
+              }
+            );
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -229,7 +316,7 @@ const LoginScreen = ({ navigation }) => {
           placeholder="Enter Login ID"
           placeholderTextColor="#e8eaf6"
           keyboardType="email-address"
-          autoCapitalize = "none"
+          autoCapitalize="none"
           autoCorrect={false}
           onChangeText={text => setLoginID(text)} />
       </View>
@@ -238,8 +325,8 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry
           style={styles.inputText}
           defaultValue={password}
-          keyboardType="email-address"
-          autoCapitalize = "none"
+          keyboardType="default"
+          autoCapitalize="none"
           autoCorrect={false}
           placeholder="Enter Password"
           placeholderTextColor="#e8eaf6"
@@ -250,7 +337,7 @@ const LoginScreen = ({ navigation }) => {
         onPress={_onPressLogin}>
         <Text style={styles.loginText}>LOGIN</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={forgotPassword}>
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
       {isLoading && <View style={styles.loading}><ActivityIndicator size='large' /></View>}

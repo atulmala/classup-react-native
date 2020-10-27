@@ -67,8 +67,6 @@ const ExamResult = ({ route, navigation }) => {
           marksRow = [subject, max_marks, marks, highest, average];
           subjectMarks.push(marksRow);
         }
-        console.log("marksArray = ", marksArray);
-        console.log("averageArray = ", averageArray);
 
         setLoading(false);
       })

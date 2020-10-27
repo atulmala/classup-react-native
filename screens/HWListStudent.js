@@ -43,7 +43,6 @@ const HWListStudent = ({ route, navigation }) => {
         else {
           hwList.length = 0;
           for (var i = 0; i < response.data.length; i++) {
-            console.log("hw with this id is fresh entry hence will be added");
             let hw = {};
             hw.id = response.data[i].id;
 

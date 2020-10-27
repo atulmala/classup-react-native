@@ -65,20 +65,12 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
       if (res.uri.startsWith('content://')) {
         const fileNameAndExtension = res.name;
         const destPath = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`;
-        console.log("destPath = ", destPath);
         await RNFS.copyFile(res.uri, destPath);
         setUri("file://".concat(destPath));
-        console.log("uri=", uri);
       }
       else {
-        console.log("source does not start with content://")
       }
-      console.log(
-        res.uri,
-        res.type, // mime type
-        res.name,
-        res.size
-      );
+
       setUri(res.uri);
       setAttachmentPresent(true);
       // setUri(res.uri);
@@ -192,7 +184,6 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
               const split = uri.split('/');
               let name = split.pop()
               name = name.replace(/ /g, "_");
-              console.log("name = ", pdfName);
 
               formData.append("file",
                 {
@@ -202,11 +193,9 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
                 });
               formData.append("file_name", pdfName);
             }
-            console.log("formData = ", formData);
             try {
               axios.post(serverIP.concat("/parents/submit_parents_communication1/"), formData)
                 .then(function (response) {
-                  console.log(response);
                   setLoading(false);
                   Alert.alert(
                     "Messages Sent",

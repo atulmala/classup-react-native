@@ -158,12 +158,6 @@ const SelectMonth = ({ route, navigation }) => {
       selectedMonth = "Jan";
     }
 
-    console.log("selectedClass = ", selectedClass);
-    console.log("selectedSubject = ", selectedSubject);
-    console.log("selectedSection = ", selectedSection);
-    console.log("selectedMonth = ", selectedMonth);
-    console.log ("year = ", year);
-
     navigation.navigate('AttendanceSummaryClass', {
       serverIP: serverIP,
       schoolID: schoolID,

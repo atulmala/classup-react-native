@@ -49,7 +49,6 @@ const LectureListTeacher = ({ route, navigation }) => {
 
           lectureList.push(lecture);
         }
-        console.log(lectureList);
         setLoading(false);
       })
       .catch(function (error) {
@@ -139,7 +138,6 @@ const LectureListTeacher = ({ route, navigation }) => {
   }
 
   const deleteLecture = (title) => {
-    console.log("title = ", title);
     Alert.alert(
       "Please Confirm ",
       "Are You sure you want to Delete this Lecture?",

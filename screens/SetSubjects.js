@@ -104,7 +104,6 @@ const SetSubjects = ({ route, navigation }) => {
             try {
               axios.post(serverIP.concat("/teachers/unset_subjects/", userID, "/"), unSelectedSubjects)
                 .then(function (response) {
-                  console.log(response);
                 });
 
                 axios.post(serverIP.concat("/teachers/set_subjects/", userID, "/"), selectedSubjects)

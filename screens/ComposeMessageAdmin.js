@@ -18,6 +18,7 @@ const ComposeMessageAdmin = ({ route, navigation }) => {
   const { userName } = route.params;
   const { userID } = route.params;
   const { recepients } = route.params;
+  console.log ("recepients = ", recepients);
 
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = React.useState("");
@@ -65,20 +66,11 @@ const ComposeMessageAdmin = ({ route, navigation }) => {
       if (res.uri.startsWith('content://')) {
         const fileNameAndExtension = res.name;
         const destPath = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`;
-        console.log("destPath = ", destPath);
         await RNFS.copyFile(res.uri, destPath);
         setUri("file://".concat(destPath));
-        console.log("uri=", uri);
       }
       else {
-        console.log("source does not start with content://")
       }
-      console.log(
-        res.uri,
-        res.type, // mime type
-        res.name,
-        res.size
-      );
       setUri(res.uri);
       setAttachmentPresent(true);
       // setUri(res.uri);
@@ -130,7 +122,7 @@ const ComposeMessageAdmin = ({ route, navigation }) => {
     });
   });
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (message.length == 0) {
       alert("Message is empty");
       Toast.show({
@@ -185,16 +177,13 @@ const ComposeMessageAdmin = ({ route, navigation }) => {
             formData.append("user", userID);
             formData.append("message_text", message);
             formData.append("whole_school", "Undetermined");
-            for (recepient of recepients) {
-              formData.append('classes_array', recepient)
-            }
+            formData.append("classes_array", JSON.stringify(recepients));
 
             formData.append("image_included", fileIncluded);
             if (attachmentPresent) {
               const split = uri.split('/');
               let name = split.pop()
               name = name.replace(/ /g, "_");
-              console.log("name = ", pdfName);
 
               formData.append("file",
                 {
@@ -204,30 +193,11 @@ const ComposeMessageAdmin = ({ route, navigation }) => {
                 });
               formData.append("image_name", pdfName);
             }
-            console.log("formData = ", formData);
             try {
               axios.post(serverIP.concat("/operations/send_bulk_sms/"), formData)
                 .then(function (response) {
-                  console.log(response);
                   setLoading(false);
-                  Alert.alert(
-                    "Messages Sent",
-                    "Messages Sent and will be delivered in about an hour time!.",
-                    [
-                      {
-                        text: "OK", onPress: () => {
-                          navigation.navigate('AdminMenu', {
-                            serverIP: serverIP,
-                            schoolID: schoolID,
-                            userID: userID,
-                            userName: userName,
-                            comingFrom: "SendMessage"
-                          });
-                        }
-                      }
-                    ],
-                    { cancelable: false }
-                  );
+                  
                 }).catch(error => {
                   console.log("ran into error");
                   setLoading(false);
@@ -256,6 +226,24 @@ const ComposeMessageAdmin = ({ route, navigation }) => {
               setLoading(false);
               console.error(error);
             }
+            Alert.alert(
+              "Messages Sent",
+              "Messages Sent and will be delivered in about an hour time!.",
+              [
+                {
+                  text: "OK", onPress: () => {
+                    navigation.navigate('AdminMenu', {
+                      serverIP: serverIP,
+                      schoolID: schoolID,
+                      userID: userID,
+                      userName: userName,
+                      comingFrom: "SendMessage"
+                    });
+                  }
+                }
+              ],
+              { cancelable: false }
+            );
           }
         }
       ],

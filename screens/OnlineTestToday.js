@@ -24,7 +24,6 @@ const OnlineTestToday = ({ route, navigation }) => {
       .get(url)
       .then(function (response) {
         if (response.data.length == 0) {
-          console.log("No online test today");
           setVisible(true);
         }
         for (var i = 0; i < response.data.length; i++) {

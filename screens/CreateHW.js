@@ -149,12 +149,7 @@ const CreateHW = ({ route, navigation }) => {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.pdf],
       });
-      console.log(
-        res.uri,
-        res.type, // mime type
-        res.name,
-        res.size
-      );
+
       setAttachmentPresent(true);
       setUri(res.uri);
       setPdfName(res.name);

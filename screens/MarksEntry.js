@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
-  Platform, StyleSheet, Text, View, ActivityIndicator, Alert,
+  Platform, StyleSheet, Text, View, ScrollView, ActivityIndicator, Alert,
   TouchableOpacity, KeyboardAvoidingView, FlatList
 } from 'react-native';
 
@@ -94,7 +94,6 @@ const MarksEntry = ({ route, navigation }) => {
 
           markList.push(record);
         }
-        console.log ("markList = ", markList);
         setLoading(false);
       })
       .catch(function (error) {
@@ -347,7 +346,6 @@ const MarksEntry = ({ route, navigation }) => {
                   }
                 }
                 setChecked(previousState => !previousState);
-                console.log("markList[", index, "] = ", markList[index])
               }
               }
             >
@@ -366,19 +364,18 @@ const MarksEntry = ({ route, navigation }) => {
             defaultValue={markList[index].marks_obtained.toString()}
             onChangeText={marks => {
               markList[index].marks_obtained = parseFloat(marks);
-              console.log("markList[", index, "] = ", markList[index])
             }}
           />
           <Input style={styles.select}
             disabled={markList[index].absent || !gradeBased}
             status='warning'
             size='small'
+            autoCapitalize='characters'
             placeholder={gradeBased ? '' : 'N/A'}
             label={evaProps => <Text {...evaProps}>Grade</Text>}
             defaultValue={markList[index].grade}
             onChangeText={grade => {
               markList[index].grade = grade.toString();
-              console.log("markList[", index, "] = ", markList[index])
             }
             }>
           </Input>
@@ -392,7 +389,6 @@ const MarksEntry = ({ route, navigation }) => {
               label={evaProps => <Text {...evaProps}>Practical</Text>}
               onChangeText={marks => {
                 markList[index].prac_marks = parseFloat(marks);
-                console.log("markList[", index, "] = ", markList[index])
               }}
             />}
         </View>
@@ -407,7 +403,6 @@ const MarksEntry = ({ route, navigation }) => {
               defaultValue={markList[index].periodic_test_marks}
               onChangeText={marks => {
                 markList[index].periodic_test_marks = parseFloat(marks);
-                console.log("markList[", index, "] = ", markList[index])
               }}
             />
             <Input
@@ -419,7 +414,6 @@ const MarksEntry = ({ route, navigation }) => {
               defaultValue={markList[index].multi_asses_marks}
               onChangeText={marks => {
                 markList[index].multi_asses_marks = parseFloat(marks);
-                console.log("markList[", index, "] = ", markList[index])
               }}
             />
             <Input
@@ -431,7 +425,6 @@ const MarksEntry = ({ route, navigation }) => {
               defaultValue={markList[index].notebook_marks}
               onChangeText={marks => {
                 markList[index].notebook_marks = marks;
-                console.log("markList[", index, "] = ", markList[index])
               }}
             />
             <Input
@@ -443,7 +436,6 @@ const MarksEntry = ({ route, navigation }) => {
               defaultValue={markList[index].sub_enrich_marks}
               onChangeText={marks => {
                 markList[index].sub_enrich_marks = marks;
-                console.log("markList[", index, "] = ", markList[index])
               }}
             />
           </View>}
@@ -482,6 +474,7 @@ const MarksEntry = ({ route, navigation }) => {
       },
       headerRight: () =>
         <View style={styles.parallel}>
+          {isLoading && <ActivityIndicator size='large' />}
           {!isLoading &&
             <TouchableOpacity style={styles.nextButton} onPress={() => saveMarks()}>
               <Text style={styles.nextText}>  Save  </Text>
@@ -496,16 +489,17 @@ const MarksEntry = ({ route, navigation }) => {
 
   return (<KeyboardAvoidingView
     behavior={Platform.OS == "ios" ? "padding" : "height"}
-    keyboardVerticalOffset={useHeaderHeight()}
+    keyboardVerticalOffset={Platform.OS == "android" ? useHeaderHeight() + 30 : useHeaderHeight()}
     style={styles.container} >
-    <View style={styles.container}>
+    <ScrollView style={styles.container} 
+>
       {isLoading ? <View style={styles.loading}>
         <ActivityIndicator size='large' />
       </View> : (
           <CustomListview
             itemList={markList}
           />)}
-    </View>
+    </ScrollView>
   </KeyboardAvoidingView>
   )
 }

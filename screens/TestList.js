@@ -224,7 +224,6 @@ const TestList = ({ route, navigation }) => {
             try {
               axios.delete(serverIP.concat("/academics/delete_test/", index, "/"))
                 .then(function (response) {
-                  console.log(response);
                   setLoading(false);
                   Alert.alert(
                     "Test Deleted",

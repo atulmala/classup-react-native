@@ -228,7 +228,6 @@ const OnlineTest = ({ route, navigation }) => {
   };
 
   const markOption = (info, option) => {
-    console.log("inside markOption");
     let params = {};
     params.student_id = studentID;
     params.question_id = info.question_id;

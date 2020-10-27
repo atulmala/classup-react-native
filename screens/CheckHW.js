@@ -30,7 +30,6 @@ const CheckHW = ({ route, navigation }) => {
       })
       .then((res) => {
         // the temp file path
-        console.log('The file saved to ', res.path());
         setLoading(false);
         PhotoEditor.Edit({
           path: res.path(),

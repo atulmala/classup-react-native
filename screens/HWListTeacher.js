@@ -37,7 +37,6 @@ const HWListTeacher = ({ route, navigation }) => {
         else {
           hwList.length = 0;
           for (var i = 0; i < response.data.length; i++) {
-            console.log("hw with this id is fresh entry hence will be added");
             let hw = {};
             hw.id = response.data[i].id;
             
@@ -55,7 +54,6 @@ const HWListTeacher = ({ route, navigation }) => {
             hwList.push(hw);
           }
           hwList.reverse();
-          console.log("hwList = ", hwList);
         }
         setLoading(false);
       })
@@ -170,7 +168,6 @@ const HWListTeacher = ({ route, navigation }) => {
   };
 
   const showSubmissins = (index) => {
-    console.log("index = ", index);
     navigation.navigate('HWSubmissions', {
       serverIP: serverIP,
       schoolID: schoolID,
@@ -182,8 +179,6 @@ const HWListTeacher = ({ route, navigation }) => {
   };
 
   const deleteHW = (index) => {
-    console.log("index = ", index);
-    console.log("hwList = ", hwList);
     if (index < 0) {
       Alert.alert(
         "Dummy Placeholder HW",

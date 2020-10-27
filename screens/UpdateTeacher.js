@@ -71,7 +71,6 @@ const UpdateTeacher = ({ route, navigation }) => {
         for (var i = 0; i < classes.data.length; i++) {
           classList.push(classes.data[i].standard);
         }
-        console.log("classList = ", classList);
 
         sectionList.push("Select");
         for (i = 0; i < sections.data.length; i++) {
@@ -252,7 +251,6 @@ const UpdateTeacher = ({ route, navigation }) => {
               result => {
                 const json = result.data;
                 setLoading(false);
-                console.log(json);
                 let status = json.status;
                 let message = json.message
                 if (status == "success") {
@@ -337,7 +335,6 @@ const UpdateTeacher = ({ route, navigation }) => {
               result => {
                 const json = result.data;
                 setLoading(false);
-                console.log(json);
                 let status = json.status;
                 if (status == "success") {
                   Alert.alert(

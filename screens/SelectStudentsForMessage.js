@@ -3,6 +3,7 @@ import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Image, Ale
 import { Divider, List, ListItem, Icon } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+var allSelected = false;
 
 const SelectStudentsForMessage = ({ route, navigation }) => {
   const { serverIP } = route.params;
@@ -14,11 +15,11 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
   const { section } = route.params;
 
   const [studentList] = useState([]);
-  const [selectedStudentList, setSelectedStudentList] = useState([]);
-
+  const [selectedStudentList] = useState([]);
+  
   const [isLoading, setLoading] = useState(true);
   const [checked, setChecked] = useState(0);
-  const [allSelected, setAllSelected] = useState(false);
+  
 
   useEffect(() => {
     let url = serverIP.concat("/student/list/", schoolID, "/", the_class, "/", section, "/");
@@ -44,25 +45,19 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
 
   const selectAll = () => {
     setLoading(true);
-    setAllSelected(!allSelected);
-    for (student of studentList) {
-      if (allSelected) {
-        student.selected = true;
-        let position = selectedStudentList.indexOf(student.id);
-        if (position > -1) {
-          // this student was in the selected list. remove...
-          selectedStudentList.splice(position, 1);
-        }
-        else {
-          selectedStudentList.push(student.id);
-        }
+    allSelected = !allSelected;
+    selectedStudentList.length = 0;
+    studentList.map(item => {
+      if (allSelected)  {
+        item.selected = true;
+        selectedStudentList.push(item.id);
       }
-      else {
-        student.selected = false;
-        setSelectedStudentList([]);
+      else  {
+        item.selected = false;
+        
       }
-    }
-    console.log("no of selected students = ", selectedStudentList);
+    });
+    setChecked(Math.floor(Math.random() * 1001));
     setLoading(false);
   };
 
@@ -79,12 +74,10 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
         }
       }
     }
-    console.log("selectedStudentList = ", selectedStudentList);
   };
 
   const composeMessage = () => {
     if (selectedStudentList.length == 0) {
-      console.log("no student selected");
       Toast.show({
         type: 'error',
         position: 'top',
@@ -144,6 +137,7 @@ const SelectStudentsForMessage = ({ route, navigation }) => {
             style={{
               width: 25,
               height: 25,
+              marginTop: 4,
               marginLeft: 15,
               marginRight: 10
             }}

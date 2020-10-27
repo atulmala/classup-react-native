@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, ActivityIndicator, Alert } from 'react-native';
-import { IndexPath, Layout, Text, Select, Button, SelectItem, Radio, RadioGroup } from '@ui-kitten/components';
+import { StyleSheet, ScrollView, View, ActivityIndicator } from 'react-native';
+import { IndexPath, Layout, Text, Select, Button, SelectItem, Icon } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
@@ -21,9 +21,6 @@ const SelectClassTeacherCommunication = ({ route, navigation }) => {
   var selectedSection;
   const [selectedSectionIndex, setSelectedSectionIndex] = useState(new IndexPath(0));
   const displaySectionValue = sectionList[selectedSectionIndex.row];
-
-  const [selectedRecepientIndex, setSelectedRecepientIndex] = React.useState(-1);
-  let recepeients = "wholeClass";
 
   const renderOption = (title) => (
     <SelectItem title={title} />
@@ -85,53 +82,21 @@ const SelectClassTeacherCommunication = ({ route, navigation }) => {
       selectedSection = sectionList[selectedSectionIndex.row];
     }
 
-    switch (selectedRecepientIndex) {
-      case -1:
-        Toast.show({
-          type: 'error',
-          position: 'bottom',
-          text1: 'Error: Recepients Not Selected',
-          text2: "Please Select a Term",
-        });
-        return;
-      case 0:
-        recepeients = "wholeClass";
-        break;
-      case 1:
-        recepeients = "selectedStudents";
-        break;
-    }
-
-    switch (recepeients) {
-      case "wholeClass":
-        navigation.navigate('ComposeMessageTeacher', {
-          serverIP: serverIP,
-          schoolID: schoolID,
-          userID: userID,
-          userName: userName,
-          the_class: selectedClass,
-          section: selectedSection,
-          recepients: 'wholeClass',
-        });
-        break;
-      case "selectedStudents":
-        navigation.navigate('SelectStudentsForMessage', {
-          serverIP: serverIP,
-          schoolID: schoolID,
-          userID: userID,
-          userName: userName,
-          the_class: selectedClass,
-          section: selectedSection,
-        });
-        break;
-    }
+    navigation.navigate('SelectStudentsForMessage', {
+      serverIP: serverIP,
+      schoolID: schoolID,
+      userID: userID,
+      userName: userName,
+      the_class: selectedClass,
+      section: selectedSection,
+    });
   };
 
 
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
-        <Text style={styles.headerText} >Select Class, Section & Recepients</Text>
+        <Text style={styles.headerText} >Select Class & Section</Text>
       </View>
     );
   };
@@ -145,6 +110,10 @@ const SelectClassTeacherCommunication = ({ route, navigation }) => {
       },
     });
   });
+
+  const penIcon = (props) => (
+    <Icon {...props} name='edit-2-outline'/>
+  );
 
   return (
     <Layout style={styles.container} level='1'>
@@ -186,20 +155,14 @@ const SelectClassTeacherCommunication = ({ route, navigation }) => {
                 </Layout>
               </Layout>
               <Layout style={styles.verticalSpace} />
-              <Layout style={styles.container}>
-                <Text style={styles.text} category='s1' status='info'>
-                  Select Recepients:
-                  </Text>
-                <RadioGroup
-                  selectedIndex={selectedRecepientIndex}
-                  onChange={index => setSelectedRecepientIndex(index)}>
-                  <Radio>Whole Class</Radio>
-                  <Radio>Selected Students</Radio>
-                </RadioGroup>
-              </Layout>
               <Layout style={styles.verticalSpace} />
               <Layout style={styles.buttonContainer}>
-                <Button style={styles.button} appearance='outline' status='info' onPress={composeMessage}>
+                <Button 
+                style={styles.button} 
+                appearance='outline' 
+                status='info' 
+                onPress={composeMessage}
+                accessoryLeft={penIcon}>
                   {"Compose Message"}
                 </Button>
               </Layout>

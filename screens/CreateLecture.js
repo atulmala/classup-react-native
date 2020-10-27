@@ -118,12 +118,7 @@ const CreateLecture = ({ route, navigation }) => {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.pdf],
       });
-      console.log(
-        res.uri,
-        res.type, // mime type
-        res.name,
-        res.size
-      );
+
       setAttachmentPresent(true);
       setUri(res.uri);
       setPdfName(res.name);
@@ -223,7 +218,6 @@ const CreateLecture = ({ route, navigation }) => {
               const split = uri.split('/');
               let name = split.pop()
               name = name.replace(/ /g,"_");
-              console.log ("name = ", name);
 
               formData.append("file",
                 {

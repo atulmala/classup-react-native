@@ -103,7 +103,6 @@ const SelectClassCoSchol = ({ route, navigation }) => {
     }
 
     let url = serverIP.concat("/teachers/whether_class_teacher2/", userID, "/");
-    console.log("url = ", url);
     axios({
       method: "GET",
       url: url,
@@ -113,7 +112,6 @@ const SelectClassCoSchol = ({ route, navigation }) => {
     }).then(
       result => {
         const json = result.data;
-        console.log("json = ", json);
         if (json.is_class_teacher == "true") {
           if (json.the_class == selectedClass && json.section == selectedSection) {
             navigation.navigate('CoScholastic', {

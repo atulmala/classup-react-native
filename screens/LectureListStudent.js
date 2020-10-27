@@ -47,7 +47,6 @@ const LectureListStudent = ({ route, navigation }) => {
 
           lectureList.push(lecture);
         }
-        console.log(lectureList);
         setLoading(false);
       })
       .catch(function (error) {

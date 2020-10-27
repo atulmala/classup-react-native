@@ -9,7 +9,6 @@ var RNFS = require('react-native-fs');
 const ViewCheckedHW = ({ route, navigation }) => {
   const { images } = route.params;
 
-  console.log("images = ", images);
 
   const HeaderTitle = () => {
     return (

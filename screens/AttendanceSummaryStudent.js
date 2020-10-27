@@ -39,7 +39,6 @@ const AttendanceSummaryStudent = ({ route, navigation }) => {
           let row = [work_days, present_days, percentage];
           attendanceRow.push(row);
         }
-        console.log(labels);
         setLoading(false);
       })
       .catch(function (error) {

@@ -14,10 +14,6 @@ const PreviewAttachment = ({ route, navigation }) => {
   const { source } = route.params;
   const { pdfName } = route.params;
 
-  console.log("type = ", type);
-  console.log("images = ", images);
-  console.log("source = ", source);
-
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
@@ -56,16 +52,13 @@ const PreviewAttachment = ({ route, navigation }) => {
         <Pdf
           source={source}
           onLoadComplete={(numberOfPages, filePath) => {
-            console.log(`number of pages: ${numberOfPages}`);
           }}
           onPageChanged={(page, numberOfPages) => {
-            console.log(`current page: ${page}`);
           }}
           onError={(error) => {
             console.log(error);
           }}
           onPressLink={(uri) => {
-            console.log(`Link presse: ${uri}`)
           }}
           style={styles.pdf} />}
     </View>

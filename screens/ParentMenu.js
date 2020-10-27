@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert } from 'rea
 import Toast from 'react-native-toast-message';
 
 const ParentMenu = ({ route, navigation }) => {
-  console.log('inside ParentMenu');
 
   const testPress = () => {
     Alert.alert('was pressed');
@@ -21,7 +20,6 @@ const ParentMenu = ({ route, navigation }) => {
 
   const showToast = () => {
     if (feeDefaultStatus == "yes") {
-      console.log('FeeDefaulter');
       Alert.alert(
         "Fee Outstanding!", welcomeMessage,
         [
@@ -41,12 +39,7 @@ const ParentMenu = ({ route, navigation }) => {
 
     }
     else {
-      console.log('Fee status good');
-      // Toast.show({
-      //   type: 'success',
-      //   text1: 'Login Successful',
-      //   text2: welcomeMessage
-      // });
+
     }
   };
   showToast();

@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert } from 'rea
 import Toast from 'react-native-toast-message';
 
 const ParentMenu = ({ route, navigation }) => {
-  console.log('inside ParentMenu');
 
   const { serverIP } = route.params;
   const { schoolID } = route.params;

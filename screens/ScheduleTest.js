@@ -185,7 +185,6 @@ const ScheduleTest = ({ route, navigation }) => {
     }
     if (exam.examType != "term") {
       if (!primaryCheckboxState.checked) {
-        console.log("Grade based = ", primaryCheckboxState.checked)
         if (maxMarks == "") {
           Toast.show({
             type: 'error',

@@ -8,7 +8,7 @@ buildscript {
         maven { url 'https://plugins.gradle.org/m2/' } // Gradle Plugin Portal
     }
     dependencies {
-        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.6, 0.99.99]'
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.9'
     }
 }
 
@@ -147,14 +147,14 @@ android {
         applicationId "com.classup"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "2.50"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
     splits {
         abi {
             reset()
-            enable enableSeparateBuildPerCPUArchitecture
+            enable enableSeparateBuildPerCPUArchitecture = true
             universalApk false  // If true, also generate a universal APK
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
@@ -213,7 +213,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }

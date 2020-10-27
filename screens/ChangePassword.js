@@ -123,7 +123,6 @@ const ChangePassword = ({ route, navigation }) => {
               result => {
                 const json = result.data;
                 setLoading(false);
-                console.log(json);
                 let password_change = json.password_change;
                 if (password_change == "Successful") {
                   Alert.alert(

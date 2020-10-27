@@ -81,13 +81,15 @@ const SelectClassesAdmin = ({ route, navigation }) => {
     selectedClasses.length = 0;
     classList.map(item => {
       if (selectedAll)  {
-        item.selected = false;
-      }
-      else  {
         item.selected = true;
         selectedClasses.push(item.class);
       }
+      else  {
+        item.selected = false;
+      }
     })
+    console.log("selectedClasses = ", selectedClasses);
+
     setLoading(false);
   }
 
