@@ -1,10 +1,7 @@
 import React from 'react';
-import {
-  StyleSheet, View, Alert
-} from 'react-native';
-import { Text, Button, Spinner } from '@ui-kitten/components';
+import { StyleSheet, View, ActivityIndicator, Dimensions, Image } from 'react-native';
+import { Text, Spinner } from '@ui-kitten/components';
 import ImageViewer from 'react-native-image-zoom-viewer';
-var RNFS = require('react-native-fs');
 
 const ViewCheckedHW = ({ route, navigation }) => {
   const { images } = route.params;
@@ -13,18 +10,24 @@ const ViewCheckedHW = ({ route, navigation }) => {
   const HeaderTitle = () => {
     return (
       <View style={styles.headerTitle}>
-        <Text style={styles.text} status='success' category='h6'>Swipe Left/Right</Text>
+        <Text style={styles.text} status='success' >Swipe Left/Right</Text>
       </View>
     );
   };
-  
+
   const renderSpinner = () => {
     return (
-      <View style={styles.loading}>
-        <Spinner />
-      </View>
+      <ActivityIndicator
+        color={'#FFA800'}
+        size="large"
+        style={{
+          height: Dimensions.get('window').height,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      />
     )
-  }  
+  }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -40,6 +43,7 @@ const ViewCheckedHW = ({ route, navigation }) => {
     <View style={styles.container}>
       <ImageViewer
         imageUrls={images}
+        enablePreload={true}
         backgroundColor={'transparent'}
         loadingRender={renderSpinner}
       />
@@ -74,11 +78,6 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 2,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

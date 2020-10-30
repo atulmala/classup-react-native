@@ -1,0 +1,49 @@
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+
+platform :ios, '10.0'
+
+target 'classup' do
+  config = use_native_modules!
+  use_react_native!(:path => config["reactNativePath"])
+
+  
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable these next few lines.
+  use_flipper!
+  post_install do |installer|
+    flipper_post_install(installer)
+    installer.pods_project.targets.each do |target|
+      if target.name.include?('iOSPhotoEditor')
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_VERSION'] = '5'
+          config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
+          config.build_settings['ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES'] = '$(inherited)'
+        end
+      end
+    end
+  end
+end
+
+target 'OneSignalNotificationServiceExtension' do
+  #only copy below line
+  pod 'OneSignal', '>= 2.11.2', '< 3.0'
+end
+
+
+use_frameworks! :linkage => :static
+
+pod 'iOSPhotoEditor', :git => 'https://github.com/prscX/photo-editor', :branch => 'master'
+
+pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
+
+pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
+
+ 
+
+
+
+

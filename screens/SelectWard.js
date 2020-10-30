@@ -37,7 +37,7 @@ const SelectWard = ({ route, navigation }) => {
   }, []);
 
   const showParentMenu = (index) => {
-    for (var ward of wardList)  {
+    for (var ward of wardList) {
       console.log("id = ", ward.id);
       if (ward.id == index) {
         navigation.navigate('ParentMenu', {
