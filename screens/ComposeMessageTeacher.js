@@ -197,9 +197,9 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
                 {
                   uri: uri,
                   type: 'application/pdf',
-                  name: pdfName
+                  name: name
                 });
-              formData.append("image_name", pdfName);
+              formData.append("image_name", name);
             }
             try {
               axios.post(serverIP.concat("/operations/send_message/", schoolID, "/"), formData)

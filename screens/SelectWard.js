@@ -78,7 +78,6 @@ const SelectWard = ({ route, navigation }) => {
           renderItem={({ item }) => <CustomRow
             title={item}
             index={item.id}
-
           />}
         />
       </View>

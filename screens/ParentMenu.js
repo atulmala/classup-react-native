@@ -68,12 +68,8 @@ const ParentMenu = ({ route, navigation }) => {
     },
   };
 
-  
-
   const pickImage = () => {
     ImagePicker.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
-    
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -81,12 +77,75 @@ const ParentMenu = ({ route, navigation }) => {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        const source = { uri: response.uri };
-    
+        let formData = new FormData();
+        formData.append("student_id", studentID);
+        const split = response.uri.split('/');
+        let name = split.pop()
+        formData.append('file', {
+          uri: Platform.OS === 'android' ? response.uri : response.uri.replace('file://', ''),
+          name: name
+        });
+
+        try {
+          axios.post(serverIP.concat("/pic_share/upload_student_pic/"), formData)
+            .then(function (response) {
+              setLoading(false);
+              let status = response.data.status;
+              let message = response.data.message;
+              Alert.alert(status, message,
+                [
+                  {
+                    text: "OK", onPress: () => {
+                    }
+                  }
+                ],
+                { cancelable: false }
+              );
+
+            }).catch(error => {
+              console.log("ran into error");
+              setLoading(false);
+              console.log(error);
+              Alert.alert(
+                "Error",
+                "Failed to upload image. Please try again",
+                [
+                  {
+                    text: "OK", onPress: () => {
+                    }
+                  }
+                ],
+                { cancelable: false }
+              );
+            });
+        } catch (error) {
+          console.log("ran into error");
+          setLoading(false);
+          console.error(error);
+        }
+        Alert.alert(
+          "Messages Sent",
+          "Messages Sent and will be delivered in about an hour time!.",
+          [
+            {
+              text: "OK", onPress: () => {
+                navigation.navigate('TeacherMenu', {
+                  serverIP: serverIP,
+                  schoolID: schoolID,
+                  userID: userID,
+                  userName: userName,
+                  comingFrom: "SendMessage"
+                });
+              }
+            }
+          ],
+          { cancelable: false }
+        );
+
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-    
-        console.log (response.uri);
+
+
       }
     });
   };
@@ -157,7 +216,7 @@ const ParentMenu = ({ route, navigation }) => {
         <TouchableOpacity style={[button, { backgroundColor: 'maroon' }]} onPress={pickImage}>
           <Text style={styles.font}>Upload Student Pic</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'olivedrab' }]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'olivedrab' }]} onPress={() => nextScreen('ChangePassword')}>
           <Text style={styles.font}>Change Password</Text>
         </TouchableOpacity>
       </View>

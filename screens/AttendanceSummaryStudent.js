@@ -76,7 +76,7 @@ const AttendanceSummaryStudent = ({ route, navigation }) => {
       </View> : (
           <ScrollView style={styles.container}>
             <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
-              <Row data={tableHead} flexArr={[1, 1, 1, 1]} style={styles.head} textStyle={styles.text} />
+              <Row data={tableHead} flexArr={[1, 1, 1, 1]} textStyle={styles.text} />
               <TableWrapper style={styles.wrapper}>
                 <Col data={colData} style={styles.title} textStyle={styles.text} />
                 <Rows data={attendanceRow} flexArr={[1, 1, 1]} style={styles.row} textStyle={styles.text} />
