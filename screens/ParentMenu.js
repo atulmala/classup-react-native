@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
+import ImagePicker from 'react-native-image-picker';
 
 const ParentMenu = ({ route, navigation }) => {
 
@@ -56,6 +57,38 @@ const ParentMenu = ({ route, navigation }) => {
 
   const nextScreen = (screen) => {
     navigation.navigate(screen, params);
+  };
+
+  const options = {
+    title: 'Select Avatar',
+    customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  };
+
+  
+
+  const pickImage = () => {
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+    
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { uri: response.uri };
+    
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    
+        console.log (response.uri);
+      }
+    });
   };
 
   const HeaderTitle = () => {
@@ -121,7 +154,7 @@ const ParentMenu = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'maroon' }]}>
+        <TouchableOpacity style={[button, { backgroundColor: 'maroon' }]} onPress={pickImage}>
           <Text style={styles.font}>Upload Student Pic</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[button, { backgroundColor: 'olivedrab' }]}>
