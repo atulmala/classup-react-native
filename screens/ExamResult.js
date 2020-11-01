@@ -131,7 +131,7 @@ const ExamResult = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size='large' color='#0097A7'/>
       </View> : (
           <View style={styles.container}>
             { tableMode &&

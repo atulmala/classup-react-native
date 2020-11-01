@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import ImagePicker from 'react-native-image-picker';
 
@@ -18,6 +19,8 @@ const ParentMenu = ({ route, navigation }) => {
   const { studentName } = route.params;
   const { feeDefaultStatus } = route.params;
   const { welcomeMessage } = route.params;
+
+  const [isLoading, setLoading] = React.useState(false);
 
   const showToast = () => {
     if (feeDefaultStatus == "yes") {
@@ -85,6 +88,7 @@ const ParentMenu = ({ route, navigation }) => {
           uri: Platform.OS === 'android' ? response.uri : response.uri.replace('file://', ''),
           name: name
         });
+        console.log("formData = ", formData);
 
         try {
           axios.post(serverIP.concat("/pic_share/upload_student_pic/"), formData)
@@ -103,6 +107,7 @@ const ParentMenu = ({ route, navigation }) => {
               );
 
             }).catch(error => {
+              console.log("error = ", error);
               console.log("ran into error");
               setLoading(false);
               console.log(error);
@@ -119,33 +124,14 @@ const ParentMenu = ({ route, navigation }) => {
               );
             });
         } catch (error) {
+          console.log("error = ", error);
           console.log("ran into error");
           setLoading(false);
           console.error(error);
         }
-        Alert.alert(
-          "Messages Sent",
-          "Messages Sent and will be delivered in about an hour time!.",
-          [
-            {
-              text: "OK", onPress: () => {
-                navigation.navigate('TeacherMenu', {
-                  serverIP: serverIP,
-                  schoolID: schoolID,
-                  userID: userID,
-                  userName: userName,
-                  comingFrom: "SendMessage"
-                });
-              }
-            }
-          ],
-          { cancelable: false }
-        );
 
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-
       }
     });
   };
@@ -170,57 +156,59 @@ const ParentMenu = ({ route, navigation }) => {
   });
 
   return (
-    <ScrollView style={styles.container}>
-      <Toast ref={(ref) => Toast.setRef(ref)} />
-      <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'chocolate' }]} onPress={() => nextScreen('AttendanceSummaryStudent')}>
-          <Text style={styles.font}>Month Wise Attendance</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'midnightblue' }]} onPress={testPress}>
-          <Text style={styles.font}>Time Table</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'darkolivegreen' }]} onPress={() => nextScreen('SelectSubject')}>
-          <Text style={styles.font}>Home Work</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'dodgerblue' }]} onPress={() => nextScreen('SelectSubjectLectures')}>
-          <Text style={styles.font}>Online Classes</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'goldenrod' }]} onPress={() => nextScreen('UpcomingTests')}>
-          <Text style={styles.font}>Upcoming Tests</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'brown' }]} onPress={() => nextScreen('OnlineTestToday')}>
-          <Text style={styles.font}>Online Test</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'darkorchid' }]} onPress={() => nextScreen('SelectExam')}>
-          <Text style={styles.font}>Exam Results</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'darkslategray' }]} onPress={() => nextScreen('SelectCategories')}>
-          <Text style={styles.font}>Communicate With School</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'indianred' }]} onPress={() => nextScreen('CommunicationHistoryParent')}>
-          <Text style={styles.font}>Communication History</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'indigo' }]} onPress={() => nextScreen('ImageVideos')}>
-          <Text style={styles.font}>Image/Video From School</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.parallel}>
-        <TouchableOpacity style={[button, { backgroundColor: 'maroon' }]} onPress={pickImage}>
-          <Text style={styles.font}>Upload Student Pic</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[button, { backgroundColor: 'olivedrab' }]} onPress={() => nextScreen('ChangePassword')}>
-          <Text style={styles.font}>Change Password</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView style={styles.container}>
+        <Toast ref={(ref) => Toast.setRef(ref)} />
+        <View style={styles.parallel}>
+          <TouchableOpacity style={[button, { backgroundColor: 'chocolate' }]} onPress={() => nextScreen('AttendanceSummaryStudent')}>
+            <Text style={styles.font}>Month Wise Attendance</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[button, { backgroundColor: 'midnightblue' }]} onPress={testPress}>
+            <Text style={styles.font}>Time Table</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.parallel}>
+          <TouchableOpacity style={[button, { backgroundColor: 'darkolivegreen' }]} onPress={() => nextScreen('SelectSubject')}>
+            <Text style={styles.font}>Home Work</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[button, { backgroundColor: 'dodgerblue' }]} onPress={() => nextScreen('SelectSubjectLectures')}>
+            <Text style={styles.font}>Online Classes</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.parallel}>
+          <TouchableOpacity style={[button, { backgroundColor: 'goldenrod' }]} onPress={() => nextScreen('UpcomingTests')}>
+            <Text style={styles.font}>Upcoming Tests</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[button, { backgroundColor: 'brown' }]} onPress={() => nextScreen('OnlineTestToday')}>
+            <Text style={styles.font}>Online Test</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.parallel}>
+          <TouchableOpacity style={[button, { backgroundColor: 'darkorchid' }]} onPress={() => nextScreen('SelectExam')}>
+            <Text style={styles.font}>Exam Results</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[button, { backgroundColor: 'darkslategray' }]} onPress={() => nextScreen('SelectCategories')}>
+            <Text style={styles.font}>Communicate With School</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.parallel}>
+          <TouchableOpacity style={[button, { backgroundColor: 'indianred' }]} onPress={() => nextScreen('CommunicationHistoryParent')}>
+            <Text style={styles.font}>Communication History</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[button, { backgroundColor: 'indigo' }]} onPress={() => nextScreen('ImageVideos')}>
+            <Text style={styles.font}>Image/Video From School</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.parallel}>
+          <TouchableOpacity style={[button, { backgroundColor: 'maroon' }]} onPress={pickImage}>
+            <Text style={styles.font}>Upload Student Pic</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[button, { backgroundColor: 'olivedrab' }]} onPress={() => nextScreen('ChangePassword')}>
+            <Text style={styles.font}>Change Password</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -277,6 +265,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5FCFF88'
+  }
 })
 
 export default ParentMenu

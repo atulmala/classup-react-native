@@ -193,7 +193,7 @@ const SelectMonth = ({ route, navigation }) => {
     <Layout style={styles.container} level='1'>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <Layout style={styles.loading}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size='large' color='#0097A7'/>
       </Layout> : (
           <ScrollView
             style={styles.scrollContainer}

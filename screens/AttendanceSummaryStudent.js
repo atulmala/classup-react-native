@@ -72,7 +72,7 @@ const AttendanceSummaryStudent = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size='large' color='#0097A7'/>
       </View> : (
           <ScrollView style={styles.container}>
             <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>

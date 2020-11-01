@@ -273,7 +273,7 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
     <Layout style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size='large' color='#0097A7'/>
       </View> : (
           <Layout style={styles.container}>
             <Layout style={styles.mainContainer}>
