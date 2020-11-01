@@ -27,6 +27,7 @@ const SelectWard = ({ route, navigation }) => {
           ward.currentClass = response.data[i].current_class;
           ward.currentSection = response.data[i].current_section;
           ward.classSec = response.data[i].current_class + " - " + response.data[i].current_section;
+          ward.picUri = response.data[i].pic_uri;
           wardList.push(ward);
         }
         setLoading(false);
@@ -57,7 +58,7 @@ const SelectWard = ({ route, navigation }) => {
     return (
       <TouchableWithoutFeedback onPress={() => showParentMenu(index)}>
         <View style={styles.containerRow}>
-          <Image source={{ uri: "https://classup2.s3.us-east-2.amazonaws.com/media/prod/student_pics/no_image.png" }} style={styles.photo} />
+          <Image source={{ uri: title.picUri }} style={styles.photo} />
           <View style={styles.container_text}>
             <Text style={styles.title}>
               {title.name}
