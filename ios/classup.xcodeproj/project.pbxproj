@@ -13,6 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		84EBC9D2671FDC26770FAEEF /* Pods_classup.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFE80233280C4650C41DE5A /* Pods_classup.framework */; };
+		B59EF8BF254C47C2006E967D /* EmptyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59EF8BE254C47C2006E967D /* EmptyFile.swift */; };
 		B78CD48424D9BFA100330B87 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B78CD48324D9BFA100330B87 /* NotificationService.swift */; };
 		B78CD48824D9BFA100330B87 /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B78CD48124D9BFA100330B87 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -56,6 +57,8 @@
 		2EFE80233280C4650C41DE5A /* Pods_classup.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_classup.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		364F13D41B0BE7CBA5033370 /* Pods_OneSignalNotificationServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalNotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = classup/SplashScreen.storyboard; sourceTree = "<group>"; };
+		B59EF8BD254C47C1006E967D /* classup-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "classup-Bridging-Header.h"; sourceTree = "<group>"; };
+		B59EF8BE254C47C2006E967D /* EmptyFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyFile.swift; sourceTree = "<group>"; };
 		B73D7B1024D91D120073C219 /* classup.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = classup.entitlements; path = classup/classup.entitlements; sourceTree = "<group>"; };
 		B78CD48124D9BFA100330B87 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B78CD48324D9BFA100330B87 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -102,6 +105,8 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
+				B59EF8BE254C47C2006E967D /* EmptyFile.swift */,
+				B59EF8BD254C47C1006E967D /* classup-Bridging-Header.h */,
 			);
 			name = classup;
 			sourceTree = "<group>";
@@ -233,7 +238,7 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = F64T6ZEDL7;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1210;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 0;
@@ -337,17 +342,16 @@
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
-				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/Base.lproj/LaunchScreen.storyboard",
-				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/ColorCollectionViewCell.xib",
-				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/EmojiCollectionViewCell.xib",
+				"${BUILT_PRODUCTS_DIR}/iOSPhotoEditor/iOSPhotoEditor.framework/LaunchScreen.storyboardc",
+				"${BUILT_PRODUCTS_DIR}/iOSPhotoEditor/iOSPhotoEditor.framework/ColorCollectionViewCell.nib",
+				"${BUILT_PRODUCTS_DIR}/iOSPhotoEditor/iOSPhotoEditor.framework/EmojiCollectionViewCell.nib",
 				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/icomoon.ttf",
-				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/LaunchScreen.storyboard",
 				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/PhotoCropEditorBorder.png",
 				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/PhotoCropEditorBorder@2x.png",
 				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/PhotoCropEditorBorder@3x.png",
-				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/PhotoEditorViewController.xib",
-				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/StickerCollectionViewCell.xib",
-				"${PODS_ROOT}/iOSPhotoEditor/Photo Editor/Photo Editor/StickersViewController.xib",
+				"${BUILT_PRODUCTS_DIR}/iOSPhotoEditor/iOSPhotoEditor.framework/PhotoEditorViewController.nib",
+				"${BUILT_PRODUCTS_DIR}/iOSPhotoEditor/iOSPhotoEditor.framework/StickerCollectionViewCell.nib",
+				"${BUILT_PRODUCTS_DIR}/iOSPhotoEditor/iOSPhotoEditor.framework/StickersViewController.nib",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
@@ -454,6 +458,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B59EF8BF254C47C2006E967D /* EmptyFile.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -516,6 +521,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.name.classup;
 				PRODUCT_NAME = classup;
+				SWIFT_OBJC_BRIDGING_HEADER = "classup-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -564,6 +570,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.name.classup;
 				PRODUCT_NAME = classup;
+				SWIFT_OBJC_BRIDGING_HEADER = "classup-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

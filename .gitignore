@@ -57,9 +57,20 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+/ios/Podfile
+/ios/Podfile.lock
+
 
 # Expo
 .expo/*
 web-build/
 android/java_pid1131.hprof
 android/java_pid21613.hprof
+android/app/gradlew
+android/app/gradlew.bat
+android/app/gradle/wrapper/gradle-wrapper.jar
+android/app/gradle/wrapper/gradle-wrapper.properties
+ios/Podfile.lock
+ios/classup.xcodeproj/project.pbxproj
+ios/Podfile.lock
+ios/Podfile.lock
