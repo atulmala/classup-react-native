@@ -86,9 +86,9 @@ const ParentMenu = ({ route, navigation }) => {
         let name = split.pop()
         formData.append('file', {
           uri: Platform.OS === 'android' ? response.uri : response.uri.replace('file://', ''),
+          type: 'image/jpeg',
           name: name
         });
-        console.log("formData = ", formData);
 
         try {
           axios.post(serverIP.concat("/pic_share/upload_student_pic/"), formData)
