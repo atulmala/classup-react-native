@@ -249,7 +249,7 @@ const LectureListTeacher = ({ route, navigation }) => {
       style={styles.container} >
       <View style={styles.container}>
         {isLoading ? <View style={styles.loading}>
-          <ActivityIndicator size='large' />
+          <ActivityIndicator size='large' color='#0097A7'/>
         </View> : (
             <CustomListview
               itemList={lectureList}

@@ -474,7 +474,7 @@ const MarksEntry = ({ route, navigation }) => {
       },
       headerRight: () =>
         <View style={styles.parallel}>
-          {isLoading && <ActivityIndicator size='large' />}
+          {isLoading && <ActivityIndicator size='large' color='#0097A7'/>}
           {!isLoading &&
             <TouchableOpacity style={styles.nextButton} onPress={() => saveMarks()}>
               <Text style={styles.nextText}>  Save  </Text>
@@ -494,7 +494,7 @@ const MarksEntry = ({ route, navigation }) => {
     <ScrollView style={styles.container} 
 >
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size='large' color='#0097A7'/>
       </View> : (
           <CustomListview
             itemList={markList}

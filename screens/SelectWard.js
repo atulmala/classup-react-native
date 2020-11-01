@@ -78,7 +78,6 @@ const SelectWard = ({ route, navigation }) => {
           renderItem={({ item }) => <CustomRow
             title={item}
             index={item.id}
-
           />}
         />
       </View>
@@ -88,7 +87,7 @@ const SelectWard = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size='large' color='#0097A7'/>
       </View> : (
           <CustomListview
             itemList={wardList

@@ -164,7 +164,7 @@ const SelectClassesAdmin = ({ route, navigation }) => {
     <View style={styles.container}>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size='large' color='#0097A7'/>
       </View> : (
           <List
             style={styles.title}

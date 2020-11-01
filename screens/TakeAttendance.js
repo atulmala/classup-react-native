@@ -272,9 +272,9 @@ const TakeAttendance = ({ route, navigation }) => {
   return (
     <AttendanceContextProvider>
       <View style={styles.container}>
-        {isLoading ? <ActivityIndicator size='large' /> : <Header />}
+        {isLoading ? <ActivityIndicator size='large' color='#0097A7'/> : <Header />}
         {isLoading ? <View style={styles.loading}>
-          <ActivityIndicator size='large' />
+          <ActivityIndicator size='large' color='#0097A7'/>
         </View> : (
             <CustomListview
               itemList={studentList}

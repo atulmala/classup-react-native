@@ -55,9 +55,15 @@ buck-out/
 # Bundle artifacts
 *.jsbundle
 
+# podfile
+/ios/Podfile
+
 # CocoaPods
 /ios/Pods/
+<<<<<<< HEAD
 /ios/Podfile
+=======
+>>>>>>> adfb52a15f7561c9be108b5c0f90fd7d18651d06
 /ios/Podfile.lock
 
 
@@ -66,6 +72,7 @@ buck-out/
 web-build/
 android/java_pid1131.hprof
 android/java_pid21613.hprof
+<<<<<<< HEAD
 android/app/gradlew
 android/app/gradlew.bat
 android/app/gradle/wrapper/gradle-wrapper.jar
@@ -74,3 +81,8 @@ ios/Podfile.lock
 ios/classup.xcodeproj/project.pbxproj
 ios/Podfile.lock
 ios/Podfile.lock
+=======
+
+# gitignore itself
+.gitignore
+>>>>>>> adfb52a15f7561c9be108b5c0f90fd7d18651d06

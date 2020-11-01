@@ -130,7 +130,7 @@ const RecepientList = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size='large' color='#0097A7'/>
       </View> : (
           <CustomListview
             itemList={receiverList}

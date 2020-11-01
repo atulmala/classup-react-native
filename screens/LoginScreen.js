@@ -58,8 +58,8 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     setLoading(true);
-    let serverIP = 'https://www.classupclient.com';
-    // let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    // let serverIP = 'https://www.classupclient.com';
+    let serverIP = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
     let url = serverIP.concat('/auth/login1/');
     axios({
       method: "POST",
@@ -240,7 +240,7 @@ const LoginScreen = ({ navigation }) => {
             {
               isLoading && (
                 <View>
-                  <ActivityIndicator style={styles.loading} size='large' />
+                  <ActivityIndicator style={styles.loading} size='large' color='#0097A7'/>
                 </View>
               )
             }
@@ -340,7 +340,7 @@ const LoginScreen = ({ navigation }) => {
       <TouchableOpacity onPress={forgotPassword}>
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
-      {isLoading && <View style={styles.loading}><ActivityIndicator size='large' /></View>}
+      {isLoading && <View style={styles.loading}><ActivityIndicator size='large' color='#0097A7'/></View>}
     </KeyboardAvoidingView>
   );
 }
