@@ -59,6 +59,24 @@ const SelectWard = ({ route, navigation }) => {
     }
   };
 
+  const HeaderTitle = () => {
+    return (
+      <View style={styles.headerTitle}>
+        <Text style={styles.headerText}>Select Ward</Text>
+      </View>
+    );
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerTitleAlign: 'left',
+      headerStyle: {
+        backgroundColor: '#808900',
+      },
+    });
+  });
+
   const CustomRow = ({ title, index }) => {
     return (
       <TouchableWithoutFeedback onPress={() => showParentMenu(index)}>
@@ -106,6 +124,7 @@ const SelectWard = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#B3D2E5',
   },
   containerRow: {
     flex: 1,
@@ -118,7 +137,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 2,
     borderRadius: 10,
-    backgroundColor: '#FFF',
+    backgroundColor: 'papayawhip',
     elevation: 6,
   },
   container_text: {
@@ -127,9 +146,22 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     justifyContent: 'center',
   },
+  headerText: {
+    ...Platform.select({
+      ios: {
+        fontSize: 16,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    fontWeight: 'bold',
+    color: 'white',
+  },
   title: {
     fontSize: 16,
-    color: '#000',
+    fontWeight: 'bold',
+    color: '#2D6386',
     fontFamily: 'Verdana'
   },
   description: {

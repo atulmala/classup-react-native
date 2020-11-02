@@ -1,10 +1,14 @@
 import 'react-native-gesture-handler';
 import React from 'react';
+import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import SplashScreen from 'react-native-splash-screen';
+
+
 import LoginScreen from './screens/LoginScreen';
 import TeacherMenu from './screens/TeacherMenu';
 import ParentMenu from './screens/ParentMenu';
@@ -75,9 +79,14 @@ import ChangePassword from './screens/ChangePassword';
 const Stack = createStackNavigator();
 
 const App = () => {
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+  
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
       <IconRegistry icons={EvaIconsPack} />
+      <StatusBar barStyle='light-content' />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
           headerStyle: {
