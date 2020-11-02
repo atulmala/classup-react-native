@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { StyleSheet, View, ActivityIndicator, FlatList, Image, TouchableWithoutFeedback } from 'react-native';
-import { Button, Text, Icon, List, ListItem } from '@ui-kitten/components';
+import { Text, } from '@ui-kitten/components';
 import axios from 'axios';
 
 const SelectWard = ({ route, navigation }) => {
@@ -27,7 +27,12 @@ const SelectWard = ({ route, navigation }) => {
           ward.currentClass = response.data[i].current_class;
           ward.currentSection = response.data[i].current_section;
           ward.classSec = response.data[i].current_class + " - " + response.data[i].current_section;
-          ward.picUri = response.data[i].pic_uri;
+
+          ward.picUri = "https://classup2.s3.us-east-2.amazonaws.com/media/prod/student_pics/no_image.png";
+          if (response.data[i].pic_uri != "not uploaded") {
+            ward.picUri = response.data[i].pic_uri;
+          }
+
           wardList.push(ward);
         }
         setLoading(false);
@@ -88,7 +93,7 @@ const SelectWard = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' color='#0097A7'/>
+        <ActivityIndicator size='large' color='#0097A7' />
       </View> : (
           <CustomListview
             itemList={wardList
@@ -133,10 +138,11 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   photo: {
-    height: 40,
-    width: 40,
+    height: 45,
+    width: 45,
     borderRadius: 10,
-    borderColor: 'black'
+    marginLeft: 4,
+    borderColor: 'darkorange'
   },
 
   loading: {
