@@ -86,7 +86,7 @@ const TeacherMenu = ({ route, navigation }) => {
             source={require('../assets/online_class.png')}
             style={styles.ImageIconStyle2}
           />
-          <Text style={styles.text}>Online Classes</Text>
+          <Text style={styles.text}>Share Lecture</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>

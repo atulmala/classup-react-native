@@ -7,8 +7,7 @@ import ImagePicker from 'react-native-image-picker';
 const ParentMenu = ({ route, navigation }) => {
 
   const testPress = () => {
-    Alert.alert('was pressed');
-    console.log('was pressed');
+    Alert.alert('Not Available. Please contact School');
   };
 
   const { serverIP } = route.params;
@@ -201,7 +200,7 @@ const ParentMenu = ({ route, navigation }) => {
         </View>
         <View style={styles.parallel}>
           <TouchableOpacity style={[button, { backgroundColor: 'maroon' }]} onPress={pickImage}>
-            <Text style={styles.font}>Upload Student Pic</Text>
+            <Text style={styles.font}>Upload Your Avatar</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[button, { backgroundColor: 'olivedrab' }]} onPress={() => nextScreen('ChangePassword')}>
             <Text style={styles.font}>Change Password</Text>
