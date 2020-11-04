@@ -82,11 +82,14 @@ const App = () => {
   React.useEffect(() => {
     SplashScreen.hide();
   }, []);
-  
+
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
       <IconRegistry icons={EvaIconsPack} />
-      <StatusBar barStyle='light-content' />
+      <StatusBar
+        barStyle='light-content'
+        backgroundColor="#4F6D7A"
+      />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
           headerStyle: {
@@ -179,7 +182,7 @@ const App = () => {
           <Stack.Screen name="SelectSubjectLectures" component={SelectSubjectLectures} />
           <Stack.Screen name="LectureListStudent" component={LectureListStudent} />
           <Stack.Screen name="CommunicationCenter" component={CommunicationCenter} />
-          <Stack.Screen name="SelectClassTeacherCommunication" component={SelectClassTeacherCommunication}/>
+          <Stack.Screen name="SelectClassTeacherCommunication" component={SelectClassTeacherCommunication} />
           <Stack.Screen name="SelectStudentsForMessage" component={SelectStudentsForMessage} />
           <Stack.Screen name="ComposeMessageTeacher" component={ComposeMessageTeacher} />
           <Stack.Screen name="PreviewAttachment" component={PreviewAttachment} />
