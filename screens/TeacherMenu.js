@@ -39,7 +39,7 @@ const TeacherMenu = ({ route, navigation }) => {
       <View style={styles.parallel}>
         <TouchableOpacity style={[button, {backgroundColor: 'chocolate'}]} onPress={() => nextScreen('SelectClass')}>
           <Image
-            source={require('../assets/attendance.png')}
+            source={require('../assets/LogoMakr-22kCL4.png')}
             style={styles.ImageIconStyle}
           />
           <Text style={styles.text} status='primary'>Take/Update Attendance</Text>
@@ -47,7 +47,7 @@ const TeacherMenu = ({ route, navigation }) => {
 
         <TouchableOpacity style={[button, {backgroundColor: 'midnightblue'}]} onPress={() => nextScreen('SelectMonth')}>
           <Image
-            source={require('../assets/attendance_summary.png')}
+            source={require('../assets/attendance_summary1.png')}
             style={styles.ImageIconStyle}
           />
           <Text body style={styles.text}>Attendance Summaries</Text>
@@ -57,7 +57,7 @@ const TeacherMenu = ({ route, navigation }) => {
       <View style={styles.parallel}>
         <TouchableOpacity style={[button, {backgroundColor: 'darkolivegreen'}]} >
           <Image
-            source={require('../assets/school_bus.png')}
+            source={require('../assets/bus.png')}
             style={styles.ImageIconStyle2}
           />
           <Text body style={styles.text}>Bus Attendance</Text>
@@ -65,7 +65,7 @@ const TeacherMenu = ({ route, navigation }) => {
 
         <TouchableOpacity style={[button, {backgroundColor: 'dodgerblue'}]} onPress={() => nextScreen('CommunicationCenter')}>
           <Image
-            source={require('../assets/communication_center.png')}
+            source={require('../assets/communication.png')}
             style={styles.ImageIconStyle2}
           />
           <Text body style={styles.text}>Communications</Text>
@@ -81,18 +81,18 @@ const TeacherMenu = ({ route, navigation }) => {
           <Text body style={styles.text}>Homework</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[button, {backgroundColor: 'brown'}]} onPress={() => nextScreen('LectureListTeacher')}>
+        <TouchableOpacity style={[button, {backgroundColor: '#827717'}]} onPress={() => nextScreen('LectureListTeacher')}>
           <Image
-            source={require('../assets/online_class.png')}
+            source={require('../assets/lecture.png')}
             style={styles.ImageIconStyle2}
           />
           <Text style={styles.text}>Share Lecture</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.parallel}>
-        <TouchableOpacity style={[button, {backgroundColor: 'darkorchid'}]} onPress={() => nextScreen('SelectExam')}>
+        <TouchableOpacity style={[button, {backgroundColor: '#F8BBD0'}]} onPress={() => nextScreen('SelectExam')}>
           <Image
-            source={require('../assets/exam4.png')}
+            source={require('../assets/test_exam.png')}
             style={styles.ImageIconStyle}
           />
           <Text body style={styles.text}>Test/Exam Management</Text>
@@ -110,7 +110,7 @@ const TeacherMenu = ({ route, navigation }) => {
       <View style={styles.parallel}>
         <TouchableOpacity style={[button, {backgroundColor: 'lightsalmon'}]} onPress={() => nextScreen('SetSubjects')}>
           <Image
-            source={require('../assets/set_my_subjects.png')}
+            source={require('../assets/subjects.png')}
             style={styles.ImageIconStyle2}
           />
           <Text body style={styles.text} >Set My Subjects</Text>

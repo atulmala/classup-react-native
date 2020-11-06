@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 import { Divider, List, ListItem } from '@ui-kitten/components';
 import axios from 'axios';
 
@@ -42,13 +42,29 @@ const SelectSubject = ({ route, navigation }) => {
       subject: subjectList[index].subjectName,
       comingFrom: comingFrom
     });
-
   };
+
+  const HeaderTitle = () => {
+    return (
+      <View style={styles.headerTitle}>
+        <Text style={styles.headerText}>Select Subject</Text>
+      </View>
+    );
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerTitleAlign: 'left',
+      headerStyle: {
+        backgroundColor: '#808900',
+      },
+    });
+  });
 
   const renderItem = ({ item, index }) => (
     <ListItem style={styles.title} title={item.subjectName} onPress={() => showHW(index)} />
   );
-
 
   return (
     <View style={styles.container}>
@@ -94,6 +110,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
     fontFamily: 'Verdana'
+  },
+  headerText: {
+    ...Platform.select({
+      ios: {
+        fontSize: 16,
+      },
+      android: {
+        fontSize: 16,
+      }
+    }),
+    fontWeight: 'bold',
+    color: 'white',
   },
 
 

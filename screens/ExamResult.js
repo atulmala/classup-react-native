@@ -43,25 +43,31 @@ const ExamResult = ({ route, navigation }) => {
           labels.push(subject);
           let max_marks = results.data[i].max_marks;
           let marks = results.data[i].marks;
+          if (marks < 0 || marks == " ")  {
+            marks = "ABS";
+          }
           let m = {};
           m.x = subject;
           m.y = marks;
           m.label = marks;
-          marksArray.push(m);
-
+          
           let highest = results.data[i].highest;
           let h = {};
           h.x = subject;
           h.y = highest;
           h.label = highest;
-          highestArray.push(h);
-
+          
           let average = results.data[i].average;
           let a = {};
           a.x = subject;
           a.y = parseInt(average);
           a.label = parseInt(average);
-          averageArray.push(a);
+          
+          if (max_marks != "Grade Based") {
+            marksArray.push(m);
+            highestArray.push(h);
+            averageArray.push(a);
+          }
 
           subjectList.push(s_no);
           marksRow = [subject, max_marks, marks, highest, average];
@@ -86,7 +92,7 @@ const ExamResult = ({ route, navigation }) => {
               width: 30,
               height: 30,
               marginLeft: 15,
-              marginRight: 10
+              marginRight: 0
             }}
           />
         </TouchableOpacity>

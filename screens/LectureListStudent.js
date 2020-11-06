@@ -106,7 +106,7 @@ const LectureListStudent = ({ route, navigation }) => {
         header={headerProps => renderItemHeader(headerProps, title)}
       >
         <Text style={styles.baseText}>
-          Subject:
+          Teacher:
               <Text style={styles.innerText}> {title.teacher}</Text>
         </Text>
         <Text style={styles.baseText}>

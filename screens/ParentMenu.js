@@ -58,6 +58,19 @@ const ParentMenu = ({ route, navigation }) => {
   };
 
   const nextScreen = (screen) => {
+    switch (screen) {
+      case "SelectSubject":
+      case "SelectSubjectLectures":
+      case "UpcomingTests":
+      case "OnlineTestToday":
+      case "SelectExam":
+        if (feeDefaultStatus == "yes")  {
+          alert("Please clear your ward's fee dues in order to proceed further");
+          return;
+        }
+        break;
+
+    }
     navigation.navigate(screen, params);
   };
 

@@ -8,7 +8,6 @@ import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import SplashScreen from 'react-native-splash-screen';
 
-
 import LoginScreen from './screens/LoginScreen';
 import TeacherMenu from './screens/TeacherMenu';
 import ParentMenu from './screens/ParentMenu';
@@ -132,9 +131,7 @@ const App = () => {
           <Stack.Screen name="HWSubmissions" component={HWSubmissions} options={{
             title: 'HW Submissions',
           }} />
-          <Stack.Screen name="SelectSubject" component={SelectSubject} options={{
-            title: 'Select Subject',
-          }} />
+          <Stack.Screen name="SelectSubject" component={SelectSubject} />
           <Stack.Screen name="SelectWard" component={SelectWard} options={{
             title: 'Select Ward',
           }} />
