@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Platform, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity, FlatList, Image, Alert
 } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 
 const TestList = ({ route, navigation }) => {
@@ -14,6 +15,7 @@ const TestList = ({ route, navigation }) => {
   const [isLoading, setLoading] = useState(true);
 
   const [testList] = useState([]);
+  const isFocused = useIsFocused();
 
   // retrieve the list of pending and completed test list for this teacher
   const getPendingTestList = () => {
@@ -27,6 +29,7 @@ const TestList = ({ route, navigation }) => {
   useEffect(() => {
     axios.all([getPendingTestList(), getCompletedTestList()]).then(
       axios.spread(function (pending, completed) {
+        testList.length = 0;
         for (var i = 0; i < pending.data.length; i++) {
           let test = {};
           let res = pending.data[i];
@@ -65,7 +68,7 @@ const TestList = ({ route, navigation }) => {
         setLoading(false);
       })
     );
-  }, [schoolID]);
+  }, [isFocused]);
 
   const BigPlus = () => {
     return (

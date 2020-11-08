@@ -214,8 +214,8 @@ const MarksEntry = ({ route, navigation }) => {
               );
               return;
             }
-            else  {
-              params1.pa = -5000.0
+            else {
+              params1.pa = -5000.0;
             }
           }
         }
@@ -235,8 +235,8 @@ const MarksEntry = ({ route, navigation }) => {
               );
               return;
             }
-            else  {
-              params1.notebook = -5000.0
+            else {
+              params1.notebook = -5000.0;
             }
           }
         }
@@ -256,8 +256,8 @@ const MarksEntry = ({ route, navigation }) => {
               );
               return;
             }
-            else  {
-              params1.multi_assess = -5000.0
+            else {
+              params1.multi_assess = -5000.0;
             }
           }
         }
@@ -277,8 +277,8 @@ const MarksEntry = ({ route, navigation }) => {
               );
               return;
             }
-            else  {
-              params1.subject_enrich = -5000.0
+            else {
+              params1.subject_enrich = -5000.0;
             }
           }
         }
@@ -286,22 +286,23 @@ const MarksEntry = ({ route, navigation }) => {
         params1.prac_marks = mark.prac_marks;
         if (params1.prac_marks == "") {
           if (type == "term" && higherClass) {
-            let message = "Please enter Practical marks for " + mark.fullName;
-            Alert.alert(
-              "Incomplete Entries",
-              message,
-              [
-                { text: "OK" }
-              ],
-              { cancelable: false }
-            );
-            return;
-          }
-          else  {
-            params1.prac_marks = -5000.0
+            if (mark.marks_obtained != "ABSENT") {
+              let message = "Please enter Practical marks for " + mark.fullName;
+              Alert.alert(
+                "Incomplete Entries",
+                message,
+                [
+                  { text: "OK" }
+                ],
+                { cancelable: false }
+              );
+              return;
+            }
+            else {
+              params1.prac_marks = -5000.0;
+            }
           }
         }
-
         params[mark.id] = params1;
       }
       else {
@@ -325,7 +326,16 @@ const MarksEntry = ({ route, navigation }) => {
                 onPress: () => console.log("Cancel Pressed"),
                 style: "cancel"
               },
-              { text: "OK", onPress: () => console.log("OK Pressed") }
+              {
+                text: "OK", onPress: () => {
+                  navigation.navigate('TestList', {
+                    serverIP: serverIP,
+                    schoolID: schoolID,
+                    userID: userID,
+                    exam: exam
+                  });
+                }
+              }
             ],
             { cancelable: false }
           );
