@@ -118,7 +118,7 @@ const MarksEntry = ({ route, navigation }) => {
         }
 
         params1.pa = mark.periodic_test_marks;
-        if (params1.pa== "") {
+        if (params1.pa == "") {
           params1.pa = -5000.00;
         }
 
@@ -199,67 +199,87 @@ const MarksEntry = ({ route, navigation }) => {
           params1.marks = -1000.00;
         }
 
-        params1.periodic_test_marks = mark.periodic_test_marks;
-        if (params1.periodic_test_marks == "") {
+        params1.pa = mark.periodic_test_marks;
+        if (params1.pa == "") {
           if (type == "term") {
-            let message = "Please enter PA marks for " + mark.fullName;
-            Alert.alert(
-              "Incomplete Entries",
-              message,
-              [
-                { text: "OK" }
-              ],
-              { cancelable: false }
-            );
-            return;
+            if (mark.marks_obtained != "ABSENT") {
+              let message = "Please enter PA marks for " + mark.fullName;
+              Alert.alert(
+                "Incomplete Entries",
+                message,
+                [
+                  { text: "OK" }
+                ],
+                { cancelable: false }
+              );
+              return;
+            }
+            else  {
+              params1.pa = -5000.0
+            }
           }
         }
 
-        params1.notebook_marks = mark.notebook_marks;
-        if (params1.notebook_marks == "") {
+        params1.notebook = mark.notebook_marks;
+        if (params1.notebook == "") {
           if (type == "term") {
-            let message = "Please enter Notebook marks for " + mark.fullName;
-            Alert.alert(
-              "Incomplete Entries",
-              message,
-              [
-                { text: "OK" }
-              ],
-              { cancelable: false }
-            );
-            return;
+            if (mark.marks_obtained != "ABSENT") {
+              let message = "Please enter Notebook marks for " + mark.fullName;
+              Alert.alert(
+                "Incomplete Entries",
+                message,
+                [
+                  { text: "OK" }
+                ],
+                { cancelable: false }
+              );
+              return;
+            }
+            else  {
+              params1.notebook = -5000.0
+            }
           }
         }
 
-        params1.multi_asses_marks = mark.multi_asses_marks;
-        if (params1.multi_asses_marks == "") {
+        params1.multi_assess = mark.multi_asses_marks;
+        if (params1.multi_assess == "") {
           if (type == "term") {
-            let message = "Please enter Mutipl Assessment marks for " + mark.fullName;
-            Alert.alert(
-              "Incomplete Entries",
-              message,
-              [
-                { text: "OK" }
-              ],
-              { cancelable: false }
-            );
-            return;
+            if (mark.marks_obtained != "ABSENT") {
+              let message = "Please enter Mutiple Assessment marks for " + mark.fullName;
+              Alert.alert(
+                "Incomplete Entries",
+                message,
+                [
+                  { text: "OK" }
+                ],
+                { cancelable: false }
+              );
+              return;
+            }
+            else  {
+              params1.multi_assess = -5000.0
+            }
           }
         }
 
-        params1.sub_enrich_marks = mark.sub_enrich_marks;
-        if (params1.sub_enrich_marks == "") {
+        params1.subject_enrich = mark.sub_enrich_marks;
+        if (params1.subject_enrich == "") {
           if (type == "term") {
-            let message = "Please enter Subject Enrichment marks for " + mark.fullName;
-            Alert.alert(
-              "Incomplete Entries",
-              message,
-              [
-                { text: "OK" }
-              ],
-              { cancelable: false }
-            );
-            return;
+            if (mark.marks_obtained != "ABSENT") {
+              let message = "Please enter Subject Enrichment marks for " + mark.fullName;
+              Alert.alert(
+                "Incomplete Entries",
+                message,
+                [
+                  { text: "OK" }
+                ],
+                { cancelable: false }
+              );
+              return;
+            }
+            else  {
+              params1.subject_enrich = -5000.0
+            }
           }
         }
 
@@ -277,6 +297,9 @@ const MarksEntry = ({ route, navigation }) => {
             );
             return;
           }
+          else  {
+            params1.prac_marks = -5000.0
+          }
         }
 
         params[mark.id] = params1;
@@ -285,12 +308,27 @@ const MarksEntry = ({ route, navigation }) => {
         params[mark.id] = mark.grade;
       }
     }
+    setLoading(true);
     let url = serverIP.concat("/academics/submit_marks/", schoolID, "/");
     axios.post(url, {
       params
     })
       .then(function (response) {
         if (response.data.status == "success") {
+          setLoading(false);
+          Alert.alert(
+            "Marks Submitted",
+            "Marks Submitted and students notified via Notification/SMS",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: "OK", onPress: () => console.log("OK Pressed") }
+            ],
+            { cancelable: false }
+          );
 
         }
       })
@@ -298,7 +336,7 @@ const MarksEntry = ({ route, navigation }) => {
         setLoading(false);
         console.log("error = ", error);
         Alert.alert(
-          "Error Saving Marks",
+          "Error Submitting Marks",
           "An error occurred while saving marks. Please try again. If error persist pl contact ClassUp Support",
           [
             {
@@ -474,7 +512,7 @@ const MarksEntry = ({ route, navigation }) => {
       },
       headerRight: () =>
         <View style={styles.parallel}>
-          {isLoading && <ActivityIndicator size='large' color='#0097A7'/>}
+          {isLoading && <ActivityIndicator size='large' color='#0097A7' />}
           {!isLoading &&
             <TouchableOpacity style={styles.nextButton} onPress={() => saveMarks()}>
               <Text style={styles.nextText}>  Save  </Text>
@@ -491,10 +529,10 @@ const MarksEntry = ({ route, navigation }) => {
     behavior={Platform.OS == "ios" ? "padding" : "height"}
     keyboardVerticalOffset={Platform.OS == "android" ? useHeaderHeight() + 30 : useHeaderHeight()}
     style={styles.container} >
-    <ScrollView style={styles.container} 
->
+    <ScrollView style={styles.container}
+    >
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' color='#0097A7'/>
+        <ActivityIndicator size='large' color='#0097A7' />
       </View> : (
           <CustomListview
             itemList={markList}
