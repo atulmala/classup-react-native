@@ -43,30 +43,32 @@ const ExamResult = ({ route, navigation }) => {
           labels.push(subject);
           let max_marks = results.data[i].max_marks;
           let marks = results.data[i].marks;
-          if (marks < 0 || marks == " ")  {
+          if (marks < 0 || marks == " ") {
             marks = "ABS";
           }
           let m = {};
           m.x = subject;
           m.y = marks;
           m.label = marks;
-          
+
           let highest = results.data[i].highest;
           let h = {};
           h.x = subject;
           h.y = highest;
           h.label = highest;
-          
+
           let average = results.data[i].average;
           let a = {};
           a.x = subject;
           a.y = parseInt(average);
           a.label = parseInt(average);
-          
+
           if (max_marks != "Grade Based") {
-            marksArray.push(m);
-            highestArray.push(h);
-            averageArray.push(a);
+            if (m >= 0) {
+              marksArray.push(m);
+              highestArray.push(h);
+              averageArray.push(a);
+            }
           }
 
           subjectList.push(s_no);
@@ -137,7 +139,7 @@ const ExamResult = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {isLoading ? <View style={styles.loading}>
-        <ActivityIndicator size='large' color='#0097A7'/>
+        <ActivityIndicator size='large' color='#0097A7' />
       </View> : (
           <View style={styles.container}>
             { tableMode &&

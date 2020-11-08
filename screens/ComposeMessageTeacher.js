@@ -313,7 +313,7 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
                       {"Preview Attachment"}
                     </Button>
                   </Layout>
-                  <Layout style={styles.buttonContainer}>
+                  {/* <Layout style={styles.buttonContainer}>
                     <Button
                       style={styles.button}
                       appearance='outline'
@@ -323,7 +323,7 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
                       onPress={sendMessage}>
                       {"Remove Attachment"}
                     </Button>
-                  </Layout>
+                  </Layout> */}
                 </Layout>
               </Layout>
             </Layout>

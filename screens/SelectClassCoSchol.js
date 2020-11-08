@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, ActivityIndicator, Alert} from 'react-native';
-import { IndexPath, Layout, Text, Select, Button, SelectItem, Radio, RadioGroup} from '@ui-kitten/components';
+import { StyleSheet, ScrollView, View, ActivityIndicator, Alert } from 'react-native';
+import { IndexPath, Layout, Text, Select, Button, SelectItem, Radio, RadioGroup } from '@ui-kitten/components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
@@ -106,9 +106,7 @@ const SelectClassCoSchol = ({ route, navigation }) => {
     axios({
       method: "GET",
       url: url,
-      data: {
 
-      }
     }).then(
       result => {
         const json = result.data;
@@ -147,8 +145,6 @@ const SelectClassCoSchol = ({ route, navigation }) => {
           );
         }
       });
-
-
   };
 
   const HeaderTitle = () => {
@@ -173,7 +169,7 @@ const SelectClassCoSchol = ({ route, navigation }) => {
     <Layout style={styles.container} level='1'>
       <Toast ref={(ref) => Toast.setRef(ref)} />
       {isLoading ? <Layout style={styles.loading}>
-        <ActivityIndicator size='large' color='#0097A7'/>
+        <ActivityIndicator size='large' color='#0097A7' />
       </Layout> : (
           <ScrollView
             style={styles.scrollContainer}
