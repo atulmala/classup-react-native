@@ -64,7 +64,7 @@ const ExamResult = ({ route, navigation }) => {
           a.label = parseInt(average);
 
           if (max_marks != "Grade Based") {
-            if (m >= 0) {
+            if (marks >= 0) {
               marksArray.push(m);
               highestArray.push(h);
               averageArray.push(a);
@@ -189,7 +189,7 @@ const ExamResult = ({ route, navigation }) => {
                         fontFamily: "verdana",
                         fontWeight: 'bold',
                         letterSpacing: "1px",
-                        stroke: "#61dafb ",
+                        stroke: "#61dafb",
                         fontSize: 10,
                         angle: 335,
                         verticalAnchor: "end",
