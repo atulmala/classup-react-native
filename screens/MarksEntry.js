@@ -105,7 +105,6 @@ const MarksEntry = ({ route, navigation }) => {
 
   let saveMarks = () => {
     let params = {};
-
     for (let mark of markList) {
       let params1 = {};
       if (!gradeBased) {
@@ -143,11 +142,14 @@ const MarksEntry = ({ route, navigation }) => {
         }
 
         params[mark.id] = params1;
+
+        
       }
       else {
         params[mark.id] = mark.grade;
       }
     }
+    
     let url = serverIP.concat("/academics/save_marks/");
     axios.post(url, {
       params
