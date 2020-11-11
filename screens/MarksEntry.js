@@ -109,48 +109,50 @@ const MarksEntry = ({ route, navigation }) => {
       let params1 = {};
       if (!gradeBased) {
         params1.marks = mark.marks_obtained;
-        if (params1.marks == "") {
+        console.log("params1.marks = ", params1.marks);
+        if (params1.marks === "") {
+          console.log("yes, marks obtained are blank");
           params1.marks = -5000.00;
+          console.log("now params1.marks = ", params1.marks);
         }
         if (params1.marks == "ABSENT") {
           params1.marks = -1000.00;
         }
 
         params1.pa = mark.periodic_test_marks;
-        if (params1.pa == "") {
+        if (params1.pa === "") {
           params1.pa = -5000.00;
         }
 
         params1.notebook = mark.notebook_marks;
-        if (params1.notebook == "") {
+        if (params1.notebook === "") {
           params1.notebook = -5000.00;
         }
 
         params1.multi_assess = mark.multi_asses_marks;
-        if (params1.multi_assess == "") {
+        if (params1.multi_assess === "") {
           params1.multi_assess = -5000.00;
         }
 
         params1.subject_enrich = mark.sub_enrich_marks;
-        if (params1.subject_enrich == "") {
+        if (params1.subject_enrich === "") {
           params1.subject_enrich = -5000.00;
         }
 
         params1.prac_marks = mark.prac_marks;
-        if (params1.prac_marks == "") {
+        if (params1.prac_marks === "") {
           params1.prac_marks = -5000.00;
         }
-
         params[mark.id] = params1;
-
-        
+        console.log("params[mark.id] = ", params[mark.id]);
       }
       else {
         params[mark.id] = mark.grade;
       }
     }
-    
+
     let url = serverIP.concat("/academics/save_marks/");
+    console.log("params = ", params);
     axios.post(url, {
       params
     })
@@ -185,7 +187,7 @@ const MarksEntry = ({ route, navigation }) => {
       let params1 = {};
       if (!gradeBased) {
         params1.marks = mark.marks_obtained;
-        if (params1.marks == "") {
+        if (params1.marks === "") {
           let message = "Please enter marks for " + mark.fullName + " or mark Absent";
           Alert.alert(
             "Incomplete Entries",
@@ -203,90 +205,82 @@ const MarksEntry = ({ route, navigation }) => {
 
         params1.pa = mark.periodic_test_marks;
         if (params1.pa == "") {
-          if (type == "term") {
-            if (mark.marks_obtained != "ABSENT") {
-              let message = "Please enter PA marks for " + mark.fullName;
-              Alert.alert(
-                "Incomplete Entries",
-                message,
-                [
-                  { text: "OK" }
-                ],
-                { cancelable: false }
-              );
-              return;
-            }
-            else {
-              params1.pa = -5000.0;
-            }
+          if (type == "term" && !higherClass) {
+            let message = "Please enter PA marks for " + mark.fullName;
+            Alert.alert(
+              "Incomplete Entries",
+              message,
+              [
+                { text: "OK" }
+              ],
+              { cancelable: false }
+            );
+            return;
+          }
+          else {
+            params1.pa = -5000.0;
           }
         }
 
         params1.notebook = mark.notebook_marks;
         if (params1.notebook == "") {
-          if (type == "term") {
-            if (mark.marks_obtained != "ABSENT") {
-              let message = "Please enter Notebook marks for " + mark.fullName;
-              Alert.alert(
-                "Incomplete Entries",
-                message,
-                [
-                  { text: "OK" }
-                ],
-                { cancelable: false }
-              );
-              return;
-            }
-            else {
-              params1.notebook = -5000.0;
-            }
+          if (type == "term" && !higherClass) {
+            let message = "Please enter Notebook marks for " + mark.fullName;
+            Alert.alert(
+              "Incomplete Entries",
+              message,
+              [
+                { text: "OK" }
+              ],
+              { cancelable: false }
+            );
+            return;
+          }
+          else {
+            params1.notebook = -5000.0;
           }
         }
 
         params1.multi_assess = mark.multi_asses_marks;
         if (params1.multi_assess == "") {
-          if (type == "term") {
-            if (mark.marks_obtained != "ABSENT") {
-              let message = "Please enter Mutiple Assessment marks for " + mark.fullName;
-              Alert.alert(
-                "Incomplete Entries",
-                message,
-                [
-                  { text: "OK" }
-                ],
-                { cancelable: false }
-              );
-              return;
-            }
-            else {
-              params1.multi_assess = -5000.0;
-            }
+          if (type == "term" && !higherClass) {
+            let message = "Please enter Mutiple Assessment marks for " + mark.fullName;
+            Alert.alert(
+              "Incomplete Entries",
+              message,
+              [
+                { text: "OK" }
+              ],
+              { cancelable: false }
+            );
+            return;
+          }
+          else {
+            params1.multi_assess = -5000.0;
           }
         }
 
         params1.subject_enrich = mark.sub_enrich_marks;
         if (params1.subject_enrich == "") {
-          if (type == "term") {
-            if (mark.marks_obtained != "ABSENT") {
-              let message = "Please enter Subject Enrichment marks for " + mark.fullName;
-              Alert.alert(
-                "Incomplete Entries",
-                message,
-                [
-                  { text: "OK" }
-                ],
-                { cancelable: false }
-              );
-              return;
-            }
-            else {
-              params1.subject_enrich = -5000.0;
-            }
+          if (type == "term" && !higherClass) {
+            let message = "Please enter Subject Enrichment marks for " + mark.fullName;
+            Alert.alert(
+              "Incomplete Entries",
+              message,
+              [
+                { text: "OK" }
+              ],
+              { cancelable: false }
+            );
+            return;
+          }
+          else {
+            params1.subject_enrich = -5000.0;
           }
         }
 
         params1.prac_marks = mark.prac_marks;
-        if (params1.prac_marks == "") {
+        if (params1.prac_marks === "") {
           if (type == "term" && higherClass) {
             if (mark.marks_obtained != "ABSENT") {
               let message = "Please enter Practical marks for " + mark.fullName;
