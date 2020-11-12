@@ -13,6 +13,7 @@ const TestList = ({ route, navigation }) => {
   const { exam } = route.params;
 
   const [isLoading, setLoading] = useState(true);
+  const [dummyState, setDummyState] = useState(0)
 
   const [testList] = useState([]);
   const isFocused = useIsFocused();
@@ -30,6 +31,7 @@ const TestList = ({ route, navigation }) => {
     axios.all([getPendingTestList(), getCompletedTestList()]).then(
       axios.spread(function (pending, completed) {
         testList.length = 0;
+        console.log('testList after initializing to zero = ', testList);
         for (var i = 0; i < pending.data.length; i++) {
           let test = {};
           let res = pending.data[i];
@@ -47,6 +49,7 @@ const TestList = ({ route, navigation }) => {
           test.type = res.test_type;
           testList.push(test);
         }
+        console.log("testList after executing the pending portion = ", testList);
 
         for (var j = 0; j < completed.data.length; j++) {
           let test = {};
@@ -65,6 +68,8 @@ const TestList = ({ route, navigation }) => {
           test.type = res.test_type;
           testList.push(test);
         }
+        setDummyState(Math.floor(Math.random() * 10));
+        setDummyState(Math.floor(Math.random() * 10));
         setLoading(false);
       })
     );
