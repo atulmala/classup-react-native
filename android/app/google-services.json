@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "859517855285",
+    "firebase_url": "https://classup-reactnative.firebaseio.com",
+    "project_id": "classup-reactnative",
+    "storage_bucket": "classup-reactnative.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859517855285:android:918b74ee98ae141008737c",
+        "android_client_info": {
+          "package_name": "com.classup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859517855285-lmh0iq0eg42mn04v5r8adjcvnh5494uo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBD4CXTEDPoaXcPgdJTt_5AhEczoMS2MyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859517855285-lmh0iq0eg42mn04v5r8adjcvnh5494uo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
