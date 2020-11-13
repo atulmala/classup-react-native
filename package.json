@@ -16,6 +16,7 @@
     "@react-native-community/picker": "^1.6.5",
     "@react-native-community/progress-bar-android": "^1.0.3",
     "@react-native-community/progress-view": "^1.2.2",
+    "@react-native-firebase/analytics": "^8.0.1",
     "@react-native-firebase/app": "^9.0.0",
     "@react-navigation/native": "^5.7.2",
     "@react-navigation/stack": "^5.8.0",

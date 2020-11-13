@@ -1614,6 +1614,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/progress-view/-/progress-view-1.2.2.tgz#e1e3b1ce232dc7a20c5d1fbbe617012d4b3aa6b6"
   integrity sha512-g3ox4TbiqxSaPwLFSBRRhb0uJQxnaPDdT+ppyWyj9obiirLK0ULbJnxuPaiApHEUKYQQ+O04McEh7C97xoWp2w==
 
+"@react-native-firebase/analytics@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-8.0.1.tgz#8ee720d6f9931d5cd38c372bf9a63605c531d131"
+  integrity sha512-KvXg965Z1jPJRms/tC7k79mOC9zozfqtfcf/tERzyMTmvkLqxcz3MYKpPge/zManlqRlwbiRLrTRLhjF5XERuw==
+
 "@react-native-firebase/app@^9.0.0":
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-9.0.0.tgz#12ecdd86eb99057cff783d66f3cc836b0b7f2f46"
