@@ -182,7 +182,7 @@ const MarksEntry = ({ route, navigation }) => {
       let params1 = {};
       if (!gradeBased) {
         params1.marks = mark.marks_obtained;
-        if (params1.marks === "") {
+        if (params1.marks === "" || params1.marks < -1000) {
           let message = "Please enter marks for " + mark.fullName + " or mark Absent";
           Alert.alert(
             "Incomplete Entries",
@@ -199,7 +199,7 @@ const MarksEntry = ({ route, navigation }) => {
         }
 
         params1.pa = mark.periodic_test_marks;
-        if (params1.pa == "") {
+        if (params1.pa == "" || params1.pa < -1000) {
           if (type == "term" && !higherClass) {
             let message = "Please enter PA marks for " + mark.fullName;
             Alert.alert(
@@ -218,7 +218,7 @@ const MarksEntry = ({ route, navigation }) => {
         }
 
         params1.multi_assess = mark.multi_asses_marks;
-        if (params1.multi_assess === "") {
+        if (params1.multi_assess === "" || params1.multi_assess < -1000) {
           if (type == "term" && !higherClass) {
             let message = "Please enter Mutiple Assessment marks for " + mark.fullName;
             Alert.alert(
@@ -237,7 +237,7 @@ const MarksEntry = ({ route, navigation }) => {
         }
 
         params1.notebook = mark.notebook_marks;
-        if (params1.notebook === "") {
+        if (params1.notebook === "" || params1.notebook < -1000) {
           if (type == "term" && !higherClass) {
             let message = "Please enter Notebook marks for " + mark.fullName;
             Alert.alert(
@@ -256,7 +256,7 @@ const MarksEntry = ({ route, navigation }) => {
         }
 
         params1.subject_enrich = mark.sub_enrich_marks;
-        if (params1.subject_enrich === "") {
+        if (params1.subject_enrich === "" || params1.subject_enrich < -1000) {
           if (type == "term" && !higherClass) {
             let message = "Please enter Subject Enrichment marks for " + mark.fullName;
             Alert.alert(
@@ -275,7 +275,7 @@ const MarksEntry = ({ route, navigation }) => {
         }
 
         params1.prac_marks = mark.prac_marks;
-        if (params1.prac_marks === "") {
+        if (params1.prac_marks === "" || params1.prac_marks < -1000) {
           if (type == "term" && higherClass) {
             let message = "Please enter Practical marks for " + mark.fullName;
             Alert.alert(
@@ -397,6 +397,9 @@ const MarksEntry = ({ route, navigation }) => {
             label={evaProps => <Text {...evaProps}>Marks</Text>}
             defaultValue={markList[index].marks_obtained.toString()}
             onChangeText={marks => {
+              if (marks === "") {
+                marks = -5000.00
+              }
               markList[index].marks_obtained = parseFloat(marks);
             }}
           />
@@ -422,6 +425,9 @@ const MarksEntry = ({ route, navigation }) => {
               keyboardType="decimal-pad"
               label={evaProps => <Text {...evaProps}>Practical</Text>}
               onChangeText={marks => {
+                if (marks === "") {
+                  marks = -5000.00
+                }
                 markList[index].prac_marks = parseFloat(marks);
               }}
             />}
@@ -436,6 +442,9 @@ const MarksEntry = ({ route, navigation }) => {
               label={evaProps => <Text {...evaProps}>PA</Text>}
               defaultValue={markList[index].periodic_test_marks}
               onChangeText={marks => {
+                if (marks === "") {
+                  marks = -5000.00
+                }
                 markList[index].periodic_test_marks = parseFloat(marks);
               }}
             />
@@ -447,6 +456,9 @@ const MarksEntry = ({ route, navigation }) => {
               label={evaProps => <Text {...evaProps}>Multi Ass</Text>}
               defaultValue={markList[index].multi_asses_marks}
               onChangeText={marks => {
+                if (marks === "") {
+                  marks = -5000.00
+                }
                 markList[index].multi_asses_marks = parseFloat(marks);
               }}
             />
@@ -458,6 +470,9 @@ const MarksEntry = ({ route, navigation }) => {
               label={evaProps => <Text {...evaProps}>Notebook</Text>}
               defaultValue={markList[index].notebook_marks}
               onChangeText={marks => {
+                if (marks === "") {
+                  marks = -5000.00
+                }
                 markList[index].notebook_marks = marks;
               }}
             />
@@ -469,6 +484,9 @@ const MarksEntry = ({ route, navigation }) => {
               label={evaProps => <Text {...evaProps}>Sub Enrich</Text>}
               defaultValue={markList[index].sub_enrich_marks}
               onChangeText={marks => {
+                if (marks === "") {
+                  marks = -5000.00
+                }
                 markList[index].sub_enrich_marks = marks;
               }}
             />
