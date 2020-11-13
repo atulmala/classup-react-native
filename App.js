@@ -7,6 +7,7 @@ import * as eva from '@eva-design/eva';
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import SplashScreen from 'react-native-splash-screen';
+import analytics from '@react-native-firebase/analytics';
 
 import LoginScreen from './screens/LoginScreen';
 import TeacherMenu from './screens/TeacherMenu';
@@ -78,6 +79,9 @@ import ChangePassword from './screens/ChangePassword';
 const Stack = createStackNavigator();
 
 const App = () => {
+  const routeNameRef = React.useRef();
+  const navigationRef = React.useRef();
+
   React.useEffect(() => {
     SplashScreen.hide();
   }, []);
@@ -89,7 +93,21 @@ const App = () => {
         barStyle='light-content'
         backgroundColor="#4F6D7A"
       />
-      <NavigationContainer>
+      <NavigationContainer
+        ref={navigationRef}
+        onStateChange={async (state) => {
+          const previousRouteName = routeNameRef.current;
+          const currentRouteName = getActiveRouteName(state);
+
+          if (previousRouteName !== currentRouteName) {
+            await analytics().logScreenView({
+              screen_name: currentRouteName,
+              screen_class: currentRouteName,
+            });
+          }
+        }
+        }
+      >
         <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
           headerStyle: {
             backgroundColor: 'darkcyan',
