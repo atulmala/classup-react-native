@@ -9,6 +9,7 @@
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
 #import <EXSplashScreen/EXSplashScreenService.h>
 #import <UMCore/UMModuleRegistryProvider.h>
+@import Firebase;
 
 #if DEBUG
 #import <FlipperKit/FlipperClient.h>
@@ -40,6 +41,7 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [FIRApp configure];
 #if DEBUG
   InitializeFlipper(application);
 #endif
@@ -54,6 +56,7 @@ static void InitializeFlipper(UIApplication *application) {
     controller.delegate = self;
     [controller startAndShowLaunchScreen:self.window];
   #endif
+  
 
   [super application:application didFinishLaunchingWithOptions:launchOptions];
 
