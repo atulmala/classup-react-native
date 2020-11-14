@@ -37,8 +37,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>ClassUp requests to use your camera for Home Work Functionality</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Application needs permission to write photos...</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>iOS 10 needs permission to write photos...</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
@@ -59,19 +65,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-  <key>NSCameraUsageDescription</key> 
-    <string>ClassUp requests to use your camera for Home Work Functionality</string> 
-    <!-- Required with iOS 11 and higher: include this only if you are planning to use the camera roll --> 
-    <key>NSPhotoLibraryAddUsageDescription</key> 
-    <string>ClassUp requests to access your photo library for Communication functionality</string>
-    <!-- Include this only if you are planning to use the camera roll --> 
-    <key>NSPhotoLibraryUsageDescription</key> 
-    <string>ClassUp requests to access your photo library for Communication functionality</string>
-  <key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Application needs permission to write photos...</string>
-
-	<!-- If you are targeting devices running on iOS 10 or later, you'll also need to add: -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>iOS 10 needs permission to write photos...</string>
 </dict>
 </plist>
