@@ -61,7 +61,6 @@ const ComposeMessageTeacher = ({ route, navigation }) => {
   const pickDocument = async () => {
     try {
       const res = await DocumentPicker.pick({
-
         type: [DocumentPicker.types.pdf],
       });
       if (res.uri.startsWith('content://')) {
