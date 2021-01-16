@@ -13,8 +13,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		84EBC9D2671FDC26770FAEEF /* Pods_classup.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFE80233280C4650C41DE5A /* Pods_classup.framework */; };
-		B52596B3255EDF680018FEF8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B52596B2255EDF680018FEF8 /* GoogleService-Info.plist */; };
 		B59EF8BF254C47C2006E967D /* EmptyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59EF8BE254C47C2006E967D /* EmptyFile.swift */; };
+		B5D05E9825656C790074B4CC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B5D05E9725656C780074B4CC /* GoogleService-Info.plist */; };
 		B78CD48424D9BFA100330B87 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B78CD48324D9BFA100330B87 /* NotificationService.swift */; };
 		B78CD48824D9BFA100330B87 /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B78CD48124D9BFA100330B87 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -61,6 +61,7 @@
 		B52596B2255EDF680018FEF8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../../../Users/atulmala/Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B59EF8BD254C47C1006E967D /* classup-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "classup-Bridging-Header.h"; sourceTree = "<group>"; };
 		B59EF8BE254C47C2006E967D /* EmptyFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyFile.swift; sourceTree = "<group>"; };
+		B5D05E9725656C780074B4CC /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "classup/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B73D7B1024D91D120073C219 /* classup.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = classup.entitlements; path = classup/classup.entitlements; sourceTree = "<group>"; };
 		B78CD48124D9BFA100330B87 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B78CD48324D9BFA100330B87 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -146,6 +147,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				B5D05E9725656C780074B4CC /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* classup */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				B78CD48224D9BFA100330B87 /* OneSignalNotificationServiceExtension */,
@@ -291,9 +293,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5D05E9825656C790074B4CC /* GoogleService-Info.plist in Resources */,
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				B52596B3255EDF680018FEF8 /* GoogleService-Info.plist in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 			);

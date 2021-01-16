@@ -17,6 +17,9 @@ const SelectClass = ({ route, navigation }) => {
   const { userID } = route.params;
 
   const [date, setDate] = React.useState(new Date());
+  const now = new Date();
+  const lastYear = new Date(now.getFullYear() - 1, 1, 1);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   const [classList] = useState([]);
   var selectedClass;
@@ -154,6 +157,8 @@ const SelectClass = ({ route, navigation }) => {
                 style={styles.select}
                 accessoryRight={calendarIcon}
                 date={date}
+                min={lastYear}
+                max={today}
                 onSelect={nextDate => setDate(nextDate)}
               />
               <Layout style={styles.verticalSpace} />
