@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Platform, Dimensions } from 'react-native';
 import { Spinner } from '@ui-kitten/components';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Pdf from 'react-native-pdf';
-import { concat } from 'react-native-reanimated';
+// import { concat } from 'react-native-reanimated';
 import {ProgressView} from "@react-native-community/progress-view";
 
 var RNFS = require('react-native-fs');
